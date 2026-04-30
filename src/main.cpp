@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "autoSelect/selection.h"
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 pros::MotorGroup leftdt({1, 2}, pros::MotorGearset::green);
@@ -54,14 +55,16 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
 void initialize() {
-    pros::lcd::initialize(); // initialize brain screen
-    while (true) { // infinite loop
-        // print measurements from the adi encoder
-        pros::lcd::print(0, "Vertical Encoder: %i", verticalEnc.get_value());
-        // print measurements from the rotation sensor
-        pros::lcd::print(1, "Horizontal Sensor: %i", horizontalEnc.get_value());
-        pros::delay(10); // delay to save resources. DO NOT REMOVE
-} // temporary llemu code to determine tracking wheel reversal.
+    // pros::lcd::initialize(); // initialize brain screen
+    // while (true) { // infinite loop
+    //     // print measurements from the adi encoder
+    //     pros::lcd::print(0, "Vertical Encoder: %i", verticalEnc.get_value());
+    //     // print measurements from the rotation sensor
+    //     pros::lcd::print(1, "Horizontal Sensor: %i", horizontalEnc.get_value());
+    //     pros::delay(10); // delay to save resources. DO NOT REMOVE
+// } // temporary llemu code to determine tracking wheel reversal.
+// selector::init();
+lv_label_set_text(labe11, "Hello World!")
 } //initialize L bozo american spelling
 
 void disabled() {
@@ -70,7 +73,11 @@ void disabled() {
 
 void competition_initialize() {}
 
-void autonomous() {}
+void autonomous() {
+	if(selector::auton == 0) {
+
+	}
+}
 
 void opcontrol() {
 	while (true) {
