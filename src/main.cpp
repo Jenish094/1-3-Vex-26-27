@@ -15,9 +15,9 @@ lemlib::Drivetrain drivetrain(&leftdt,
 pros::Imu imu(10); //IMU sensor port 10
 //tracking wheels
 //horizontal tracking wheel's sensor port 20, not reversed
-pros::adi::Encoder horizontalEnc('A', 'B');
+pros::Rotation horizontalEnc(20);
 //vertical tracking wheel's sensor, reversed. NEED TO CHECK IF IT NEEDS TO BE REVERSE OR NOT
-pros::adi::Encoder verticalEnc('C', 'D');
+pros::Rotation verticalEnc(11);
 // horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
 // vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
@@ -53,14 +53,14 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
 void initialize() {
-    pros::lcd::initialize(); // initialize brain screen
-    while (true) { // infinite loop
-        // print measurements from the adi encoder
-        pros::lcd::print(0, "Horizontal: %i", horizontalEnc.get_value());
-        // print measurements from the rotation sensor
-        pros::lcd::print(1, "Vertical: %i", verticalEnc.get_value());
-        pros::delay(10); // delay to save resources. DO NOT REMOVE
-    }
+    // pros::lcd::initialize(); // initialize brain screen
+    // while (true) { // infinite loop
+    //     // print measurements from the adi encoder
+    //     pros::lcd::print(0, "Horizontal: %i", horizontalEnc.get_value());
+    //     // print measurements from the rotation sensor
+    //     pros::lcd::print(1, "Vertical: %i", verticalEnc.get_value());
+    //     pros::delay(10); // delay to save resources. DO NOT REMOVE
+    // }
 }
 
 void disabled() {}
