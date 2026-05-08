@@ -1,0 +1,191 @@
+#pragma once
+
+#include "vex.h"
+
+/** @brief Constants used while tuning motions */
+void test_constants();
+
+/** @brief Robot should drive and end in starting position. */
+void test_drive();
+/** @brief Robot should drive and end in starting position. */
+void test_odom_drive();
+
+/** @brief Robot should drive in curves and end in starting position. */
+void test_heading();
+/** @brief Robot should drive in curves and end in starting position. */
+void test_odom_heading();
+
+/** @brief Robot should turn and end in starting position. */
+void test_turn();
+/** @brief Robot should turn and end in starting position. */
+void test_odom_turn();
+
+/** @brief Robot should swing and end in start heading. */
+void test_swing();
+/** @brief Robot should swing and end close to start heading. */
+void test_odom_swing();
+
+/** @brief Robot should drive, turn, and swing and end in starting position. */
+void test_full();
+/** @brief Robot should drive, turn, and swing and end in starting position. */
+void test_odom_full();
+
+/** @brief Robot should drive in curves and end in starting position. */
+void test_boomerang();
+
+/** @brief Robot should chain through motions quickly and end in starting position */
+void test_motion_chaining();
+
+/** @brief Robot should turn in place driving to corners and return in its starting position */
+void test_holonomic();
+
+/**
+ * @brief Enables a PID tuner suite.
+ * `test_drive()` can be run on controller and Actual and Setpoint values will be graphed on brain.
+ * Adjust `set_plot_bounds()`’s `x_max_bound` if the trace doesn’t fit.
+ * Check `PID_tuner()`'s documentation to see controls.
+ */
+void config_tune_drive();
+
+/**
+ * @brief Enables a PID tuner suite.
+ * `test_heading()` can be run on controller and Actual and Setpoint values will be graphed on brain.
+ * Adjust `set_plot_bounds()`’s `x_max_bound` if the trace doesn’t fit.
+ * Check `PID_tuner()`'s documentation to see controls.
+ */
+void config_tune_heading();
+
+/**
+ * @brief Enables a PID tuner suite.
+ * `test_turn()` can be run on controller and Actual and Setpoint values will be graphed on brain.
+ * Adjust `set_plot_bounds()`’s `x_max_bound` if the trace doesn’t fit.
+ * Check `PID_tuner()`'s documentation to see controls.
+ */
+void config_tune_turn();
+
+/**
+ * @brief Enables a PID tuner suite.
+ * `test_swing()` can be run on controller and Actual and Setpoint values will be graphed on brain.
+ * Adjust `set_plot_bounds()`’s `x_max_bound` if the trace doesn’t fit.
+ * Check `PID_tuner()`'s documentation to see controls.
+ */
+void config_tune_swing();
+
+/** Swaps the tuning configuration for config_test_...() functions.
+ * Swaps odom_constants to default_constants and swaps test_drive to test_odom_drive etc.
+ */
+bool config_swap_test_mode();
+
+/** @returns True if odom testing mode is selected */
+bool config_is_testing_odom();
+
+struct pid_data {
+    std::vector<std::pair<std::string, std::reference_wrapper<float>>> variables = {};
+    int index = 0;
+    int min = 0;
+    int max = 3;
+    float modifier = 1;
+    float modifer_scale = 1;
+    float var_upper_size = 1;
+    bool needs_update = false;
+};
+
+extern pid_data data;
+extern std::vector<std::string> error_data;
+
+/**
+ * @brief Displays a menu on the controller to change PID values.
+ * Heres a guide on how to tune a PID https://www.youtube.com/watch?v=6EcxGh1fyMw&t=602s.
+ * If SD is inserted all changed values are logged in pid_data.txt.
+ * Use `config_add_pid_output_SD_console()` to see the data.
+ *
+ * **Controls:
+ *
+ * - Joysticks – Move drivetrain (only when no autonomous is running).
+ *
+ * - Up Arrow – Move cursor to the tuning value above
+ *
+ * - Down Arrow – Move cursor to the tuning value below
+ *
+ * - A – Increase the hovered digit by 1
+ *
+ * - Y – Decrease the hovered digit by 1
+ *
+ * - Right Arrow – Shift the digit cursor one place to the right
+ *
+ * - Left Arrow – Shift the digit cursor one place to the left
+ *
+ * - X – Start the auton test, reset the graph, and begin re-plotting
+ *
+ * - B – Cancel the auton run and re-enable user control
+ */
+void PID_tuner();
+
+std::vector<mik::motor*> config_get_motors();
+
+/** @brief Logs errors during robot calibration, checks inertial, SD, and drivetrain motors
+ * It is recommended to add other motors and devices to this function
+ */
+int run_diagnostic();
+
+/** @brief Displays a log of the most recent controller edited PID values from the PID tuner suite  */
+void config_add_pid_output_SD_console();
+
+/** @brief Spins all drivetrain motors one at a time.
+ * Useful for debugging the spin direction of motors as motors may be flipped in drivetrain.
+ * Intended behavior is for all motors to spin forward.
+ */
+void config_spin_all_motors();
+
+/** @brief Adds motor wattage values into UI console,
+ * Used for checking motor friction. around 0.5~ is good for one side of a 6 motor drivetrain.
+ */
+void config_motor_wattage();
+
+/** @brief Adds motor temperature values into UI console,
+ * around 80% is when the motors become cooked
+ */
+void config_motor_temp();
+
+/** Adds motor torque values to UI console */
+void config_motor_torque();
+
+/** Adds motor efficency % values to UI console */
+void config_motor_efficiency();
+
+/** Adds motor current values to UI console */
+void config_motor_current();
+
+/** @brief Adds odometry data into the UI console, will start position tracking if not already done so
+ * useful for debugging tracking pods
+ */
+void config_odom_data();
+
+/** @brief Adds distance reset data from all the sensors to the config screen */
+void config_reset_data();
+
+/** @brief Adds errors found into the UI console, errors are collected from run_diagnostic() */
+void config_error_data();
+
+/** @brief Starts a practice driver skills run that will stop the robot after 60 seconds */
+void config_skills_driver_run();
+
+/** @brief Drives forward 72 inches and gets the robots max velocity and an estimated constant acceleration,
+ * printed to the console screen useful for simulating your robot in mikGen, https://ethanmik.github.io/mikGen/
+ */
+void config_measure_velocity_accel();
+
+/** @brief Measures the offsets of the forward and sideways tracker by turning prints output the the console screen */
+void config_measure_odometry_offsets();
+
+/** Measures the distance sensor offsets of the robot, note that it is more accurate to use CAD model. To find the offsets
+ * place robots tracking center in the middle of intersection of the 4 field tiles in the far upper right corner of the field.
+ * Make sure there are no obstructions. The robot should be facing a top and right wall.
+ */
+void config_measure_distance_reset_offsets();
+
+/** @brief Triggers a component plugged into a 3 wire port at specified port */
+void config_test_three_wire_port(int port);
+
+/** @brief Triggers a component plugged into a 3 wire port on a smart port expander */
+void config_test_three_wire_port(int expander_port, int port);

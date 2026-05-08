@@ -1,0 +1,278 @@
+#pragma once
+
+#include "v5.h"
+#include "v5_vcs.h"
+#include <string>
+
+typedef struct point{
+    double x;
+    double y;
+};
+
+namespace mik {
+
+// Drive Globals
+    /** @brief Enumerates the available driver‑control schemes. */
+    enum class drive_mode {
+        SPLIT_ARCADE,            // Left stick Y, right stick X
+        SPLIT_ARCADE_CURVED,     // Split arcade with curved turns (from lemlib)
+        TANK,                    // Tank drive
+        TANK_CURVED,             // Tank drive with curved turn (from lemlib)
+        FIELD_CENTRIC_HOLONOMIC, // Field centric driving for holonomic drivetrains
+        SPLIT_ARCADE_HOLONOMIC   // Split Arcade that allows strafing
+    };
+
+    /** @brief Explicitly specifies rotation direction when turning or swinging. */
+    enum class turn_direction {
+        FASTEST, // Direction chosen automatically (shortest path)
+        CW,      // Clockwise rotation
+        CCW      // Counter‑clockwise rotation
+    };
+
+    enum class drive_direction {
+        FASTEST,  // Direction chosen automatically (shortest path)
+        FWD,      // Drives to point in forward direction
+        REV       // Drives it point in reverse direction
+    };
+    
+    enum class turn_type { TURN, LEFT_SWING, RIGHT_SWING };
+    enum auto_variation : int { ONE = 1, TWO = 2, THREE = 3, FOUR = 4 };
+    enum class distance_position { FRONT_SENSOR, REAR_SENSOR, LEFT_SENSOR, RIGHT_SENSOR };
+    enum class wall_position { TOP_WALL, BOTTOM_WALL, LEFT_WALL, RIGHT_WALL, AUTO };
+    enum class tracker_mode { MOTOR_ENCODER, FORWARD_TRACKER };
+    enum class alliance_colors { RED, BLUE };
+
+
+    inline constexpr int PORT_A = -1;
+    inline constexpr int PORT_B = -2;
+    inline constexpr int PORT_C = -3;
+    inline constexpr int PORT_D = -4;
+    inline constexpr int PORT_E = -5;
+    inline constexpr int PORT_F = -6;
+    inline constexpr int PORT_G = -7;
+    inline constexpr int PORT_H = -8;
+    inline constexpr int PORT0 = INT16_MAX;
+
+    inline constexpr distance_position front_sensor = distance_position::FRONT_SENSOR;
+    inline constexpr distance_position rear_sensor = distance_position::REAR_SENSOR;
+    inline constexpr distance_position left_sensor = distance_position::LEFT_SENSOR;
+    inline constexpr distance_position right_sensor = distance_position::RIGHT_SENSOR;
+
+    inline constexpr tracker_mode forward_tracker = tracker_mode::FORWARD_TRACKER;
+    inline constexpr tracker_mode motor_encoder = tracker_mode::MOTOR_ENCODER;
+
+    inline constexpr wall_position top_wall = wall_position::TOP_WALL;
+    inline constexpr wall_position bottom_wall = wall_position::BOTTOM_WALL;
+    inline constexpr wall_position left_wall = wall_position::LEFT_WALL;
+    inline constexpr wall_position right_wall = wall_position::RIGHT_WALL;
+    inline constexpr wall_position auto_detect_wall = wall_position::AUTO;
+
+    inline constexpr vex::gearSetting blue_6_1  = vex::gearSetting::ratio6_1;
+    inline constexpr vex::gearSetting green_18_1 = vex::gearSetting::ratio18_1;
+    inline constexpr vex::gearSetting red_36_1   = vex::gearSetting::ratio36_1;
+
+    inline constexpr turn_direction clockwise         = turn_direction::CW;
+    inline constexpr turn_direction counter_clockwise = turn_direction::CCW;
+    inline constexpr turn_direction cw                = turn_direction::CW;
+    inline constexpr turn_direction ccw               = turn_direction::CCW;
+
+    inline constexpr drive_direction forwards     = drive_direction::FWD;
+    inline constexpr drive_direction reversed     = drive_direction::REV;
+
+    inline constexpr auto_variation one   = auto_variation::ONE;
+    inline constexpr auto_variation two   = auto_variation::TWO;
+    inline constexpr auto_variation three = auto_variation::THREE;
+    inline constexpr auto_variation four  = auto_variation::FOUR;
+
+#ifndef FAST_COMPILE
+// UI Globals
+
+    // UI main color palette
+    inline const std::string UI_white =      "#ffffff"; // Text and secondary primary outline color
+    inline const std::string UI_light_gray = "#999999"; // Secondary outline color
+    inline const std::string UI_med_gray =   "#666666"; // Primary outline color
+    inline const std::string UI_dark_gray =  "#434343"; // Secondary background color
+    inline const std::string UI_black =      "#000000"; // Primary background color
+    inline const std::string UI_red =        "#ff0000"; // Tertiary outline color
+
+    // Loading screen
+    inline const std::string& loading_text_bg_color = UI_dark_gray; 
+    inline const std::string& loading_text_color = UI_white; 
+
+    // Selector panel colors
+    inline const std::string& selector_text_color = UI_white;
+    inline const std::string& selector_bg_color = UI_black;
+    inline const std::string& selector_scroll_bar_color = UI_dark_gray;
+    
+    inline const std::string& selector_bg_pressing_color = UI_med_gray;
+    inline const std::string& selector_bg_pressed_color = UI_dark_gray;
+    inline const std::string& selector_outline_color = UI_dark_gray;
+    inline const std::string& selector_outline_pressing_color = UI_light_gray;
+    inline const std::string& selector_outline_pressed_color = UI_light_gray;
+
+    // Config screen colors
+    inline const std::string& config_text_color = UI_white;
+    inline const std::string& config_bg_color = UI_black;
+    inline const std::string& config_scroll_bar_color = UI_med_gray;
+
+    inline const std::string& config_btn_outline_color = UI_med_gray;
+    inline const std::string& config_btn_outline_pressing_color = UI_white;
+    inline const std::string& config_btn_outline_pressed_color = UI_red;
+    
+    inline const std::string config_macro_btn_bg_color = "#000000";
+    inline const std::string config_data_btn_bg_color =  "#232323";
+    inline const std::string config_test_btn_bg_color =  "#323232";
+
+    // Pnematic screen colors
+    inline const std::string& pnematic_bg_color = UI_black;
+    inline const std::string& pnematic_text_color = UI_white;
+    
+    inline const std::string& pnematic_port_btn_outline_color = UI_dark_gray;
+    inline const std::string& pnematic_port_btn_outline_pressing_color = UI_light_gray;
+    inline const std::string& pnematic_port_btn_outline_pressed_color = UI_red;
+
+    inline const std::string& pnematic_close_btn_bg_color = UI_black;
+    inline const std::string& pnematic_close_btn_outline_color = UI_med_gray;
+    inline const std::string& pnematic_close_btn_pressing_color = UI_light_gray;
+    inline const std::string& pnematic_close_btn_pressed_color = UI_red;
+    
+    inline const std::string pnematic_A_btn_bg_color = "#303030";
+    inline const std::string pnematic_B_btn_bg_color = "#595959";
+    inline const std::string pnematic_C_btn_bg_color = "#858585";
+    inline const std::string pnematic_D_btn_bg_color = "#cccccc";
+    inline const std::string pnematic_E_btn_bg_color = "#303030";
+    inline const std::string pnematic_F_btn_bg_color = "#595959";
+    inline const std::string pnematic_G_btn_bg_color = "#858585";
+    inline const std::string pnematic_H_btn_bg_color = "#cccccc";
+
+    // Auton screen colors
+    inline const std::string& auton_bg_color = UI_black;
+    inline const std::string& auton_text_color = UI_white;
+
+    inline const std::string& auton_toggle_panel_outline_color = UI_med_gray;
+    inline const std::string& auton_toggle_knob_color = UI_white;
+    inline const std::string& auton_pressing_toggle_bg_color = UI_light_gray;
+
+    inline const std::string auton_toggle_blue_bg_color =  "#25a3e3";
+    inline const std::string auton_toggle_red_bg_color =   "#f14a41";
+    inline const std::string auton_toggle_left_bg_color =  "#d4e404";
+    inline const std::string auton_toggle_right_bg_color = "#6410a4"; 
+    inline const std::string auton_toggle_quals_bg_color = "#ff0000";
+    inline const std::string auton_toggle_elims_bg_color = "#33e013";
+    inline const std::string auton_toggle_off_bg_color =   "#666666";
+    inline const std::string auton_toggle_sawp_bg_color =  "#ff9900";
+    
+    inline const std::string& auton_data_bg_color = UI_black;
+    inline const std::string& auton_data_outline_color = UI_white;
+    inline const std::string& auton_data_pressing_color = UI_red;
+    inline const std::string& auton_data_pressed_color = UI_red;
+
+    inline const std::string& auton_num_bg_color = UI_black;
+    inline const std::string& auton_num_outline_color = UI_med_gray;
+    inline const std::string& auton_num_pressing_color = UI_light_gray;
+    inline const std::string& auton_num_pressed_color = UI_red;
+
+    inline const std::string& auton_description_bg_color = UI_black;
+    inline const std::string& auton_description_outline_color = UI_med_gray;
+
+    inline const std::string& auton_calibrate_bg_color = UI_med_gray;
+    inline const std::string& auton_calibrate_bg_pressing_color = UI_light_gray;
+    inline const std::string& auton_calibrate_outline_color = UI_white;
+    inline const std::string& auton_calibrate_outline_pressing_color = UI_white;
+    inline const std::string& auton_calibrate_outline_pressed_color = UI_red;
+
+    // Graph screen colors
+    inline const std::string& graph_bg_color = UI_black;
+    inline const std::string& graph_text_color = UI_white;
+
+    inline const std::string& graph_chart_bg_color = UI_black;
+    inline const std::string& graph_chart_outline_color = UI_med_gray;
+    inline const std::string& graph_legend_bg_color = UI_black;
+    inline const std::string& graph_legend_outline_color = UI_med_gray;
+    
+    inline const std::string& graph_reset_btn_bg_color = UI_black;
+    inline const std::string& graph_reset_btn_outline_color = UI_med_gray;
+    inline const std::string& graph_reset_btn_pressing_color = UI_white;
+    inline const std::string& graph_reset_btn_pressed_color = UI_red;
+
+    // Console screen colors
+    inline const std::string& console_bg_color = UI_black;
+    inline const std::string& console_text_color = UI_white;
+    inline const std::string& console_text_bg_color = UI_med_gray;
+    inline const std::string& console_outline_color = UI_med_gray;
+    inline const std::string& console_scroll_bar_color = UI_med_gray;
+
+    // Motors screen colors
+    inline const std::string& motors_bg_color = UI_black;
+    inline const std::string& motors_spin_left_bg_color = UI_black;
+    inline const std::string& motors_spin_left_outline_color = UI_med_gray;
+    inline const std::string& motors_spin_left_pressing_color = UI_white;
+    inline const std::string& motors_spin_left_pressed_color = UI_red;
+
+    inline const std::string& motors_spin_right_bg_color = UI_black;
+    inline const std::string& motors_spin_right_outline_color = UI_med_gray;
+    inline const std::string& motors_spin_right_pressing_color = UI_white;
+    inline const std::string& motors_spin_right_pressed_color = UI_red;
+
+    inline const std::string motors_left_drive_btn_bg_color = "#303030";
+    inline const std::string motors_right_drive_btn_bg_color = "#595959";
+    inline const std::string motors_assembly_btn_bg_color = "#858585";
+
+    inline const std::string& motors_port_btn_outline_color = UI_dark_gray;
+    inline const std::string& motors_port_btn_pressing_color = UI_white;
+    inline const std::string& motors_port_btn_pressed_color = UI_red;
+
+    inline const std::string& motors_volt_btn_bg_color = UI_black;
+    inline const std::string& motors_volt_btn_outline_color = UI_med_gray;
+    inline const std::string& motors_volt_btn_pressed_color = UI_white;
+    inline const std::string& motors_volt_btn_pressing_color = UI_red;
+
+    inline const std::string& motors_ports_text_color = UI_white;
+    inline const std::string& motors_close_button_bg_color = UI_black;
+    inline const std::string& motors_close_button_outline_color = UI_med_gray;
+    inline const std::string& motors_close_button_pressing_color = UI_white;
+    inline const std::string& motors_close_button_pressed_color = UI_red;
+
+    inline const std::string& motors_ports_btn_bg = UI_black;
+    inline const std::string& motors_ports_btn_pressing_color = UI_light_gray;
+    inline const std::string& motors_ports_btn_closed_color = UI_red;
+    inline const std::string& motors_ports_btn_open_color = UI_med_gray;
+    inline const std::string& motors_ports_btn_current_color = UI_white;
+#endif
+
+    enum class color { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BRIGHT_BLACK, BRIGHT_RED, BRIGHT_GREEN, BRIGHT_YELLOW, BRIGHT_BLUE, BRIGHT_MAGENTA, BRIGHT_CYAN, BRIGHT_WHITE }; 
+
+    inline constexpr color black          = color::BLACK;
+    inline constexpr color red            = color::RED;
+    inline constexpr color green          = color::GREEN;
+    inline constexpr color yellow         = color::YELLOW;
+    inline constexpr color blue           = color::BLUE;
+    inline constexpr color magenta        = color::MAGENTA;
+    inline constexpr color cyan           = color::CYAN;
+    inline constexpr color white          = color::WHITE;
+    inline constexpr color bright_black   = color::BRIGHT_BLACK;
+    inline constexpr color bright_red     = color::BRIGHT_RED;
+    inline constexpr color bright_green   = color::BRIGHT_GREEN;
+    inline constexpr color bright_yellow  = color::BRIGHT_YELLOW;
+    inline constexpr color bright_blue    = color::BRIGHT_BLUE;
+    inline constexpr color bright_magenta = color::BRIGHT_MAGENTA;
+    inline constexpr color bright_cyan    = color::BRIGHT_CYAN;
+    inline constexpr color bright_white   = color::BRIGHT_WHITE;
+
+    enum class UI_distance_units {inches, centimeters, pixels};
+    enum class input_type { CONTROLLER, TOUCHSCREEN };
+    enum class text_align { LEFT, CENTER };
+    enum class autons { RED_BLUE, RINGS_GOAL, QUALS_ELIMS, OFF_SAWP, OFF_SKILLS };
+
+    inline constexpr vex::fontType default_font = vex::fontType::mono20;
+
+    #define UI_Graphic_ID    1
+    #define UI_Background_ID 2
+    #define UI_Label_ID      3
+    #define UI_Button_ID     4
+    #define UI_Toggle_ID     5
+    #define UI_Textbox_ID    6
+
+    #define SCREEN_WIDTH 480
+    #define SCREEN_HEIGHT 240
+}
