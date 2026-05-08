@@ -14,4 +14,6 @@ extern lemlib::TrackingWheel vertical;
 extern lemlib::OdomSensors sensors;
 extern lemlib::ControllerSettings lateral_controller;
 extern lemlib::ControllerSettings angular_controller;
+extern lemlib::ExpoDriveCurve throttle_curve;
+extern lemlib::ExpoDriveCurve steer_curve; 
 extern lemlib::Chassis chassis;

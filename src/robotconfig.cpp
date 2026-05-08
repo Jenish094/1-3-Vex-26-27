@@ -2,8 +2,8 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-pros::MotorGroup leftdt({1, 2}, pros::MotorGearset::green);
-pros::MotorGroup rightdt({3, 4}, pros::MotorGearset::green);
+pros::MotorGroup leftdt({-1, -2}, pros::MotorGearset::green);
+pros::MotorGroup rightdt({-3, -4}, pros::MotorGearset::green);
 
 lemlib::Drivetrain drivetrain(&leftdt,
 							  &rightdt, 
@@ -16,9 +16,8 @@ lemlib::Drivetrain drivetrain(&leftdt,
 pros::Imu imu(10); //IMU sensor port 10
 //tracking wheels
 //horizontal tracking wheel's sensor port 20, not reversed
-pros::Rotation horizontalEnc('20');
-//vertical tracking wheel's sensor, reversed. NEED TO CHECK IF IT NEEDS TO BE REVERSE OR NOT
-pros::adi::Encoder verticalEnc('11', true);
+pros::Rotation horizontalEnc('20'); // perpendicular to drivetrain
+pros::Rotation verticalEnc('11'); // paralell to drivetrain
 // horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
 // vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
@@ -51,4 +50,16 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
                                               0 // maximum acceleration (slew)
 );
 
-lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
+// input curve for throttle input during driver control
+lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
+);
+
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
+);
+
+lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttle_curve, &steer_curve);

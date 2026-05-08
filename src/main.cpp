@@ -28,7 +28,9 @@ void blueright(){
 
 
 
-void skills_auton(){}
+void skills_auton(){
+
+}
 
 rd::Selector selector({
     {"RedLeft", redleft},
@@ -58,14 +60,18 @@ void disabled() {
 void competition_initialize() {}
 
 void autonomous() {
-selector.run_auton();
+// selector.run_auton();
+    // set position to x:0, y:0, heading:0
+    chassis.setPose(0, 0, 0);
+    // turn to face heading 90 with a very long timeout
+    chassis.turnToHeading(90, 100000);
 }
 
 void opcontrol() {
 	while (true) {
-		int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		int leftX = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-		chassis.arcade(leftY, leftX);
-		pros::delay(20);                               // Run for 20 ms then update
+        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        chassis.curvature(rightX, leftY);
+        pros::delay(20);                               // Run for 20 ms then update
 	}
 }
