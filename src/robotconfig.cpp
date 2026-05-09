@@ -16,8 +16,8 @@ lemlib::Drivetrain drivetrain(&leftdt,
 pros::Imu imu(10); //IMU sensor port 10
 //tracking wheels
 //horizontal tracking wheel's sensor port 20, not reversed
-pros::Rotation horizontalEnc('20'); // perpendicular to drivetrain
-pros::Rotation verticalEnc('11'); // paralell to drivetrain
+pros::Rotation horizontalEnc(20); // perpendicular to drivetrain
+pros::Rotation verticalEnc(11); // paralell to drivetrain
 // horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
 // vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
@@ -43,9 +43,9 @@ lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               10, // derivative gain (kD)
                                               3, // anti windup
-                                              1, // small error range, in degrees
+                                              1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
-                                              3, // large error range, in degrees
+                                              3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
