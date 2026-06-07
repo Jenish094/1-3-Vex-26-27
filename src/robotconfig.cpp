@@ -1,16 +1,15 @@
-#include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-pros::MotorGroup leftdt({-1, -2}, pros::MotorGearset::green);
-pros::MotorGroup rightdt({-3, -4}, pros::MotorGearset::green);
+pros::MotorGroup leftdt({-1, -2}, pros::MotorGearset::blue);
+pros::MotorGroup rightdt({-3, -4}, pros::MotorGearset::blue);
 
 lemlib::Drivetrain drivetrain(&leftdt,
 							  &rightdt, 
 								  16.5,
 								  lemlib::Omniwheel::NEW_275,
 							  360,
-							  2 // horizontal drift need to recalibrate
+							  0 // horizontal drift need to recalibrate
 							  );
 
 pros::Imu imu(10); //IMU sensor port 10
@@ -63,3 +62,7 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 );
 
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttle_curve, &steer_curve);
+
+
+pros::Motor Lift(5, pros::MotorGearset::red); //lift motor port 5, gearset 36 (red), not reversed
+pros::adi::DigitalOut Claw('A');

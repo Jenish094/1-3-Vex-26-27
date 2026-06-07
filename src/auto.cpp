@@ -2,21 +2,21 @@
 #include "robotconfig.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 
+ASSET(redfront_txt);
 
-void nothing_auton() {
+void redFront() {
+    chassis.setPose(0, 0, 0);
+    chassis.follow(redfront_txt, 15, 2000);
+
 }
 
-void redleft() {
-    
+void redLeft() {
 }
 
-void redright() {
+void blueFront() {
 }
 
-void blueleft() {
-}
-
-void blueright() {
+void blueLeft() {
 }
 
 void skills_auton() {
