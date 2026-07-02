@@ -18,4 +18,5 @@ extern lemlib::ExpoDriveCurve throttle_curve;
 extern lemlib::ExpoDriveCurve steer_curve; 
 extern lemlib::Chassis chassis;
 extern pros::Motor Lift;
-extern pros::adi::DigitalOut Claw;
+extern pros::adi::DigitalOut ClawRotate;
+extern pros::adi::DigitalOut ClawOpenClose;
