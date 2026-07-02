@@ -12,17 +12,19 @@ lemlib::Drivetrain drivetrain(&leftdt,
 							  0 // horizontal drift need to recalibrate
 							  );
 
-pros::Imu imu(10); //IMU sensor port 10
-//tracking wheels
-//horizontal tracking wheel's sensor port 20, not reversed
-pros::Rotation horizontalEnc(20); // perpendicular to drivetrain
-pros::Rotation verticalEnc(11); // paralell to drivetrain
-// horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
-// vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 1.7);
+// pros::Imu imu(10); //IMU sensor port 10
+// //tracking wheels
+// //horizontal tracking wheel's sensor port 20, not reversed
+// pros::Rotation horizontalEnc(20); // perpendicular to drivetrain
+// pros::Rotation verticalEnc(11); // paralell to drivetrain
+// // horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
+// lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
+// // vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
+// lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 1.7);
 
-lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
+// disabled odoms
+
+// lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
 // odomsensors, 1 vertical wheel, 1 horizontal, replace nullptr with second tracking wheels if needed
 
 // lateral PID controller
@@ -61,9 +63,11 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
                                   1.019 // expo curve gain
 );
 
-lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttle_curve, &steer_curve);
+lemlib::Chassis chassis(drivetrain); 
+// , lateral_controller, angular_controller, sensors, &throttle_curve, &steer_curve);
 
 
-pros::Motor Lift(5, pros::MotorGearset::red); //lift motor port 5, gearset 36 (red), not reversed
-pros::adi::DigitalOut ClawRotate('A');
-pros::adi::DigitalOut ClawOpenClose('B');
+pros::MotorGroup lift({5, 6}, pros::MotorGearset::blue); // lift motor port 5 and 6, gearset 36 (red), not reversed
+pros::Motor Intake(7, pros::MotorGearset::red); // intake motor port 7, gearset 36 (red), not reversed, maybe 2 motors
+pros::adi::DigitalOut ClawRotate('A', 'B');
+pros::adi::DigitalOut ClawOpenClose('C', 'D');
