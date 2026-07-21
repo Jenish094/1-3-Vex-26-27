@@ -65,5 +65,5 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
 
 
 pros::Motor Lift(5, pros::MotorGearset::red); //lift motor port 5, gearset 36 (red), not reversed
-pros::adi::DigitalOut ClawRotate('A');
-pros::adi::DigitalOut ClawOpenClose('B');
+pros::adi::DigitalOut ClawOpenClose('A');
+pros::Motor Intake(6, pros::MotorGearset::blue);

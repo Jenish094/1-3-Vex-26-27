@@ -7,14 +7,16 @@
 #include "robodash/api.h" // IWYU pragma: keep
 #include <string>
 #include <vector>
+#include "controls.h"
 
 // controls screen
 static rd_view_t *controlsView = rd_view_create("Controls");
 static lv_obj_t *controlsTitle = nullptr;
 static lv_obj_t *controlsMoveLabel = nullptr;
 static lv_obj_t *controlsLiftLabel = nullptr;
-static lv_obj_t *controlsClawLabel = nullptr;
 static lv_obj_t *controlsClawOpenCloseLabel = nullptr;
+static lv_obj_t *controlsIntakeLabel = nullptr;
+static lv_obj_t *controlsSchemeLabel = nullptr;
 
 //init images in lvgl
 extern const lv_img_dsc_t logonat;
@@ -29,7 +31,22 @@ rd::Image red(&logonatred, "RedLogo");
 void controls_view() {
     rd_view_focus(controlsView);
 }
-
+void refreshControlsPage() {
+    if (currentScheme == ControlScheme::R2L2) {
+        lv_label_set_text(controlsSchemeLabel, "Current: R2L2");
+        lv_label_set_text(controlsMoveLabel, "Drive: LStick + R2/L2");
+        lv_label_set_text(controlsLiftLabel, "Lift: Right Stick");
+        lv_label_set_text(controlsClawOpenCloseLabel, "Open/Close: A");
+        lv_label_set_text(controlsIntakeLabel, "Intake: R1/L1");
+    }
+    else {
+        lv_label_set_text(controlsSchemeLabel, "Current: DSA");
+        lv_label_set_text(controlsMoveLabel, "Drive: Double Stick Arcade");
+        lv_label_set_text(controlsLiftLabel, "Lift: R2/L2");
+        lv_label_set_text(controlsClawOpenCloseLabel, "Open/Close: A");
+        lv_label_set_text(controlsIntakeLabel, "Intake: R1/L1");
+    }
+}
 // setup autonomous selector with custom lib
 rd::Selector autonSelector("autonselect", {
     {"BlueLeft", blueFront},
@@ -53,31 +70,46 @@ void initialize() {
     controlsTitle = lv_label_create(controlsRoot);
     lv_label_set_text(controlsTitle, "Controls");
     lv_obj_align(controlsTitle, LV_ALIGN_TOP_MID, 0, 0);
+    
+    controlsSchemeLabel = lv_label_create(controlsRoot);
+    lv_obj_align(controlsSchemeLabel, LV_ALIGN_TOP_MID, 0, 20);
 
     controlsMoveLabel = lv_label_create(controlsRoot);
-    lv_label_set_text(controlsMoveLabel, "L2/R2: Drive");
     lv_obj_align(controlsMoveLabel, LV_ALIGN_TOP_LEFT, 0, 30);
 
     controlsLiftLabel = lv_label_create(controlsRoot);
     lv_label_set_text(controlsLiftLabel, "Right Stick Y: Lift");
     lv_obj_align(controlsLiftLabel, LV_ALIGN_TOP_LEFT, 0, 55);
 
-    controlsClawLabel = lv_label_create(controlsRoot);
-    lv_label_set_text(controlsClawLabel, "A: Claw Rotate");
-    lv_obj_align(controlsClawLabel, LV_ALIGN_TOP_LEFT, 0, 80);
-
     controlsClawOpenCloseLabel = lv_label_create(controlsRoot);
-    lv_label_set_text(controlsClawOpenCloseLabel, "B: Claw Open/Close");
     lv_obj_align(controlsClawOpenCloseLabel, LV_ALIGN_TOP_LEFT, 0, 105);
 
+    controlsIntakeLabel = lv_label_create(controlsRoot);
+    lv_obj_align(controlsIntakeLabel, LV_ALIGN_TOP_LEFT, 0, 130);
+
+    controlsInit();
+    refreshControlsPage();
     autonSelector.focus();
 } //initialize L bozo american spelling
 
 void disabled() {
 	// reset motors sensors and everything between autonomous and driver
+    while (pros::competition::is_disabled()) {
+        if (controlsUpdate()) {
+            refreshControlsPage();
+        }
+        pros::delay(20);
+    }
 }
 
-void competition_initialize() {}
+void competition_initialize() {
+    while (pros::competition::is_disabled()) {
+        if (controlsUpdate()) {
+            refreshControlsPage();
+        }
+        pros::delay(20);
+    }
+}
 
 void autonomous() {
     auto selectedAuton = autonSelector.get_auton();
@@ -89,15 +121,11 @@ void autonomous() {
 }
 
 void opcontrol() {
-	while (true) {
-        const int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X); // ts is actually steer not throttle
-        const int steer = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2) ? 127 : 0)
-                        - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127 : 0); // this is throttle not steer, the code doesnt like it when i make it normal
-        chassis.arcade(throttle, steer, false, 0.25);
-        Lift.move(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        ClawOpenClose.set_value(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B));
-        ClawRotate.set_value(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A));
-        pros::delay(20);                               // Run for 20 ms then update
-	}
+    while (true) {
+        if (controlsUpdate()) {
+            refreshControlsPage();
+        }
+        runDriverControls();
+        pros::delay(20);
+    }
 }
-
