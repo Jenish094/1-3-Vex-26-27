@@ -60,7 +60,6 @@ rd::Selector autonSelector("autonselect", {
 void initialize() {
     chassis.calibrate();
     lemlib::init();
-    imu.reset();
 
     chassis.setPose(0, 0, 0);
 

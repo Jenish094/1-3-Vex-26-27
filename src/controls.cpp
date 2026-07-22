@@ -3,8 +3,8 @@
 
 ControlScheme currentScheme = ControlScheme::R2L2;
 static void updateControllerScreen() {
-
-    controller.clear();
+    controller.clear_line(0);
+    controller.clear_line(1);
 
     switch (currentScheme) {
 
@@ -50,14 +50,16 @@ bool controlsUpdate() {
 }
 
 void runDriverControls() {
+    static bool clawOpenCloseState = false;
+    static bool previousA = false;
 
     if (currentScheme == ControlScheme::R2L2) {
 
-        int throttle =
+        int steer =
             (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2) ? 127 : 0)
           - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127 : 0);
 
-        int steer =
+        int throttle =
             controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
         chassis.arcade(steer, throttle, false, 0.25);
@@ -68,10 +70,10 @@ void runDriverControls() {
     }
     else {
 
-        int throttle =
+        int steer =
             controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 
-        int steer =
+        int throttle =
             controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
         chassis.arcade(steer, throttle, false, 0.25);
@@ -81,8 +83,13 @@ void runDriverControls() {
           - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127 : 0));
     }
 
-    ClawOpenClose.set_value(
-        controller.get_digital(pros::E_CONTROLLER_DIGITAL_A));
+    bool a = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+    if (a && !previousA) {
+        clawOpenCloseState = !clawOpenCloseState;
+    }
+    previousA = a;
+
+    ClawOpenClose.set_value(clawOpenCloseState);
     Intake.move(
         (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? 127 : 0)
       - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 127 : 0)

@@ -1,28 +1,31 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "lemlib/chassis/chassis.hpp"
+#include "pros/abstract_motor.hpp"
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-pros::MotorGroup leftdt({-1, -2}, pros::MotorGearset::blue);
-pros::MotorGroup rightdt({-3, -4}, pros::MotorGearset::blue);
+pros::MotorGroup leftdt({-4, -20}, pros::MotorGearset::blue);
+pros::MotorGroup rightdt({6, 5}, pros::MotorGearset::blue);
 
 lemlib::Drivetrain drivetrain(&leftdt,
 							  &rightdt, 
 								  16.5,
 								  lemlib::Omniwheel::NEW_275,
-							  360,
+							  270,
 							  0 // horizontal drift need to recalibrate
 							  );
 
-pros::Imu imu(10); //IMU sensor port 10
+// pros::Imu imu(10); //IMU sensor port 10
 //tracking wheels
 //horizontal tracking wheel's sensor port 20, not reversed
-pros::Rotation horizontalEnc(20); // perpendicular to drivetrain
-pros::Rotation verticalEnc(11); // paralell to drivetrain
+// pros::Rotation horizontalEnc(20); // perpendicular to drivetrain
+// pros::Rotation verticalEnc(11); // paralell to drivetrain
 // horizontal tracking wheel size default is 2 inch with wheel 2 inches right to the IMU center
-lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
-// vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
-lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 1.7);
+// lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_2, 2);
+// // vertical tracking wheel size default is 2.75 inch with wheel 1.7 inches right to the IMU center
+// lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_2, 1.7);
 
-lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
+// lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
+lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, nullptr);
 // odomsensors, 1 vertical wheel, 1 horizontal, replace nullptr with second tracking wheels if needed
 
 // lateral PID controller
@@ -64,6 +67,6 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors, &throttle_curve, &steer_curve);
 
 
-pros::Motor Lift(5, pros::MotorGearset::red); //lift motor port 5, gearset 36 (red), not reversed
+pros::MotorGroup Lift({-1, 2}, pros::MotorGearset::red);
 pros::adi::DigitalOut ClawOpenClose('A');
-pros::Motor Intake(6, pros::MotorGearset::blue);
+pros::MotorGroup Intake({-11, 10}, pros::MotorGearset::blue);

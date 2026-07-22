@@ -1,4 +1,5 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "pros/motor_group.hpp"
 #include "pros/rotation.hpp"
 
 // Robot configuration declarations
@@ -17,6 +18,6 @@ extern lemlib::ControllerSettings angular_controller;
 extern lemlib::ExpoDriveCurve throttle_curve;
 extern lemlib::ExpoDriveCurve steer_curve; 
 extern lemlib::Chassis chassis;
-extern pros::Motor Lift;
+extern pros::MotorGroup Lift;
 extern pros::adi::DigitalOut ClawOpenClose;
-extern pros::Motor Intake;
+extern pros::MotorGroup Intake;
