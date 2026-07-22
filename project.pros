@@ -329,11 +329,7 @@
     "upload_options": {
       "slot": 2,
       "icon": "pizza",
-<<<<<<< HEAD
       "description": "Compiled: 22/7/26"
-=======
-      "description": "Compiled: 02/07/26"
->>>>>>> 0948ccc06ea009c01be3d24d8f53edb05d04bdec
     },
     "use_early_access": false
   }
