@@ -14,14 +14,14 @@ struct Pose {
 
 // Movement to a target pose using tracking wheel feedback with closed-loop control
 // maxPower: maximum motor power (-127 to 127)
-// timeout_ms: maximum time to spend moving (0 = no timeout)
+// timeout_ms: maximum time to spend moving (0 = no timeout, default 5000ms = 5 seconds)
 // tolerance_in: position tolerance in inches for BOTH vert and horz (stop when both within this tolerance)
-void moveToPoint(const Pose& target, int maxPower = 80, int timeout_ms = 0, float tolerance_in = 0.05f);
+void moveToPoint(const Pose& target, int maxPower = 80, int timeout_ms = 5000, float tolerance_in = 0.05f);
 
 // Move to point using tracking wheel positions
 // vert: target vertical wheel position in inches
 // horz: target horizontal wheel position in inches
-void moveToPoint(float vert, float horz, int maxPower = 80, int timeout_ms = 0, float tolerance_in = 0.05f);
+void moveToPoint(float vert, float horz, int maxPower = 80, int timeout_ms = 5000, float tolerance_in = 0.05f);
 
 // Print current VERT and HORZ tracking wheel positions to brain screen (use for recording coordinates)
 // Simply call and read the screen, then pass those values to moveToPoint()

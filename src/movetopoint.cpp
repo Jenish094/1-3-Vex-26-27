@@ -21,12 +21,9 @@ void moveToPoint(const Pose& target, int maxPower, int timeout_ms, float toleran
     // Get starting time for timeout
     unsigned long startTime = pros::millis();
     
-    // PID/Proportional gains
-    const float kP_linear = 0.8f;   // linear proportional gain (power per inch of error)
-    const float kP_angular = 15.0f; // angular proportional gain (power per radian of error)
-    
-    // Thresholds
-    const float headingTolerance = 0.15f; // radians (~8.6 degrees)
+    // PID/Proportional gains - MUCH HIGHER so robot actually moves
+    const float kP_linear = 3.5f;   // increased from 0.8
+    const float kP_angular = 15.0f;
     
     // Track frames at target to avoid noise
     int framesAtTarget = 0;
@@ -50,15 +47,16 @@ void moveToPoint(const Pose& target, int maxPower, int timeout_ms, float toleran
         float horzError = target.y - currentHorz;  // target.y = horizontal target
         float distanceError = std::sqrt(vertError * vertError + horzError * horzError);
         
-        // Debug output every 10 loops
+        // Debug output every 5 loops
         static int debugCounter = 0;
-        if (debugCounter++ % 10 == 0) {
+        if (debugCounter++ % 5 == 0) {
             pros::screen::erase();
-            pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Tgt VERT: %.2f, HORZ: %.2f", target.x, target.y);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Cur VERT: %.2f, HORZ: %.2f", currentVert, currentHorz);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Vert Err: %.4f  Horz Err: %.4f", vertError, horzError);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Distance: %.4f in", distanceError);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 4, "At target: %d/%d", framesAtTarget, framesNeeded);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Tgt V:%.2f H:%.2f", target.x, target.y);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Cur V:%.2f H:%.2f", currentVert, currentHorz);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Err V:%.3f H:%.3f", vertError, horzError);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Dist:%.3f  Tol:%.3f", distanceError, tolerance_in);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 5, "At target: %d/%d", framesAtTarget, framesNeeded);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Time: %d ms", (int)(pros::millis() - startTime));
         }
         
         // Check if we're close enough (both vertical and horizontal within tolerance)
@@ -69,6 +67,7 @@ void moveToPoint(const Pose& target, int maxPower, int timeout_ms, float toleran
             if (framesAtTarget >= framesNeeded) {
                 devices.MGroups.DT_L.set(0);
                 devices.MGroups.DT_R.set(0);
+                pros::delay(100);
                 break;
             }
         } else {
@@ -81,7 +80,7 @@ void moveToPoint(const Pose& target, int maxPower, int timeout_ms, float toleran
         
         // Calculate linear and angular components
         float linearPower = clamp(distanceError * kP_linear, -maxPower, maxPower);
-        float angularPower = clamp(headingError * kP_angular, -maxPower * 0.4f, maxPower * 0.4f);
+        float angularPower = clamp(headingError * kP_angular, -maxPower * 0.5f, maxPower * 0.5f);
         
         // Combine: forward/back + rotation
         float leftPower = clamp(linearPower + angularPower, -127.0f, 127.0f);

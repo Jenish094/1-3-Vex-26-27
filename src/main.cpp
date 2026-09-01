@@ -34,6 +34,7 @@ void initialize(void) {
         pros::delay(300);
         pros::screen::erase();
         devices.init();
+        odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
         pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
         pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
@@ -58,8 +59,7 @@ void autonomous(void) {
 //     }
 
 //     selectedAuton->action();
-    moveToPoint(24.50, 18.33, 1.5708);
-}
+        moveToPoint(12.5, 8.3);}
 
 void opcontrol(void) {
         isAuton = false;
