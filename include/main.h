@@ -15,6 +15,7 @@ extern "C" {
         void competition_initialize(void);
         void opcontrol(void);
         void odomUpdate(void);
+        void cascadeAutomation(void);
 
 
 

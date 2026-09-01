@@ -66,6 +66,7 @@ void opcontrol(void) {
         controlsInit();
         while (true) {
                 runDriverControls();
+                cascadeAutomation();
                 pros::delay(20);
         }
         driverScreenManager();
