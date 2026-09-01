@@ -29,6 +29,8 @@ enum StandardPorts
         odom_vertical = 3,
         odom_horizontal = 4,
 
+        cascade_encoder = 7,
+
         distance = 7
 };
 
@@ -118,6 +120,7 @@ public:
         struct
         {
                 std::unique_ptr<pros::Imu> IMU;
+                std::unique_ptr<pros::Rotation> CascadeEncoder;
         } Sensors;
 
         struct {

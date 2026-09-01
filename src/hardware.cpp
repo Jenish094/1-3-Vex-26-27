@@ -30,6 +30,7 @@ void Hardware::LoadPeripherals(void) {
     this->Odom.VerticalWheel = std::make_unique<pros::Rotation>(odom_vertical);
     this->Odom.HorizontalWheel = std::make_unique<pros::Rotation>(odom_horizontal);
     this->Sensors.IMU = std::make_unique<pros::Imu>(imu);
+    this->Sensors.CascadeEncoder = std::make_unique<pros::Rotation>(cascade_encoder);
 
     this->Macros.flipToggleHeight = std::make_unique<FlipToggleHeight>();
 }
@@ -47,7 +48,6 @@ Hardware::Hardware(void) : Motors{
     MotorWrapper(motor_score_roll, pros::E_MOTOR_GEAR_GREEN) } 
 {
     // Leave this completely blank or just structural assignments.
-    // Do not call LoadPeripherals() here!
 }
 
 // Create a safe initialization function to run inside main.cpp's initialize()
@@ -72,6 +72,9 @@ void Hardware::init(void) {
     this->Odom.HorizontalWheel->set_reversed(false);
     this->Odom.HorizontalWheel->reset_position();
     this->Odom.HorizontalWheel->reset();
+
+    this->Sensors.CascadeEncoder->set_reversed(false);
+    this->Sensors.CascadeEncoder->reset_position();
 
     this->Sensors.IMU->reset(true); // Now safe to run blockingly!
 

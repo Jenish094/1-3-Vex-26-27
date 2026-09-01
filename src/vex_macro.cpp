@@ -21,3 +21,5 @@ void FlipToggleHeight::Run(int timeout_millis) {
         pros::delay(450);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 }
+
+void CascadeHeight() {}

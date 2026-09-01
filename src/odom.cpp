@@ -14,6 +14,8 @@ std::atomic<float> lastGlobalYIn(0.0f);
 std::atomic<float> verticalPosIn(0.0f);
 std::atomic<float> horizontalPosIn(0.0f);
 
+std::atomic<float> cascadeEncoderPos(0.0f);
+
 std::atomic<int> dist(0); // placeholder / diagnostic, see odomUpdate() in main.cpp
 
 // Single combined odom task: reads both tracking wheels + the IMU, then
@@ -90,12 +92,14 @@ void odomReset(void) {
         devices.Odom.VerticalWheel->reset_position();
         devices.Odom.HorizontalWheel->reset_position();
         devices.Sensors.IMU->tare_rotation();
+        devices.Sensors.CascadeEncoder->reset_position();
 
         lastVertical = 0.0f;
         lastHorizontal = 0.0f;
 
         verticalPosIn = 0.0f;
         horizontalPosIn = 0.0f;
+        cascadeEncoderPos = 0.0f;
 
         globalHeading = globalHeadingAtLastReset.load();
 
@@ -115,6 +119,10 @@ void brainScreenManager(void) {
                 pros::screen::print(pros::E_TEXT_MEDIUM, 3, "X (In): %.4f", globalXIn.load());
                 pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Y (In): %.4f", globalYIn.load());
                 pros::screen::print(pros::E_TEXT_MEDIUM, 5, "HDG (deg): %.4f", globalHeading.load() * (180.0f / PI));
+
+                float cascadeRot = devices.Sensors.CascadeEncoder->get_position();
+                cascadeEncoderPos = cascadeRot;
+                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "CASCADE (deg): %.4f", cascadeRot);
 
                 pros::delay(77);
         } while (true);
