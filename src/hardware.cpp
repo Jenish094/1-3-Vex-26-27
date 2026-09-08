@@ -12,7 +12,8 @@ void MotorWrapper::set(int speed) {
 
 MotorWrapper::~MotorWrapper(void) {}
 
-MotorGroupWrapper::MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3) {
+MotorGroupWrapper::MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3, float powerScale) {
+    this->powerScale = powerScale;
     this->motors.reserve(3);
     this->motors.push_back(m1);
     this->motors.push_back(m2);
@@ -21,7 +22,7 @@ MotorGroupWrapper::MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWr
 
 void Hardware::LoadPeripherals(void) {
     this->MGroups.DT_L = MotorGroupWrapper(&Motors.MOTOR_L1, &Motors.MOTOR_L2, nullptr);
-    this->MGroups.DT_R = MotorGroupWrapper(&Motors.MOTOR_R1, &Motors.MOTOR_R2, nullptr);
+    this->MGroups.DT_R = MotorGroupWrapper(&Motors.MOTOR_R1, &Motors.MOTOR_R2, nullptr, 0.97f);
     this->MGroups.MOTORGROUP_INTAKE = MotorGroupWrapper(&Motors.MOTOR_INTAKE_11W, nullptr, nullptr);
     
     this->Pneumatics.PNEUMATIC = std::make_unique<pros::adi::Pneumatics>('B', false);

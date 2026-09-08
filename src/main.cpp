@@ -2,6 +2,7 @@
 #include "movetopoint.hpp"
 #include "robodash/api.h"
 #include "auto.h"
+#include "auto.h"
 #include <iostream>
 
 bool isAuton = false;
@@ -36,11 +37,11 @@ void initialize(void) {
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
-        pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
-        pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
-        pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
+        // pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
+        // pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
+        // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
-        // autonSelector.focus();
+        autonSelector.focus();
 }
 
 void disabled(void) {}
@@ -53,13 +54,15 @@ void raw_drive(int pow) {
 }
 
 void autonomous(void) {
-//     auto selectedAuton = autonSelector.get_auton();
-//     if (!selectedAuton) {
-//         return; 
-//     }
+        auto selectedAuton = autonSelector.get_auton();
+        if (!selectedAuton) {
+                return;
+        }
 
-//     selectedAuton->action();
-        moveToPoint(12.5, 8.3);}
+        AUTON_REVERSED = false;
+        selectedAuton->action();
+
+}
 
 void opcontrol(void) {
         isAuton = false;
