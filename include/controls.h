@@ -5,4 +5,3 @@
 void controlsInit();
 bool controlsUpdate();
 void runDriverControls();
-void cascadeAutomation();

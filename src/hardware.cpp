@@ -1,4 +1,7 @@
 #include "hardware.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
+#include <memory>
 
 // Define the global instance here
 Hardware devices; 
@@ -27,6 +30,7 @@ void Hardware::LoadPeripherals(void) {
     this->Pneumatics.PNEUMATIC = std::make_unique<pros::adi::Pneumatics>('B', false);
 
     this->PRIMARY_CONTROLLER = std::make_unique<pros::Controller>(pros::controller_id_e_t::E_CONTROLLER_MASTER);
+    this->SECONDARY_CONTROLLER = std::make_unique<pros::Controller>(pros::controller_id_e_t::E_CONTROLLER_PARTNER);
     this->Odom.VerticalWheel = std::make_unique<pros::Rotation>(odom_vertical);
     this->Odom.HorizontalWheel = std::make_unique<pros::Rotation>(odom_horizontal);
     this->Sensors.IMU = std::make_unique<pros::Imu>(imu);

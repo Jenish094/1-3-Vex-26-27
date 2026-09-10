@@ -2,6 +2,7 @@
 #include "movetopoint.hpp"
 #include "robodash/api.h"
 #include "auto.h"
+#include "functions.h"
 #include <iostream>
 
 bool isAuton = false;
@@ -64,9 +65,10 @@ void autonomous(void) {
 void opcontrol(void) {
         isAuton = false;
         controlsInit();
+        functionsInit();
         while (true) {
                 runDriverControls();
-                cascadeAutomation();
+                updateCascadeAutomation();
                 pros::delay(20);
         }
         driverScreenManager();

@@ -29,7 +29,7 @@ enum StandardPorts
         odom_vertical = 3,
         odom_horizontal = 4,
 
-        cascade_encoder = 7,
+        cascade_encoder = 6,
 
         distance = 7
 };
@@ -105,6 +105,7 @@ public:
         } MGroups;
 
         std::unique_ptr<pros::Controller> PRIMARY_CONTROLLER;
+        std::unique_ptr<pros::Controller> SECONDARY_CONTROLLER;
 
         struct
         {
