@@ -1,6 +1,11 @@
 #pragma once
 #include "helpers.hpp"
 
+// ===== CONFIGURATION =====
+// Set to true if the robot moves BACKWARD when moveToPoint is called
+// Set to false if the robot moves FORWARD (normal)
+extern bool AUTON_REVERSED;
+
 // Pose: represents a target position based on tracking wheel measurements
 struct Pose {
     float x;       // target VERT (vertical wheel) position in inches
@@ -12,16 +17,13 @@ struct Pose {
     Pose(float x, float y, float heading) : x(x), y(y), heading(heading) {}
 };
 
-// Movement to a target pose using tracking wheel feedback with closed-loop control
-// maxPower: maximum motor power (-127 to 127)
-// timeout_ms: maximum time to spend moving (0 = no timeout, default 5000ms = 5 seconds)
-// tolerance_in: position tolerance in inches for BOTH vert and horz (stop when both within this tolerance)
-void moveToPoint(const Pose& target, int maxPower = 80, int timeout_ms = 5000, float tolerance_in = 0.05f);
-
-// Move to point using tracking wheel positions
+// Simple straight-line movement to a target using tracking wheels
+// Goes FORWARD by default (set AUTON_REVERSED = true to reverse)
 // vert: target vertical wheel position in inches
 // horz: target horizontal wheel position in inches
-void moveToPoint(float vert, float horz, int maxPower = 80, int timeout_ms = 5000, float tolerance_in = 0.05f);
+// maxPower: maximum motor power (-127 to 127)
+// heading: target heading in radians (0 = no heading control, just move forward/backward)
+void moveToPoint(float vert, float horz, int maxPower = 80, float heading = 0.0f);
 
 // Print current VERT and HORZ tracking wheel positions to brain screen (use for recording coordinates)
 // Simply call and read the screen, then pass those values to moveToPoint()

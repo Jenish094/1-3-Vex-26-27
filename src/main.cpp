@@ -16,8 +16,8 @@ rd::Image blue(&logonatblue, "BlueLogo");
 rd::Image red(&logonatred, "RedLogo");
 
 rd::Selector autonSelector("autonselect", {
-        {"CoenAuton_LeftSide", CoenAuton_LeftSide},
-        {"CoenAuton_RightSide", CoenAuton_RightSide},
+        {"LeftAuto", LeftAuto},
+        {"RightAuto", RightAuto},
         {"ToggleOnly_LeftSide", ToggleOnly_LeftSide},
         {"ToggleOnly_RightSide", ToggleOnly_RightSide},
         {"Skills", skills_auton},
@@ -54,13 +54,15 @@ void raw_drive(int pow) {
 }
 
 void autonomous(void) {
-//     auto selectedAuton = autonSelector.get_auton();
-//     if (!selectedAuton) {
-//         return; 
-//     }
+        auto selectedAuton = autonSelector.get_auton();
+        if (!selectedAuton) {
+                return;
+        }
 
-//     selectedAuton->action();
-        moveToPoint(12.5, 8.3);}
+        AUTON_REVERSED = false;
+        selectedAuton->action();
+
+}
 
 void opcontrol(void) {
         isAuton = false;

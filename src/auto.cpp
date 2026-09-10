@@ -215,7 +215,7 @@ void pinpickup() {
 
 }
 
-void CoenAuton_LeftSide() {
+void LeftAuto() {
         isAuton = true;
         
         devices.Pneumatics.PNEUMATIC->retract();
@@ -360,7 +360,7 @@ void CoenAuton_LeftSide() {
         isAuton = false;
 }
 
-void CoenAuton_RightSide() {
+void RightAuto() {
         isAuton = true;
         devices.MGroups.DT_L.set(35);
         devices.MGroups.DT_R.set(35);

@@ -3,6 +3,9 @@
 #include "hardware.hpp"
 #include <cmath>
 
+// Configuration flag - set to true to reverse the drivetrain during autonomous
+bool AUTON_REVERSED = false;
+
 // Clamp a value between min and max
 static float clamp(float value, float min, float max) {
     if (value > max) return max;
@@ -17,86 +20,112 @@ static float normalizeAngle(float angle) {
     return angle;
 }
 
-void moveToPoint(const Pose& target, int maxPower, int timeout_ms, float tolerance_in) {
-    // Get starting time for timeout
+void moveToPoint(float vert, float horz, int maxPower, float heading) {
+    // Get starting time for timeout (5 second max)
     unsigned long startTime = pros::millis();
+    const int timeout_ms = 5000;
+    const float tolerance_in = 0.05f;
+    const float headingTolerance = 0.15f; // radians (~8.6 degrees)
     
-    // PID/Proportional gains - MUCH HIGHER so robot actually moves
-    const float kP_linear = 3.5f;   // increased from 0.8
-    const float kP_angular = 15.0f;
-    
-    // Track frames at target to avoid noise
+    // Track frames at target
     int framesAtTarget = 0;
-    const int framesNeeded = 5;  // Must be at target for 5 frames (100ms)
+    const int framesNeeded = 3;  // Must be at target for 3 frames
     
     while (true) {
         // Check timeout
-        if (timeout_ms > 0 && (pros::millis() - startTime) > timeout_ms) {
+        if ((pros::millis() - startTime) > timeout_ms) {
             devices.MGroups.DT_L.set(0);
             devices.MGroups.DT_R.set(0);
             break;
         }
         
-        // Get current state - use raw tracking wheel positions
+        // Get current position
         float currentVert = verticalPosIn.load();
         float currentHorz = horizontalPosIn.load();
         float currentHeading = globalHeading.load();
         
-        // Calculate error using tracking wheel positions
-        float vertError = target.x - currentVert;  // target.x = vertical target
-        float horzError = target.y - currentHorz;  // target.y = horizontal target
-        float distanceError = std::sqrt(vertError * vertError + horzError * horzError);
+        // Calculate error
+        float vertError = vert - currentVert;
+        float horzError = horz - currentHorz;
         
         // Debug output every 5 loops
         static int debugCounter = 0;
         if (debugCounter++ % 5 == 0) {
             pros::screen::erase();
-            pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Tgt V:%.2f H:%.2f", target.x, target.y);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Cur V:%.2f H:%.2f", currentVert, currentHorz);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Err V:%.3f H:%.3f", vertError, horzError);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Dist:%.3f  Tol:%.3f", distanceError, tolerance_in);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 5, "At target: %d/%d", framesAtTarget, framesNeeded);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Time: %d ms", (int)(pros::millis() - startTime));
+            pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Target: V=%.2f H=%.2f", vert, horz);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Current: V=%.2f H=%.2f", currentVert, currentHorz);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: V=%.3f H=%.3f", vertError, horzError);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Hdg: %.2f rad (%.1f deg)", currentHeading, currentHeading * 180.0f / PI);
+            
+            if (heading != 0.0f) {
+                float headingErr = normalizeAngle(heading - currentHeading);
+                pros::screen::print(pros::E_TEXT_MEDIUM, 4, "HdgErr: %.2f deg", headingErr * 180.0f / PI);
+            }
+            
+            pros::screen::print(pros::E_TEXT_MEDIUM, 5, "AtTarget: %d/%d", framesAtTarget, framesNeeded);
+            
+            if (AUTON_REVERSED) {
+                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Mode: REVERSED");
+            } else {
+                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Mode: FORWARD");
+            }
         }
         
-        // Check if we're close enough (both vertical and horizontal within tolerance)
-        if (std::abs(vertError) < tolerance_in && std::abs(horzError) < tolerance_in) {
+        // Check if we're close enough to position
+        bool positionReached = (std::abs(vertError) < tolerance_in && std::abs(horzError) < tolerance_in);
+        
+        // Check heading if specified
+        bool headingReached = true;
+        if (heading != 0.0f) {
+            float headingError = normalizeAngle(heading - currentHeading);
+            headingReached = (std::abs(headingError) < headingTolerance);
+        }
+        
+        if (positionReached && headingReached) {
             framesAtTarget++;
             
-            // If we've been at target long enough, exit
             if (framesAtTarget >= framesNeeded) {
                 devices.MGroups.DT_L.set(0);
                 devices.MGroups.DT_R.set(0);
-                pros::delay(100);
                 break;
             }
         } else {
-            framesAtTarget = 0;  // Reset if we drift away
+            framesAtTarget = 0;
         }
         
-        // Calculate desired direction to target based on tracking wheel deltas
-        float desiredHeading = std::atan2(horzError, vertError);
-        float headingError = normalizeAngle(desiredHeading - currentHeading);
+        float linearPower = clamp(vertError * 8.0f, -maxPower, maxPower);
         
-        // Calculate linear and angular components
-        float linearPower = clamp(distanceError * kP_linear, -maxPower, maxPower);
-        float angularPower = clamp(headingError * kP_angular, -maxPower * 0.5f, maxPower * 0.5f);
+        // Calculate angular (rotation) power if heading is specified
+        float angularPower = 0.0f;
+        if (heading != 0.0f) {
+            float headingError = normalizeAngle(heading - currentHeading);
+            angularPower = clamp(headingError * 15.0f, -maxPower * 0.5f, maxPower * 0.5f);
+        }
         
-        // Combine: forward/back + rotation
-        float leftPower = clamp(linearPower + angularPower, -127.0f, 127.0f);
-        float rightPower = clamp(linearPower - angularPower, -127.0f, 127.0f);
+        // Apply reversal if configured
+        if (AUTON_REVERSED) {
+            linearPower = -linearPower;
+        }
+        
+        float leftPower;
+        float rightPower;
+
+        if (std::abs(angularPower) > std::abs(linearPower)) {
+            leftPower = angularPower;
+            rightPower = -angularPower;
+        } else {
+            leftPower = linearPower + angularPower;
+            rightPower = linearPower - angularPower;
+        }
+
+        leftPower = clamp(leftPower, -127.0f, 127.0f);
+        rightPower = clamp(rightPower, -127.0f, 127.0f);
         
         devices.MGroups.DT_L.set((int)leftPower);
         devices.MGroups.DT_R.set((int)rightPower);
         
         pros::delay(20);
     }
-}
-
-void moveToPoint(float x, float y, int maxPower, int timeout_ms, float tolerance_in) {
-    // Move using tracking wheel positions (vert, horz)
-    Pose target(x, y, 0);  // x = vertical target, y = horizontal target
-    moveToPoint(target, maxPower, timeout_ms, tolerance_in);
 }
 
 void printCurrentPosition(void) {
@@ -108,5 +137,5 @@ void printCurrentPosition(void) {
     pros::screen::print(pros::E_TEXT_MEDIUM, 2, "VERT (in): %.4f", vert);
     pros::screen::print(pros::E_TEXT_MEDIUM, 3, "HORZ (in): %.4f", horz);
     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Copy to auto.cpp:");
-    pros::screen::print(pros::E_TEXT_SMALL, 6, "moveToPoint(%.2f, %.2f)", vert, horz);
+    pros::screen::print(pros::E_TEXT_SMALL, 6, "moveToPoint(%.2f, %.2f);", vert, horz);
 }

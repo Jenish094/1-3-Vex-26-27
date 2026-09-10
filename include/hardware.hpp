@@ -67,16 +67,18 @@ struct MotorWrapper
 struct MotorGroupWrapper
 {
         std::vector<MotorWrapper*> motors;
+        float powerScale = 1.0f;
 
         void set(int speed) {
+                int scaledSpeed = static_cast<int>(speed * powerScale);
                 for (MotorWrapper* m : motors) {
                         if (m)
-                                m->set(speed);
+                                m->set(scaledSpeed);
                 }
         }
 
         MotorGroupWrapper(void) {};
-        MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3);
+        MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3, float powerScale = 1.0f);
 };
 
 struct Hardware
