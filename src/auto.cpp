@@ -686,13 +686,13 @@ void bluegoalsRight() {
 
 void redgoalsLeft() {
         isAuton = true;
-        CoenAuton_LeftSide();
+        LeftAuto();
         isAuton = false;
 }
 
 void redgoalsRight() {
         isAuton = true;
-        CoenAuton_RightSide();
+        RightAuto();
         isAuton = false;
 }
 
