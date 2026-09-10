@@ -37,11 +37,11 @@ void initialize(void) {
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
-        pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
-        pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
-        pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
+        // pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
+        // pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
+        // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
-        // autonSelector.focus();
+        autonSelector.focus();
 }
 
 void disabled(void) {}

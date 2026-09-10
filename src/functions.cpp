@@ -2,7 +2,46 @@
 #include "controls.h"
 #include "hardware.hpp"
 #include <cmath>
+#include <cstdio>
 #include <string>
+
+// Cascade height automation instructions (from the goat programmer here): 
+
+// CONTROLS
+
+// Secondary Controller:
+// Left: Neutral goal mode
+// Up: Centre goal mode
+// Right: Alliance goal mode
+// B: Toggle between pin and cup scoring
+// A: Increase cascade level (up to 10)
+
+
+// CONTROLLER SCREEN INFORMATION
+
+// Modes will print on the secondary controller screen for being in alliance, neutral or centre mode and pin/cup mode.
+// Cascade rotation height in float value will be printed on the primary controllers screen. 
+// Set the cascade height manually using the primary controller in driver mode using L1/L2
+// Then copy the rotation value from the primary controller screen into the PIN_LEVEL_DISTANCES for pin measurements
+// And CUP_LEVEL_DISTANCES for cup measurements. 
+// The cascade will automatically move to the correct height when the secondary controller is used to change the level.
+
+
+// MEASUREMENT INSTRUCTIONS
+
+// PIN MODE IS WHEN YOU"RE PLACING A CUP ON TOP OF A PIN
+// Level 0 is when the goal is empty, hence pretty useless in pin mode
+// Level 1 is when there is 1 pin in the goal and you are placing a cup ontop
+// Level 2 is when there is 1 pin in the goal, there is a cup and another pin ontop, and you are placing a cup ontop of that pin
+// Level 3-10 is the same but keeps going in that pattern.
+
+// CUP MODE IS WHEN YOU"RE PLACING A PIN ON TOP OF A CUP
+// Level 0 is when the goal is empty
+// Level 1 is when there is a pin in the goal, and a cup ontop of that pin and you are placing a pin ontop of that cup
+// Level 2 is when there is a pin in the goal, and a cup ontop of that pin and there is a pin ontop of that cup and another cup ontop of that pin, and you are placing a pin ontop of that cup
+// Level 3-10 is the same but keeps going in that pattern.
+
+// If you manually move the cascade by hand too much I will personally come to your house and get yo ahh (*cough* Alec Wallace)
 
 namespace {
 const float PIN_LEVEL_DISTANCES[11] = {
@@ -66,6 +105,24 @@ void functionsInit() {
     updateSecondaryControllerScreen();
 }
 
+void updatePrimaryControllerScreen() {
+    if (!devices.PRIMARY_CONTROLLER || !devices.Sensors.CascadeEncoder) {
+        return;
+    }
+
+    char rotationText[24];
+    std::snprintf(
+        rotationText,
+        sizeof(rotationText),
+        "rot: %.2d",
+        devices.Sensors.CascadeEncoder->get_position()
+    );
+
+    pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
+    controller.clear();
+    controller.set_text(0, 0, rotationText);
+}
+
 void updateSecondaryControllerScreen() {
     if (!devices.SECONDARY_CONTROLLER) {
         return;
@@ -86,6 +143,8 @@ void updateSecondaryControllerScreen() {
 }
 
 void updateCascadeAutomation() {
+    updatePrimaryControllerScreen();
+
     if (!devices.SECONDARY_CONTROLLER || !devices.Sensors.CascadeEncoder) {
         return;
     }
