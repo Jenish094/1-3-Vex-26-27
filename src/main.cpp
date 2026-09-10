@@ -16,8 +16,8 @@ rd::Image blue(&logonatblue, "BlueLogo");
 rd::Image red(&logonatred, "RedLogo");
 
 rd::Selector autonSelector("autonselect", {
-        {"CoenAuton_LeftSide", CoenAuton_LeftSide},
-        {"CoenAuton_RightSide", CoenAuton_RightSide},
+        {"LeftAuto", LeftAuto},
+        {"RightAuto", RightAuto},
         {"ToggleOnly_LeftSide", ToggleOnly_LeftSide},
         {"ToggleOnly_RightSide", ToggleOnly_RightSide},
         {"Skills", skills_auton},
