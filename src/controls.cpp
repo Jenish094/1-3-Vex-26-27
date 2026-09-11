@@ -2,17 +2,6 @@
 
 static bool scoreopenReverseState = false;
 
-static void updateControllerScreen() {
-    pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
-    controller.clear_line(0);
-    controller.clear_line(1);
-    controller.clear_line(2);
-
-    controller.set_text(0, 0, "Drive: LS throttle");
-    controller.set_text(1, 0, "Intake/Cascade/Score");
-    controller.set_text(2, 0, "A scoreopen, B pneumatic");
-}
-
 void controlsInit() {
     devices.Motors.MOTOR_INTAKE_11W.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     devices.Motors.MOTOR_CASCADE_11WR.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -21,7 +10,6 @@ void controlsInit() {
     devices.Motors.MOTOR_SCORE_ROLL.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     devices.MGroups.DT_L.set(0);
     devices.MGroups.DT_R.set(0);
-    updateControllerScreen();
 }
 
 bool controlsUpdate() {
@@ -59,7 +47,6 @@ void runDriverControls() {
             devices.Motors.MOTOR_SCORE_OPEN.motor->move_relative(scoreopenDegrees, 127);
         }
         scoreopenReverseState = !scoreopenReverseState;
-        updateControllerScreen();
     }
     
     if (b && !previousB) {
@@ -80,4 +67,5 @@ void runDriverControls() {
 
     int scorerollPower = intakePower;
     devices.Motors.MOTOR_SCORE_ROLL.set(scorerollPower);
+
 }
