@@ -21,9 +21,8 @@
 
 // Modes will print on the secondary controller screen for being in alliance, neutral or centre mode and pin/cup mode.
 // Cascade rotation height in float value will be printed on the primary controllers screen. 
-// Set the cascade height manually using the primary controller in driver mode using L1/L2
-// Then copy the rotation value from the primary controller screen into the PIN_LEVEL_DISTANCES for pin measurements
-// And CUP_LEVEL_DISTANCES for cup measurements. 
+// Set the cascade height manually using the primary controller in driver mode using L1/L2.
+// Measure the PIN_LEVEL_DISTANCES and CUP_LEVEL_DISTANCES while in alliance mode.
 // The cascade will automatically move to the correct height when the secondary controller is used to change the level.
 
 
@@ -44,6 +43,8 @@
 // If you manually move the cascade by hand too much I will personally come to your house and get yo ahh (*cough* Alec Wallace)
 
 namespace {
+// These are the only distances that need to be measured. Measure them in
+// alliance goal mode, because the alliance goal is the shortest goal.
 const float PIN_LEVEL_DISTANCES[11] = {
     0.0f, // Level 0
     900.0f, // Level 1
@@ -72,6 +73,15 @@ const float CUP_LEVEL_DISTANCES[11] = {
     9000.0f // Level 10
 };
 
+// Goal base heights from the floor.
+const float ALLIANCE_BASE_HEIGHT_MM = 82.5f;
+const float NEUTRAL_BASE_HEIGHT_MM = 146.5f;
+const float CENTRE_BASE_HEIGHT_MM = 222.7f;
+
+// The rotation sensor reports centidegrees. Measure this once by raising the
+// cascade a known distance, then replace 1.0f with encoder units per mm.
+const float CASCADE_ENCODER_UNITS_PER_MM = 1.0f;
+
 enum class GoalMode {
     Neutral,
     Centre,
@@ -91,6 +101,18 @@ bool previousB = false;
 bool previousLeft = false;
 bool previousUp = false;
 bool previousRight = false;
+
+float goalHeightOffset() {
+    if (goalMode == GoalMode::Neutral) {
+        return (NEUTRAL_BASE_HEIGHT_MM - ALLIANCE_BASE_HEIGHT_MM)
+            * CASCADE_ENCODER_UNITS_PER_MM;
+    }
+    if (goalMode == GoalMode::Centre) {
+        return (CENTRE_BASE_HEIGHT_MM - ALLIANCE_BASE_HEIGHT_MM)
+            * CASCADE_ENCODER_UNITS_PER_MM;
+    }
+    return 0.0f;
+}
 }
 
 void functionsInit() {
@@ -191,7 +213,12 @@ void updateCascadeAutomation() {
     const float* levelDistances = scoreMode == ScoreMode::Pin
         ? PIN_LEVEL_DISTANCES
         : CUP_LEVEL_DISTANCES;
-    float error = levelDistances[cascadeLevel] - devices.Sensors.CascadeEncoder->get_position();
+    float targetPosition = levelDistances[cascadeLevel];
+    if (cascadeLevel > 0) {
+        targetPosition += goalHeightOffset();
+    }
+
+    float error = targetPosition - devices.Sensors.CascadeEncoder->get_position();
     const float tolerance = 50.0f;
     const float proportionalGain = 0.05f;
 
