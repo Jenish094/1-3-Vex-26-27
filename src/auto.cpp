@@ -217,290 +217,98 @@ void pinpickup() {
 
 void LeftAuto() {
         isAuton = true;
-        
-        devices.Pneumatics.PNEUMATIC->retract();
+        odomReset();
+        runToggleNew();
 
-        devices.MGroups.DT_L.set(35);
-        devices.MGroups.DT_R.set(35);
-        pros::delay(700);
-        stop();
+        //Move the pin in tight in the scoreflipper
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(60);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
 
-        devices.MGroups.DT_L.set(10);//Shake to ensure pin is seated
-        devices.MGroups.DT_R.set(10);
-
-        backwards();//reverse from goal
-        pros::delay(100);
-        stop();
-
-        forward();
-        pros::delay(100);
-        stop();
-        //Now at goal dropped pin
-
-        devices.MGroups.DT_L.set(25);
-        devices.MGroups.DT_R.set(25);
-
-        pros::delay(200); 
-
-        // move slightly back need to chekc if this is enough
-        backwards();
-        pros::delay(150);
-        stop();
-
-        // turn 45 deg left to be back parallel to the toggle
-        fourtyfivedegright();
-        
-        // move backwards near the toggle need to check if this is enough
-        forward();
-        pros::delay(800);
-        stop();
-
-        // turn 45 left to be back facing the toggle
         devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(60);
-        pros::delay(280);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-        devices.MGroups.MOTORGROUP_INTAKE.set(127);
-        pros::delay(500);
-        devices.MGroups.MOTORGROUP_INTAKE.set(0);
-
-        backwards();
-        pros::delay(1200);
-        stop();
-
-        forward();
-        pros::delay(600);
-        stop();
-        
-        // turn 45 left to be back facing the toggle
-        devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(60);
-        pros::delay(1300);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-        pros::delay(100);
-
-        forward();
-        pros::delay(610);
-        stop();
-
-        backwards();
-        pros::delay(600);
-        stop();
-
-        forward();
-        pros::delay(620);
-        stop();
-
-        backwards();
-        pros::delay(600);
-        stop();
-
-        devices.MGroups.DT_L.set(60);
         devices.MGroups.DT_R.set(-60);
-        pros::delay(362.5);                               //change dont know if right, this is to turn and align with the pin
+        pros::delay(100);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
-        // flip the scoring mech upwards
-        devices.Motors.MOTOR_SCORE_OPEN.set(50);
-        pros::delay(3000);
-        stop();
 
-        //intake pin using scoring mechanism
-        devices.Motors.MOTOR_SCORE_ROLL.set(40);
+        //Turn right enough
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(+60);
         pros::delay(500);
-
-        backwards(); //towards yellow pin on field
-        pros::delay(950);
-        stop();
-
-        pinpickup();
-
-        forward(); // move towards goal
-        pros::delay(1000);
-        stop();
-
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(-60);//rotate to alighn with goal
-        pros::delay(1500);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
-        backwards();//back into goal
-        pros::delay(550);
-        stop();
+        // set flipper to zero
+        devices.Motors.MOTOR_SCORE_OPEN.set(-60);
+        pros::delay(10);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
-        devices.Motors.MOTOR_SCORE_ROLL.set(-40);//outtake into goal
+        //up the flipper
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(450);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        // Move backwards
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(1120);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+        //Drop the pin
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_ROLL.set(0);
-        stop();
-
-        forward();//move forwards
-        pros::delay(500);
-        stop();
-        
-        devices.Motors.MOTOR_SCORE_OPEN.set(-50); //move scoring mech down
-        pros::delay(1000);
-        stop();
-
-        
-        devices.MGroups.DT_L.set(-60); //rotate to be straight with the field for driver
-        devices.MGroups.DT_R.set(60);
-        pros::delay(635);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-
-        pros::delay(1000);
 
         isAuton = false;
 }
 
 void RightAuto() {
         isAuton = true;
-        devices.MGroups.DT_L.set(35);
-        devices.MGroups.DT_R.set(35);
-        pros::delay(700);
-        stop();
+        odomReset();
+        runToggleNew();
 
-        devices.MGroups.DT_L.set(10);//Shake to ensure pin is seated
-        devices.MGroups.DT_R.set(10);
-
-        backwards();//reverse from goal
-        pros::delay(100);
-        stop();
-
-        forward();
-        pros::delay(100);
-        stop();
-        //Now at goal dropped pin
-
-        devices.MGroups.DT_L.set(25);
-        devices.MGroups.DT_R.set(25);
-
-        pros::delay(200); 
-
-        // move slightly back need to chekc if this is enough
-        backwards();
-        pros::delay(150);
-        stop();
-
-        // turn 45 deg left to be back parallel to the toggle
-        fourtyfivedegleft();
-        
-        // move backwards near the toggle need to check if this is enough
-        forward();
-        pros::delay(800);
-        stop();
-
-        // turn 45 left to be back facing the toggle
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(-60);
-        pros::delay(280);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-        devices.MGroups.MOTORGROUP_INTAKE.set(127);
-        pros::delay(500);
-        devices.MGroups.MOTORGROUP_INTAKE.set(0);
-
-        backwards();
-        pros::delay(1200);
-        stop();
-
-        forward();
-        pros::delay(600);
-        stop();
-        
-        // turn 45 left to be back facing the toggle
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(-60);
-        pros::delay(1300);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-        pros::delay(100);
-
-        forward();
-        pros::delay(610);
-        stop();
-
-        backwards();
-        pros::delay(600);
-        stop();
-
-        forward();
-        pros::delay(620);
-        stop();
-
-        backwards();
-        pros::delay(600);
-        stop();
+        //Move the pin in tight in the scoreflipper
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(60);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
 
         devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(60);
-        pros::delay(362.5);                               //change dont know if right, this is to turn and align with the pin
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(100);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
-        // flip the scoring mech upwards
-        devices.Motors.MOTOR_SCORE_OPEN.set(50);
-        pros::delay(3000);
-        stop();
 
-        //intake pin using scoring mechanism
-        devices.Motors.MOTOR_SCORE_ROLL.set(40);
+        //Turn right enough
+        devices.MGroups.DT_L.set(60);
+        devices.MGroups.DT_R.set(-60);
         pros::delay(500);
-
-        backwards(); //towards yellow pin on field
-        pros::delay(950);
-        stop();
-
-        pinpickup();
-
-        forward(); // move towards goal
-        pros::delay(1000);
-        stop();
-
-        devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(60);//rotate to alighn with goal
-        pros::delay(1500);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
-        backwards();//back into goal
-        pros::delay(550);
-        stop();
+        // set flipper to zero
+        devices.Motors.MOTOR_SCORE_OPEN.set(-60);
+        pros::delay(10);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
-        devices.Motors.MOTOR_SCORE_ROLL.set(-40);//outtake into goal
+        //up the flipper
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(450);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        // Move backwards
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(1120);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+        //Drop the pin
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_ROLL.set(0);
-        stop();
-
-        forward();//move forwards
-        pros::delay(500);
-        stop();
-        
-        devices.Motors.MOTOR_SCORE_OPEN.set(-50); //move scoring mech down
-        pros::delay(1000);
-        stop();
-
-        
-        devices.MGroups.DT_L.set(60); //rotate to be straight with the field for driver
-        devices.MGroups.DT_R.set(-60);
-        pros::delay(635);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
-
-
-        pros::delay(1000);
-
-
-
 
         isAuton = false;
 }
