@@ -58,96 +58,49 @@ void stop() {
 }
 
 void runToggleNew(){
-        isAuton = true;
-        forward();
-        pros::delay(550);
-        stop();
-        
-        //backwards();
-        //pros::delay(600);
-        //stop();
+        // movement::backwards();
+        //Move robot slightly backwards
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(350);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
 
-
-        // reset toggle mech
-        devices.Motors.MOTOR_SCORE_OPEN.set(-60);
-        pros::delay(20);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-        devices.Motors.MOTOR_SCORE_OPEN.set(60);
-        pros::delay(520);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        // back into the toggle
-        backwards();
+        //Open scoring pneumatic
+        devices.MGroups.MOTORGROUP_INTAKE.set(60);
         pros::delay(500);
-        stop();
+        devices.MGroups.MOTORGROUP_INTAKE.set(0);
 
-        // flip toggle once
-        devices.Motors.MOTOR_SCORE_OPEN.set(60);
-        pros::delay(100);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        //Move robot back at double speed
+        devices.MGroups.DT_L.set(120);
+        devices.MGroups.DT_R.set(120);
+        pros::delay(500);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
 
-        devices.Motors.MOTOR_CASCADE_11WL.set(60);
-        devices.Motors.MOTOR_CASCADE_11WR.set(60);
-        pros::delay(1500);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        pros::delay(1000);
 
-        backwards();
-        pros::delay(110);
-        stop();
-
-
-        //move up again
-        forward();
-        pros::delay(250);
-        stop();
-
-        devices.Motors.MOTOR_CASCADE_11WL.set(-60);
-        devices.Motors.MOTOR_CASCADE_11WR.set(-60);
-        pros::delay(1600);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-
-
-        // reset toggle mech
-        devices.Motors.MOTOR_SCORE_OPEN.set(-60);
-        pros::delay(600);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-        devices.Motors.MOTOR_SCORE_OPEN.set(60);
-        pros::delay(520);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-
-        // back into toggle again
-        backwards();
-        pros::delay(450);
-        stop();
-
-        // flip the toggle second time
-        devices.Motors.MOTOR_SCORE_OPEN.set(60);
-        pros::delay(200);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_CASCADE_11WL.set(60);
-        devices.Motors.MOTOR_CASCADE_11WR.set(60);
-        pros::delay(1500);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-
-        backwards();
-        pros::delay(170);
-        stop();
-        
-        forward();
+        //Run the second toggle
+        //Move robot slgihtly backwards
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
         pros::delay(400);
-        stop();
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
 
-        devices.Motors.MOTOR_CASCADE_11WL.set(-60);
-        devices.Motors.MOTOR_CASCADE_11WR.set(-60);
-        pros::delay(1600);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        isAuton = false;
+        //Move robot back at double speed
+        devices.MGroups.DT_L.set(60);
+        devices.MGroups.DT_R.set(60);
+        pros::delay(600);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+        //Move robot slightly forward
+        devices.MGroups.DT_L.set(60);
+        devices.MGroups.DT_R.set(60);
+        pros::delay(100);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
 }
 
 
@@ -215,10 +168,58 @@ void pinpickup() {
 
 }
 
-void LeftAuto() {
+void leftAuto() {
         isAuton = true;
         odomReset();
         runToggleNew();
+
+        //Move the pin in tight in the scoreflipper
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(60);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(100);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+
+        //Turn left enough
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(+60);
+        pros::delay(500);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+        // set flipper to zero
+        devices.Motors.MOTOR_SCORE_OPEN.set(-60);
+        pros::delay(10);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        //up the flipper
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(450);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        // Move backwards
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(1120);
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
+
+        //Drop the pin
+        // devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        // pros::delay(500);
+        // devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        isAuton = false;
+}
+
+void LeftAuto2() {
+        isAuton = true;
+        odomReset();
 
         //Move the pin in tight in the scoreflipper
         devices.Motors.MOTOR_SCORE_ROLL.set(60);
@@ -260,6 +261,7 @@ void LeftAuto() {
         devices.Motors.MOTOR_SCORE_ROLL.set(-60);
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_ROLL.set(0);
+        
 
         isAuton = false;
 }
@@ -267,7 +269,6 @@ void LeftAuto() {
 void RightAuto() {
         isAuton = true;
         odomReset();
-        runToggleNew();
 
         //Move the pin in tight in the scoreflipper
         devices.Motors.MOTOR_SCORE_ROLL.set(60);
@@ -281,8 +282,8 @@ void RightAuto() {
         devices.MGroups.DT_R.set(0);
 
 
-        //Turn right enough
-        devices.MGroups.DT_L.set(60);
+        //Turn left enough
+        devices.MGroups.DT_L.set(+60);
         devices.MGroups.DT_R.set(-60);
         pros::delay(500);
         devices.MGroups.DT_L.set(0);
@@ -309,6 +310,7 @@ void RightAuto() {
         devices.Motors.MOTOR_SCORE_ROLL.set(-60);
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_ROLL.set(0);
+        
 
         isAuton = false;
 }
@@ -494,7 +496,7 @@ void bluegoalsRight() {
 
 void redgoalsLeft() {
         isAuton = true;
-        LeftAuto();
+        leftAuto();
         isAuton = false;
 }
 
@@ -507,9 +509,14 @@ void redgoalsRight() {
 
 void skills_auton() {
         isAuton = true;
-        ToggleOnly_LeftSide();
-        backwards();
-        pros::delay(4000);
+        runToggleNew();
+        RightAuto();
+        forward();
+        pros::delay(200);
+        stop();
+        fourtyfivedegright();
+        forward();
+        pros::delay(1000);
         stop();
         isAuton = false;
 }

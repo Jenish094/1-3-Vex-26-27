@@ -16,7 +16,7 @@ rd::Image blue(&logonatblue, "BlueLogo");
 rd::Image red(&logonatred, "RedLogo");
 
 rd::Selector autonSelector("autonselect", {
-        {"LeftAuto", LeftAuto},
+        {"LeftAuto", leftAuto},
         {"RightAuto", RightAuto},
         {"ToggleOnly_LeftSide", ToggleOnly_LeftSide},
         {"ToggleOnly_RightSide", ToggleOnly_RightSide},
