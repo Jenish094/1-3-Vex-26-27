@@ -1,4 +1,4 @@
-win states
-win natinals 
-win tiwan
-wiwn worlds
+win states, 
+win natinals, 
+win tiwan, 
+wiwn worlds, 
