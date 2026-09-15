@@ -56,4 +56,6 @@ extern std::atomic<float> lastGlobalYIn;
 extern std::atomic<float> verticalPosIn;
 extern std::atomic<float> horizontalPosIn;
 
+extern std::atomic<float> cascadeEncoderPos;
+
 extern std::atomic<int> dist;
