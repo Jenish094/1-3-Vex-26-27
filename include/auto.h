@@ -2,18 +2,12 @@
 #include "movetopoint.hpp"
 
 void nothing_auton();
-void redgoalsLeft();
-void redgoalsRight();
-void bluegoalsLeftNew();
-void test();
-void leftAuto();
-void RightAuto();
-void ToggleOnly_LeftSide();
-void ToggleOnly_RightSide();
-void pinpickup();
-void runToggleNew();
-void bluegoalsRight();
-void skills_auton();
+void toggle_auton();
+void left_side_auton();
+void right_side_auton();
+void left_side_toggle_only();
+void right_side_toggle_only();
+void skills_auton_routine();
 void nodrive();
 
 // dont use

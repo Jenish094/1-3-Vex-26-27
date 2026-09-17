@@ -16,19 +16,13 @@ rd::Image blue(&logonatblue, "BlueLogo");
 rd::Image red(&logonatred, "RedLogo");
 
 rd::Selector autonSelector("autonselect", {
-        {"LeftAuto", leftAuto},
-        {"RightAuto", RightAuto},
-        {"ToggleOnly_LeftSide", ToggleOnly_LeftSide},
-        {"ToggleOnly_RightSide", ToggleOnly_RightSide},
-        {"Skills", skills_auton},
-        {"nodrive", nodrive},
-    //{"ToggleOnly", runToggleNew},
-    //{"PinPickUp", pinpickup},
-    //{"BluegoalsLeftNew", bluegoalsLeftNew},
-    //{"BluegoalsRight", bluegoalsRight},
-    //{"RedgoalsLeft", redgoalsLeft},
-    //{"RedgoalsRight", redgoalsRight},
-    
+        {"Toggle Auton", toggle_auton},
+        {"Left Side Auton", left_side_auton},
+        {"Right Side Auton", right_side_auton},
+        {"Left Side Toggle Only", left_side_toggle_only},
+        {"Right Side Toggle Only", right_side_toggle_only},
+        {"Skills Auton", skills_auton_routine},
+        {"No Drive", nodrive},
 });
 
 void initialize(void) {

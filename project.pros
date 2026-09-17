@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "41103C-New",
+    "project_name": "41103C-States",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -285,7 +285,7 @@
     },
     "upload_options": {
       "description": "Weeee Are Cooking",
-      "slot": 3,
+      "slot": 1,
       "icon": "robot"
     },
     "use_early_access": false
