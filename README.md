@@ -1,0 +1,5 @@
+get auto working, 
+win states, 
+win natinals, 
+win tiwan, 
+win worlds, 
