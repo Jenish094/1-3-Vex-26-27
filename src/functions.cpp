@@ -98,9 +98,16 @@ ScoreMode scoreMode = ScoreMode::Pin;
 int cascadeLevel = 0;
 bool previousA = false;
 bool previousB = false;
+bool previousX = false;
+bool previousPartnerL2 = false;
 bool previousLeft = false;
 bool previousUp = false;
 bool previousRight = false;
+bool cascadeStopped = false;
+bool cascadeAutomationArmed = false;
+bool primaryScreenInitialized = false;
+bool secondaryScreenInitialized = false;
+uint32_t movementStartTime = 0;
 
 float goalHeightOffset() {
     if (goalMode == GoalMode::Neutral) {
@@ -121,9 +128,16 @@ void functionsInit() {
     cascadeLevel = 0;
     previousA = false;
     previousB = false;
+    previousX = false;
+    previousPartnerL2 = false;
     previousLeft = false;
     previousUp = false;
     previousRight = false;
+    cascadeStopped = false;
+    cascadeAutomationArmed = false;
+    primaryScreenInitialized = false;
+    secondaryScreenInitialized = false;
+    movementStartTime = 0;
     updateSecondaryControllerScreen();
 }
 
@@ -132,16 +146,26 @@ void updatePrimaryControllerScreen() {
         return;
     }
 
+    static uint32_t lastScreenUpdate = 0;
+    uint32_t now = pros::millis();
+    if (now - lastScreenUpdate < 100) {
+        return;
+    }
+    lastScreenUpdate = now;
+
     char rotationText[24];
     std::snprintf(
         rotationText,
         sizeof(rotationText),
-        "rot: %.2d",
+        "rot: %d",
         devices.Sensors.CascadeEncoder->get_position()
     );
 
     pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
-    controller.clear();
+    if (!primaryScreenInitialized) {
+        controller.clear();
+        primaryScreenInitialized = true;
+    }
     controller.set_text(0, 0, rotationText);
 }
 
@@ -159,13 +183,24 @@ void updateSecondaryControllerScreen() {
 
     const char* scoreText = scoreMode == ScoreMode::Pin ? "pin" : "cup";
     pros::Controller& controller = *devices.SECONDARY_CONTROLLER;
-    controller.clear();
-    controller.set_text(0, 0, std::string("goal: ") + goalText);
-    controller.set_text(1, 0, std::string("scr: ") + scoreText);
+    char modeLine[16];
+    std::snprintf(modeLine, sizeof(modeLine), "%s %s", goalText, scoreText);
+    if (!secondaryScreenInitialized) {
+        controller.clear();
+        secondaryScreenInitialized = true;
+    }
+    controller.set_text(0, 0, modeLine);
 }
 
 void updateCascadeAutomation() {
     updatePrimaryControllerScreen();
+
+    static uint32_t lastSecondaryScreenUpdate = 0;
+    uint32_t now = pros::millis();
+    if (now - lastSecondaryScreenUpdate >= 250) {
+        updateSecondaryControllerScreen();
+        lastSecondaryScreenUpdate = now;
+    }
 
     if (!devices.SECONDARY_CONTROLLER || !devices.Sensors.CascadeEncoder) {
         return;
@@ -177,25 +212,55 @@ void updateCascadeAutomation() {
     bool right = secondary.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
     bool b = secondary.get_digital(pros::E_CONTROLLER_DIGITAL_B);
     bool a = secondary.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+    bool x = secondary.get_digital(pros::E_CONTROLLER_DIGITAL_X);
+    bool partnerL2 = secondary.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+
+    if (x && !previousX) {
+        cascadeStopped = true;
+        cascadeAutomationArmed = false;
+        cascadeLevel = 0;
+        movementStartTime = 0;
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        updateSecondaryControllerScreen();
+    }
+
+    if (partnerL2) {
+        cascadeStopped = true;
+        cascadeAutomationArmed = false;
+        cascadeLevel = 0;
+        movementStartTime = 0;
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Sensors.CascadeEncoder->reset_position();
+        updateSecondaryControllerScreen();
+    }
 
     if (left && !previousLeft) {
         goalMode = GoalMode::Neutral;
+        movementStartTime = 0;
         updateSecondaryControllerScreen();
     }
     if (up && !previousUp) {
         goalMode = GoalMode::Centre;
+        movementStartTime = 0;
         updateSecondaryControllerScreen();
     }
     if (right && !previousRight) {
         goalMode = GoalMode::Alliance;
+        movementStartTime = 0;
         updateSecondaryControllerScreen();
     }
     if (b && !previousB) {
         scoreMode = scoreMode == ScoreMode::Pin ? ScoreMode::Cup : ScoreMode::Pin;
+        movementStartTime = 0;
         updateSecondaryControllerScreen();
     }
     if (a && !previousA && cascadeLevel < 10) {
         ++cascadeLevel;
+        cascadeStopped = false;
+        cascadeAutomationArmed = true;
+        movementStartTime = 0;
     }
 
     previousLeft = left;
@@ -203,10 +268,18 @@ void updateCascadeAutomation() {
     previousRight = right;
     previousB = b;
     previousA = a;
+    previousX = x;
+    previousPartnerL2 = partnerL2;
 
     int manualPower = (devices.PRIMARY_CONTROLLER->get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127 : 0)
         - (devices.PRIMARY_CONTROLLER->get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 127 : 0);
     if (manualPower != 0) {
+        return;
+    }
+
+    if (cascadeStopped || !cascadeAutomationArmed) {
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
         return;
     }
 
@@ -220,15 +293,33 @@ void updateCascadeAutomation() {
 
     float error = targetPosition - devices.Sensors.CascadeEncoder->get_position();
     const float tolerance = 50.0f;
-    const float proportionalGain = 0.05f;
+    const float proportionalGain = 0.20f;
 
     if (std::fabs(error) <= tolerance) {
+        movementStartTime = 0;
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        return;
+    }
+
+    if (movementStartTime == 0) {
+        movementStartTime = pros::millis();
+    }
+    if (pros::millis() - movementStartTime > 15000) {
+        cascadeStopped = true;
+        cascadeLevel = 0;
+        movementStartTime = 0;
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
         return;
     }
 
     int power = static_cast<int>(error * proportionalGain);
+    if (power > 0 && power < 35) {
+        power = 35;
+    } else if (power < 0 && power > -35) {
+        power = -35;
+    }
     power = power > 127 ? 127 : power < -127 ? -127 : power;
     devices.Motors.MOTOR_CASCADE_11WR.set(power);
     devices.Motors.MOTOR_CASCADE_11WL.set(power);
