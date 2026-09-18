@@ -60,6 +60,9 @@ void stop() {
 void toggle_auton(){
         isAuton = true;
 
+        
+
+
         devices.MGroups.DT_L.set(-60);
         devices.MGroups.DT_R.set(-60);
         pros::delay(350);
@@ -67,7 +70,7 @@ void toggle_auton(){
         devices.MGroups.DT_R.set(0);
 
         // Open scoring pneumatic / intake action
-        devices.MGroups.MOTORGROUP_INTAKE.set(60);
+        devices.MGroups.MOTORGROUP_INTAKE.set(127);
         pros::delay(500);
         devices.MGroups.MOTORGROUP_INTAKE.set(0);
 
@@ -84,7 +87,7 @@ void toggle_auton(){
         // Move robot slightly backwards
         devices.MGroups.DT_L.set(-60);
         devices.MGroups.DT_R.set(-60);
-        pros::delay(400);
+        pros::delay(600);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
@@ -107,6 +110,96 @@ void toggle_auton(){
 
 void left_side_auton(){
         isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn left to score in goal
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(60);
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(900);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
+        // fourtyfivedegright();
+        // pros::delay(1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+        pros::delay(1);
+        stop();
+
+        devices.MGroups.DT_L.set(60);
+        devices.MGroups.DT_R.set(-60);
+        pros::delay(510);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(100);
+        
+        backwards();
+        pros::delay(1110);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(200);
+        stop();
+
+        forward();
+        pros::delay(500);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(100);
+
+
 
         isAuton = false;
 }
