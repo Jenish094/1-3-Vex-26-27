@@ -77,9 +77,14 @@ const float CUP_LEVEL_DISTANCES[11] = {
 const float ALLIANCE_BASE_HEIGHT_MM = 82.5f;
 const float NEUTRAL_BASE_HEIGHT_MM = 146.5f;
 const float CENTRE_BASE_HEIGHT_MM = 222.7f;
+// need to double check ts
+// measure this out by measuring the height of placing a pin into each goal and placing that value from the controller into the variable (put an f at the end)
 
 // The rotation sensor reports centidegrees. Measure this once by raising the
 // cascade a known distance, then replace 1.0f with encoder units per mm.
+
+//so basically raise the cascade by like 100mm(10cm) then check the encoder value on the primary controller
+// then divide that encoder number from the controller by 100 and place that value here (make sure you put an f at the end of the number)
 const float CASCADE_ENCODER_UNITS_PER_MM = 1.0f;
 
 enum class GoalMode {
