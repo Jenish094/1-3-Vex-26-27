@@ -1,5 +1,5 @@
 get auto working, 
 win states, 
-win natinals, 
-win tiwan, 
+win nationals, 
+win taiwan, 
 win worlds, 
