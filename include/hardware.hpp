@@ -1,4 +1,6 @@
-#pragma once
+#ifndef HARDWARE_HPP
+#define HARDWARE_HPP
+
 #include "api.h"
 #include "helpers.hpp"
 #include "odom.hpp"
@@ -39,17 +41,17 @@ enum Triports
 
 };
 
-struct MotorWrapper
+struct MWrap
 {
         std::unique_ptr<pros::Motor> motor;
         pros_standard_port port;
         pros::motor_gearset_e_t gearset;
 
-        MotorWrapper(void) : port(0), gearset(pros::E_MOTOR_GEAR_BLUE) {};
-        MotorWrapper(const pros_standard_port port, const pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_BLUE) : port(port), gearset(gearset) {};
-        ~MotorWrapper(void);
+        MWrap(void) : port(0), gearset(pros::E_MOTOR_GEAR_BLUE) {};
+        MWrap(const pros_standard_port port, const pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_BLUE) : port(port), gearset(gearset) {};
+        ~MWrap(void);
 
-        void MotorWrapper_Init() {
+        void MWrap_Init() {
                 if (!motor) {
                         motor = std::make_unique<pros::Motor>(port);
                         motor->set_brake_mode(pros::MotorBrake::brake);
@@ -64,21 +66,21 @@ struct MotorWrapper
         void set(int speed);
 };
 
-struct MotorGroupWrapper
+struct MGWrap
 {
-        std::vector<MotorWrapper*> motors;
+        std::vector<MWrap*> motors;
         float powerScale = 1.0f;
 
         void set(int speed) {
                 int scaledSpeed = static_cast<int>(speed * powerScale);
-                for (MotorWrapper* m : motors) {
+                for (MWrap* m : motors) {
                         if (m)
                                 m->set(scaledSpeed);
                 }
         }
 
-        MotorGroupWrapper(void) {};
-        MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3, float powerScale = 1.0f);
+        MGWrap(void) {};
+        MGWrap(MWrap* m1, MWrap* m2, MWrap* m3, float powerScale = 1.0f);
 };
 
 struct Hardware
@@ -86,24 +88,24 @@ struct Hardware
 public:
         struct
         {
-                MotorWrapper MOTOR_L1;
-                MotorWrapper MOTOR_L2;
+                MWrap MOTOR_L1;
+                MWrap MOTOR_L2;
 
-                MotorWrapper MOTOR_R1;
-                MotorWrapper MOTOR_R2;
+                MWrap MOTOR_R1;
+                MWrap MOTOR_R2;
 
-                MotorWrapper MOTOR_INTAKE_11W;
-                MotorWrapper MOTOR_CASCADE_11WR;
-                MotorWrapper MOTOR_CASCADE_11WL;
-                MotorWrapper MOTOR_SCORE_OPEN;
-                MotorWrapper MOTOR_SCORE_ROLL;
+                MWrap MOTOR_INTAKE_11W;
+                MWrap MOTOR_CASCADE_11WR;
+                MWrap MOTOR_CASCADE_11WL;
+                MWrap MOTOR_SCORE_OPEN;
+                MWrap MOTOR_SCORE_ROLL;
         } Motors;
 
         struct
         {
-                MotorGroupWrapper DT_L;
-                MotorGroupWrapper DT_R;
-                MotorGroupWrapper MOTORGROUP_INTAKE;
+                MGWrap DT_L;
+                MGWrap DT_R;
+                MGWrap MOTORGROUP_INTAKE;
         } MGroups;
 
         std::unique_ptr<pros::Controller> PRIMARY_CONTROLLER;
@@ -143,3 +145,5 @@ private:
 };
 
 extern Hardware devices;
+
+#endif

@@ -1,11 +1,11 @@
 /**
  * @file console.hpp
- * @brief Robodash Console
+ * @brief Dash Console
  * @ingroup console
  */
 
 #pragma once
-#include "robodash/api.h"
+#include "dash/api.h"
 #include <sstream>
 #include <string>
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "movetopoint.hpp"
 
+namespace auton {
+
 void nothing_auton();
 void toggle_auton();
 void left_side_auton();
@@ -22,3 +24,5 @@ void ninetydegright();
 void forward();
 void backwards();
 void stop();
+
+}

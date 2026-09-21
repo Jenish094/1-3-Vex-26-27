@@ -1,11 +1,11 @@
 /**
  * @file selector.hpp
- * @brief Robodash Selector
+ * @brief Dash Selector
  * @ingroup selector
  */
 
 #pragma once
-#include "robodash/api.h"
+#include "dash/api.h"
 #include <functional>
 #include <optional>
 #include <string>

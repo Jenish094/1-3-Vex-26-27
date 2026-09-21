@@ -6,16 +6,16 @@
 // Define the global instance here
 Hardware devices; 
 
-void MotorWrapper::set(int speed) {
+void MWrap::set(int speed) {
     if (motor)
         speed != 0 ? motor->move(speed) : motor->brake();
     else
-        MotorWrapper_Init();
+        MWrap_Init();
 }
 
-MotorWrapper::~MotorWrapper(void) {}
+MWrap::~MWrap(void) {}
 
-MotorGroupWrapper::MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWrapper* m3, float powerScale) {
+MGWrap::MGWrap(MWrap* m1, MWrap* m2, MWrap* m3, float powerScale) {
     this->powerScale = powerScale;
     this->motors.reserve(3);
     this->motors.push_back(m1);
@@ -24,9 +24,9 @@ MotorGroupWrapper::MotorGroupWrapper(MotorWrapper* m1, MotorWrapper* m2, MotorWr
 }
 
 void Hardware::LoadPeripherals(void) {
-    this->MGroups.DT_L = MotorGroupWrapper(&Motors.MOTOR_L1, &Motors.MOTOR_L2, nullptr);
-    this->MGroups.DT_R = MotorGroupWrapper(&Motors.MOTOR_R1, &Motors.MOTOR_R2, nullptr, 0.97f);
-    this->MGroups.MOTORGROUP_INTAKE = MotorGroupWrapper(&Motors.MOTOR_INTAKE_11W, nullptr, nullptr);
+    this->MGroups.DT_L = MGWrap(&Motors.MOTOR_L1, &Motors.MOTOR_L2, nullptr);
+    this->MGroups.DT_R = MGWrap(&Motors.MOTOR_R1, &Motors.MOTOR_R2, nullptr, 0.97f);
+    this->MGroups.MOTORGROUP_INTAKE = MGWrap(&Motors.MOTOR_INTAKE_11W, nullptr, nullptr);
     
     this->Pneumatics.PNEUMATIC = std::make_unique<pros::adi::Pneumatics>('B', false);
 
@@ -42,15 +42,15 @@ void Hardware::LoadPeripherals(void) {
 
 // REMOVE ALL HARDWARE INTERACTION FROM THE CONSTRUCTOR
 Hardware::Hardware(void) : Motors{ 
-    MotorWrapper(motor_left_front, pros::E_MOTOR_GEAR_BLUE), 
-    MotorWrapper(motor_left_rear, pros::E_MOTOR_GEAR_BLUE), 
-    MotorWrapper(motor_right_front, pros::E_MOTOR_GEAR_BLUE), 
-    MotorWrapper(motor_right_rear, pros::E_MOTOR_GEAR_BLUE), 
-    MotorWrapper(motor_intake_11W, pros::E_MOTOR_GEAR_GREEN), 
-    MotorWrapper(motor_cascade_11WR, pros::E_MOTOR_GEAR_GREEN), 
-    MotorWrapper(motor_cascade_11WL, pros::E_MOTOR_GEAR_GREEN), 
-    MotorWrapper(motor_score_open, pros::E_MOTOR_GEAR_GREEN), 
-    MotorWrapper(motor_score_roll, pros::E_MOTOR_GEAR_GREEN) } 
+    MWrap(motor_left_front, pros::E_MOTOR_GEAR_BLUE), 
+    MWrap(motor_left_rear, pros::E_MOTOR_GEAR_BLUE), 
+    MWrap(motor_right_front, pros::E_MOTOR_GEAR_BLUE), 
+    MWrap(motor_right_rear, pros::E_MOTOR_GEAR_BLUE), 
+    MWrap(motor_intake_11W, pros::E_MOTOR_GEAR_GREEN), 
+    MWrap(motor_cascade_11WR, pros::E_MOTOR_GEAR_GREEN), 
+    MWrap(motor_cascade_11WL, pros::E_MOTOR_GEAR_GREEN), 
+    MWrap(motor_score_open, pros::E_MOTOR_GEAR_GREEN), 
+    MWrap(motor_score_roll, pros::E_MOTOR_GEAR_GREEN) } 
 {
     // Leave this completely blank or just structural assignments.
 }
@@ -59,16 +59,16 @@ Hardware::Hardware(void) : Motors{
 void Hardware::init(void) {
     LoadPeripherals();
     
-    this->Motors.MOTOR_L1.MotorWrapper_Init();
-    this->Motors.MOTOR_L2.MotorWrapper_Init();
-    this->Motors.MOTOR_R1.MotorWrapper_Init();
-    this->Motors.MOTOR_R2.MotorWrapper_Init();
+    this->Motors.MOTOR_L1.MWrap_Init();
+    this->Motors.MOTOR_L2.MWrap_Init();
+    this->Motors.MOTOR_R1.MWrap_Init();
+    this->Motors.MOTOR_R2.MWrap_Init();
 
-    this->Motors.MOTOR_CASCADE_11WR.MotorWrapper_Init();
-    this->Motors.MOTOR_CASCADE_11WL.MotorWrapper_Init();
-    this->Motors.MOTOR_INTAKE_11W.MotorWrapper_Init();
-    this->Motors.MOTOR_SCORE_OPEN.MotorWrapper_Init();
-    this->Motors.MOTOR_SCORE_ROLL.MotorWrapper_Init();
+    this->Motors.MOTOR_CASCADE_11WR.MWrap_Init();
+    this->Motors.MOTOR_CASCADE_11WL.MWrap_Init();
+    this->Motors.MOTOR_INTAKE_11W.MWrap_Init();
+    this->Motors.MOTOR_SCORE_OPEN.MWrap_Init();
+    this->Motors.MOTOR_SCORE_ROLL.MWrap_Init();
 
     this->Odom.VerticalWheel->set_reversed(true);
     this->Odom.VerticalWheel->reset_position();

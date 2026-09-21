@@ -1,6 +1,6 @@
 /**
  * @file core.h
- * @brief Robodash core header
+ * @brief Dash core header
  * @ingroup core
  */
 
@@ -29,7 +29,7 @@ extern "C" {
 typedef enum rd_anim_state { RD_ANIM_ON, RD_ANIM_OFF } rd_anim_state_t;
 
 /**
- * @brief Robodash view structure
+ * @brief Dash view structure
  */
 typedef struct rd_view {
 	const char *name;

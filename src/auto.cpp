@@ -4,7 +4,8 @@
 #include "odom.hpp"
 #include "auto.h"
 #include <cmath>
-#include "api.h"
+
+namespace auton {
 
 // Need to check all ms delay timings for movement 45, 90, 180
 void fourtyfivedegleft() {
@@ -229,4 +230,6 @@ void skills_auton_routine() {
 void nodrive() {
         isAuton = true;
         isAuton = false;
+}
+
 }

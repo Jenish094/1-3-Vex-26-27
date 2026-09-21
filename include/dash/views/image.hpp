@@ -1,11 +1,11 @@
 /**
  * @file image.hpp
- * @brief Robodash Image
+ * @brief Dash Image
  * @ingroup image
  */
 
 #pragma once
-#include "robodash/api.h"
+#include "dash/api.h"
 #include <string>
 
 namespace rd {

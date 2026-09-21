@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DRIVER_HPP
+#define DRIVER_HPP
+
 #include "api.h"
 #include "hardware.hpp"
 #include "odom.hpp"
@@ -38,3 +40,5 @@ bool isAnyDriveMotorTempAbove(float temp);
 
 int calcSpeedKmPerH(void);
 void driveForTime(int power, int millis);
+
+#endif

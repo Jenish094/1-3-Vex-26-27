@@ -1,11 +1,11 @@
 /**
  * @file styles.h
- * @brief Styles used by robodash
+ * @brief Styles used by dash
  * @internal
  */
 
 #pragma once
-#include "robodash/apix.h"
+#include "dash/apix.h"
 
 #ifdef __cplusplus
 extern "C" {

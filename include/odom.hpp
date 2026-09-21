@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ODOM_HPP
+#define ODOM_HPP
+
 #include "api.h"
 #include "helpers.hpp"
 #include "main.h"
@@ -59,3 +61,5 @@ extern std::atomic<float> horizontalPosIn;
 extern std::atomic<float> cascadeEncoderPos;
 
 extern std::atomic<int> dist;
+
+#endif

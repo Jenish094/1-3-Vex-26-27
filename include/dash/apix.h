@@ -2,7 +2,7 @@
  * @file apix.h
  * @internal
  *
- * Extended API header for robodash.
+ * Extended API header for dash.
  *
  * Includes additional declarations for fonts, styles, and more. Automatically
  * includes the main API header file as well.

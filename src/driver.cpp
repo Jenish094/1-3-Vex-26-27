@@ -83,7 +83,7 @@ bool isAnyMotorTempAbove(float temp) {
         if (isAnyDriveMotorTempAbove(temp))
                 return true;
 
-        for (MotorWrapper* m : devices.MGroups.MOTORGROUP_INTAKE.motors) { // TODO: fix
+        for (MWrap* m : devices.MGroups.MOTORGROUP_INTAKE.motors) { // TODO: fix
                 if (m->motor->get_temperature() >= temp)
                         return true;
         }
@@ -92,11 +92,11 @@ bool isAnyMotorTempAbove(float temp) {
 }
 
 bool isAnyDriveMotorTempAbove(float temp) {
-        for (MotorWrapper* m : devices.MGroups.DT_L.motors)
+        for (MWrap* m : devices.MGroups.DT_L.motors)
                 if (m->motor->get_temperature() >= temp)
                         return true;
 
-        for (MotorWrapper* m : devices.MGroups.DT_R.motors)
+        for (MWrap* m : devices.MGroups.DT_R.motors)
                 if (m->motor->get_temperature() >= temp)
                         return true;
 
