@@ -4,7 +4,7 @@
 #include "dash/impl/styles.h"
 #include <cstring>
 
-extern const lv_img_dsc_t logonat;
+extern const lv_img_dsc_t Logo_41103C_Neutral;
 
 const char *file_name = "/usd/rd_auton.txt";
 
@@ -167,7 +167,7 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	this->view = rd_view_create(name.c_str());
 
 	lv_obj_t *background = lv_img_create(view->obj);
-	lv_img_set_src(background, &logonat);
+	lv_img_set_src(background, &Logo_41103C_Neutral);
 	lv_obj_set_size(background, 480, 240);
 	lv_obj_align(background, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_clear_flag(background, LV_OBJ_FLAG_CLICKABLE);
