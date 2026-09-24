@@ -168,8 +168,9 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 
 	lv_obj_t *background = lv_img_create(view->obj);
 	lv_img_set_src(background, &Logo_41103C_Neutral);
-	lv_obj_set_size(background, 480, 240);
-	lv_obj_align(background, LV_ALIGN_CENTER, 0, 0);
+	lv_img_set_zoom(background, LV_IMG_ZOOM_NONE / 2);
+	lv_obj_set_size(background, 240, 240);
+	lv_obj_align(background, LV_ALIGN_RIGHT_MID, 0, 0);
 	lv_obj_clear_flag(background, LV_OBJ_FLAG_CLICKABLE);
 
 	routine_list = lv_list_create(view->obj);
