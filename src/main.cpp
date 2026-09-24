@@ -7,9 +7,9 @@
 
 bool isAuton = false;
 
-extern const lv_img_dsc_t logonat;
-extern const lv_img_dsc_t logonatblue;
-extern const lv_img_dsc_t logonatred;
+extern const lv_img_dsc_t Logo_41103C_Blue;
+extern const lv_img_dsc_t Logo_41103C_Neutral;
+extern const lv_img_dsc_t Logo_41103C_Red;
 
 rd::Image* white = nullptr;
 rd::Image* blue = nullptr;
@@ -21,9 +21,9 @@ rd::Selector* autonSelector = nullptr;
 void initialize(void) {
         pros::delay(300);
                 // pros::screen::erase();
-        white = new rd::Image(&logonat, "WhiteLogo");
-        blue = new rd::Image(&logonatblue, "BlueLogo");
-        red = new rd::Image(&logonatred, "RedLogo");
+        white = new rd::Image(&Logo_41103C_Neutral, "WhiteLogo");
+        blue = new rd::Image(&Logo_41103C_Blue, "BlueLogo");
+        red = new rd::Image(&Logo_41103C_Red, "RedLogo");
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
