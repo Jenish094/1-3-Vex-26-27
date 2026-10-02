@@ -32,9 +32,12 @@ void initialize(void) {
         // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
         autonSelector = new rd::Selector("autonselect", {
+        //{"Test Auton", auton::test},
         {"Toggle Auton", auton::toggle_auton},
         {"Left Side Auton", auton::left_side_auton},
         {"Right Side Auton", auton::right_side_auton},
+        {"Left Side Middle Pin Auton", auton::left_side_auton_middle_pin},
+        {"Right Side Middle Pin Auton", auton::right_side_auton_middle_pin},
         {"Left Side Toggle Only", auton::left_side_toggle_only},
         {"Right Side Toggle Only", auton::right_side_toggle_only},
         {"Skills Auton", auton::skills_auton_routine},

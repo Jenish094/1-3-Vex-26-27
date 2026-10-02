@@ -43,6 +43,18 @@ void oneeighty() {
         ninetydegleft();
 }
 
+void onetwentyleft(){
+        left();
+        pros::delay(1000);
+        stop();
+}
+
+void onetwentyright(){
+        right();
+        pros::delay(1000);
+        stop();
+}
+
 void forward() {
         devices.MGroups.DT_L.set(60);
         devices.MGroups.DT_R.set(60);
@@ -53,20 +65,36 @@ void backwards() {
         devices.MGroups.DT_R.set(-60);
 }
 
+void left() {
+        devices.MGroups.DT_L.set(-60);
+        devices.MGroups.DT_R.set(60);
+}
+
+void right() {
+        devices.MGroups.DT_L.set(60);
+        devices.MGroups.DT_R.set(-60);
+}
+
 void stop() {
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 }
 
+
+
+
+void test(){
+        isAuton = true;
+
+        isAuton = false;
+}
+
 void toggle_auton(){
         isAuton = true;
 
-        
-
-
         devices.MGroups.DT_L.set(-60);
         devices.MGroups.DT_R.set(-60);
-        pros::delay(350);
+        pros::delay(300);
         devices.MGroups.DT_L.set(0);
         devices.MGroups.DT_R.set(0);
 
@@ -117,8 +145,7 @@ void left_side_auton(){
         pros::delay(200);
 
         //turn left to score in goal
-        devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(60);
+        left();
         pros::delay(580);
         stop();
 
@@ -127,7 +154,7 @@ void left_side_auton(){
         stop();
 
         backwards();
-        pros::delay(900);
+        pros::delay(1000);
         stop();
 
         pros::delay(200);
@@ -143,6 +170,8 @@ void left_side_auton(){
         devices.Motors.MOTOR_SCORE_OPEN.set(40);
         pros::delay(150);
         stop();
+
+        //pin now in goal, move back to get out of goal
 
         forward();
         pros::delay(300);
@@ -162,8 +191,7 @@ void left_side_auton(){
         pros::delay(1);
         stop();
 
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(-60);
+        right();
         pros::delay(510);
         stop();
 
@@ -171,12 +199,16 @@ void left_side_auton(){
         pros::delay(100);
         
         backwards();
-        pros::delay(1110);
+        pros::delay(1100);
         stop();
 
-        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
-        pros::delay(400);
+        //bacakwards towards pin #1
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-40);
+        pros::delay(450);
         stop();
+
+        //moves bancee down to intake pin off ground
 
         devices.Motors.MOTOR_SCORE_OPEN.set(30);
         pros::delay(200);
@@ -186,8 +218,10 @@ void left_side_auton(){
         pros::delay(500);
         stop();
 
-        fourtyfivedegleft();
-        pros::delay(1000);
+        left();
+        pros::delay(650);
+        stop();
+        //turned to face the goal
 
         backwards();
         pros::delay(1000);
@@ -200,35 +234,608 @@ void left_side_auton(){
         devices.Motors.MOTOR_SCORE_ROLL.set(-60);
         pros::delay(100);
 
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(400);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        pros::delay(700);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        forward();
+        pros::delay(200);
+        stop();
 
 
+        devices.Motors.MOTOR_SCORE_ROLL.set(-10);
+        pros::delay(100);
+        stop();
+
+
+        //first pin dropped off, now going for second pin and cup
+
+
+        forward();
+        pros::delay(500);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(700);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        pros::delay(1);
+        stop();
+
+        right();
+        pros::delay(650);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        left();
+        pros::delay(710);
+        stop();
+
+        backwards();
+        pros::delay(1400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(40);
+        pros::delay(100);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(300);
+        stop();
+
+        forward();
+        pros::delay(800);
+        stop();
+
+        left();
+        pros::delay(580);
+        stop();
+
+        backwards();
+        pros::delay(700);
+        stop();
+
+        isAuton = false;
+}
+
+void left_side_auton_middle_pin(){
+        isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn left to score in goal
+        left();
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        //pin now in goal, move back to get out of goal
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
+        right();
+        pros::delay(850);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(200);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(100);
+
+        backwards();
+        pros::delay(700);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(600);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(100);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(1000);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        backwards();
+        pros::delay(1100);
+        stop();
+
+        pros::delay(500);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(100);
+        
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(1300);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        forward();
+        pros::delay(200);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        pros::delay(2000);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        
         isAuton = false;
 }
 
 void right_side_auton(){
         isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn right to score in goal
+        right();
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        //pin now in goal, move back to get out of goal
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
+        // fourtyfivedegright();
+        // pros::delay(1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+        pros::delay(1);
+        stop();
+
+        left();
+        pros::delay(510);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(100);
+        
+        backwards();
+        pros::delay(1100);
+        stop();
+
+        //bacakwards towards pin #1
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-40);
+        pros::delay(450);
+        stop();
+
+        //moves bancee down to intake pin off ground
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(200);
+        stop();
+
+        forward();
+        pros::delay(500);
+        stop();
+
+        right();
+        pros::delay(650);
+        stop();
+        //turned to face the goal
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(100);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(400);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        pros::delay(700);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        forward();
+        pros::delay(200);
+        stop();
+
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-10);
+        pros::delay(100);
+        stop();
+
+
+        //first pin dropped off, now going for second pin and cup
+
+
+        forward();
+        pros::delay(500);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(700);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        pros::delay(1);
+        stop();
+
+        left();
+        pros::delay(650);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        right();
+        pros::delay(710);
+        stop();
+
+        backwards();
+        pros::delay(1400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(40);
+        pros::delay(100);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(300);
+        stop();
+
+        forward();
+        pros::delay(800);
+        stop();
+
+        right();
+        pros::delay(580);
+        stop();
+
+        backwards();
+        pros::delay(700);
+        stop();
+
         isAuton = false;
+}
+
+void right_side_auton_middle_pin(){
+    isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn left to score in goal
+        right();
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        //pin now in goal, move back to get out of goal
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
+        left();
+        pros::delay(850);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(200);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(60);
+        pros::delay(100);
+
+        backwards();
+        pros::delay(700);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(600);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(100);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(1000);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        backwards();
+        pros::delay(1100);
+        stop();
+
+        pros::delay(500);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(400);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(100);
+        
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        pros::delay(1300);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        stop();
+
+        forward();
+        pros::delay(200);
+        stop();
+
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        pros::delay(2000);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        
+        isAuton = false;    
 }
 
 void left_side_toggle_only(){
         isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn left to score in goal
+        left();
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        //pin now in goal, move back to get out of goal
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
         isAuton = false;
 }
 
 void right_side_toggle_only(){
         isAuton = true;
+
+        toggle_auton();
+
+        pros::delay(200);
+
+        //turn left to score in goal
+        right();
+        pros::delay(580);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(350);
+        stop();
+
+        backwards();
+        pros::delay(1000);
+        stop();
+
+        pros::delay(200);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(350);
+        stop();
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+        pros::delay(500);
+        stop();
+        
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(150);
+        stop();
+
+        //pin now in goal, move back to get out of goal
+
+        forward();
+        pros::delay(300);
+        stop();
+
+        fourtyfivedegleft();
+        pros::delay(1000);
+
+        forward();
+        pros::delay(400);
+        stop();
+
         isAuton = false;
 }
 
 void skills_auton_routine() {
         isAuton = true;
 
+        right_side_auton();
+
+        fourtyfivedegright();
+        pros::delay(1000);
+        stop();
+
+        forward();
+        pros::delay(1000);
+        stop();
+
         isAuton = false;
 }
 
-
 void nodrive() {
         isAuton = true;
+        
         isAuton = false;
 }
 
