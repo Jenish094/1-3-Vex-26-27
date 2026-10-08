@@ -261,7 +261,8 @@
     "upload_options": {
       "description": "States code",
       "icon": "pros",
-      "slot": 1
+      "slot": 1,
+      "after": "run"
     },
     "use_early_access": false
   }
