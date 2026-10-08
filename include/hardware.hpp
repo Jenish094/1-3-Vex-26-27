@@ -18,7 +18,7 @@ enum StandardPorts
         motor_right_rear = 12,
 
         imu = 5,
-        aivision = 6,
+        aivision = 9,
 
         motor_intake_11W = -16,
 

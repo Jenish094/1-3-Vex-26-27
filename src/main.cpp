@@ -10,10 +10,12 @@ bool isAuton = false;
 extern const lv_img_dsc_t Logo_41103C_Blue;
 extern const lv_img_dsc_t Logo_41103C_Neutral;
 extern const lv_img_dsc_t Logo_41103C_Red;
+extern const lv_img_dsc_t Logo_41103C_Chinese;
 
 rd::Image* white = nullptr;
 rd::Image* blue = nullptr;
 rd::Image* red = nullptr;
+rd::Image* chinese = nullptr;
 
 rd::Selector* autonSelector = nullptr;
 
@@ -24,6 +26,7 @@ void initialize(void) {
         white = new rd::Image(&Logo_41103C_Neutral, "WhiteLogo");
         blue = new rd::Image(&Logo_41103C_Blue, "BlueLogo");
         red = new rd::Image(&Logo_41103C_Red, "RedLogo");
+        chinese = new rd::Image(&Logo_41103C_Chinese, "ChineseLogo");
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
