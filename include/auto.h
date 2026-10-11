@@ -27,9 +27,13 @@ void ninetydegright();
 void onetwentyleft();
 void onetwentyright();
 void forward();
+void half_speed_forward();
 void backwards();
+void half_speed_backwards();
 void left();
+void half_speed_left();
 void right();
+void half_speed_right();
 void stop();
 
 }

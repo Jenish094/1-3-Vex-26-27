@@ -35,7 +35,7 @@ void initialize(void) {
         // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
         autonSelector = new rd::Selector("autonselect", {
-        //{"Test Auton", auton::test},
+        {"Test Auton", auton::test},
         {"Toggle Auton", auton::toggle_auton},
         {"Left Side Auton", auton::left_side_auton},
         {"Right Side Auton", auton::right_side_auton},

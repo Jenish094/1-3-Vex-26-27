@@ -259,8 +259,8 @@
       }
     },
     "upload_options": {
-      "description": "States code",
-      "icon": "pros",
+      "description": "Ni Hao Mother Fucker",
+      "icon": "robot",
       "slot": 1,
       "after": "run"
     },

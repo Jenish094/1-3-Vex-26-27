@@ -60,9 +60,19 @@ void forward() {
         devices.MGroups.DT_R.set(60);
 }
 
+void half_speed_forward(){
+        devices.MGroups.DT_L.set(30);
+        devices.MGroups.DT_R.set(30);
+}
+
 void backwards() {
         devices.MGroups.DT_L.set(-60);
         devices.MGroups.DT_R.set(-60);
+}
+
+void half_speed_backwards(){
+        devices.MGroups.DT_L.set(-30);
+        devices.MGroups.DT_R.set(-30);
 }
 
 void left() {
@@ -70,9 +80,19 @@ void left() {
         devices.MGroups.DT_R.set(60);
 }
 
+void half_speed_left() {
+        devices.MGroups.DT_L.set(-30);
+        devices.MGroups.DT_R.set(30);
+}
+
 void right() {
         devices.MGroups.DT_L.set(60);
         devices.MGroups.DT_R.set(-60);
+}
+
+void half_speed_right() {
+        devices.MGroups.DT_L.set(30);
+        devices.MGroups.DT_R.set(-30);
 }
 
 void stop() {
@@ -86,6 +106,9 @@ void stop() {
 void test(){
         isAuton = true;
 
+        devices.Motors.MOTOR_INTAKE_11W.set(127);
+        pros::delay(1000);
+        
         isAuton = false;
 }
 
@@ -832,6 +855,8 @@ void skills_auton_routine() {
 
         isAuton = false;
 }
+
+
 
 void nodrive() {
         isAuton = true;
