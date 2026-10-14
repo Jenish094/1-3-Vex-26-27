@@ -11,11 +11,13 @@ extern const lv_img_dsc_t Logo_41103C_Blue;
 extern const lv_img_dsc_t Logo_41103C_Neutral;
 extern const lv_img_dsc_t Logo_41103C_Red;
 extern const lv_img_dsc_t Logo_41103C_Chinese;
+extern const lv_img_dsc_t Logo_41103C_Invctus;
 
 rd::Image* white = nullptr;
 rd::Image* blue = nullptr;
 rd::Image* red = nullptr;
 rd::Image* chinese = nullptr;
+rd::Image* invctus = nullptr;
 
 rd::Selector* autonSelector = nullptr;
 
@@ -27,6 +29,7 @@ void initialize(void) {
         blue = new rd::Image(&Logo_41103C_Blue, "BlueLogo");
         red = new rd::Image(&Logo_41103C_Red, "RedLogo");
         chinese = new rd::Image(&Logo_41103C_Chinese, "ChineseLogo");
+        invctus = new rd::Image(&Logo_41103C_Invctus, "InvctusLogo");
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
@@ -35,7 +38,7 @@ void initialize(void) {
         // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
         autonSelector = new rd::Selector("autonselect", {
-        {"Test Auton", auton::test},
+        //{"Test Auton", auton::test},
         {"Toggle Auton", auton::toggle_auton},
         {"Left Side Auton", auton::left_side_auton},
         {"Right Side Auton", auton::right_side_auton},

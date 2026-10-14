@@ -102,7 +102,6 @@ void stop() {
 
 
 
-
 void test(){
         isAuton = true;
 
@@ -176,8 +175,8 @@ void left_side_auton(){
         pros::delay(350);
         stop();
 
-        backwards();
-        pros::delay(1000);
+        half_speed_backwards();
+        pros::delay(2000);
         stop();
 
         pros::delay(200);
@@ -221,8 +220,8 @@ void left_side_auton(){
         devices.Motors.MOTOR_SCORE_ROLL.set(60);
         pros::delay(100);
         
-        backwards();
-        pros::delay(1100);
+        half_speed_backwards();
+        pros::delay(2200);
         stop();
 
         //bacakwards towards pin #1
@@ -336,6 +335,8 @@ void left_side_auton(){
         backwards();
         pros::delay(700);
         stop();
+
+
 
         isAuton = false;
 }
@@ -466,8 +467,8 @@ void right_side_auton(){
         pros::delay(350);
         stop();
 
-        backwards();
-        pros::delay(1000);
+        half_speed_backwards();
+        pros::delay(2000);
         stop();
 
         pros::delay(200);
