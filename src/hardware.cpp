@@ -36,6 +36,7 @@ void Hardware::LoadPeripherals(void) {
     this->Odom.HorizontalWheel = std::make_unique<pros::Rotation>(odom_horizontal);
     this->Sensors.IMU = std::make_unique<pros::Imu>(imu);
     this->Sensors.CascadeEncoder = std::make_unique<pros::Rotation>(cascade_encoder);
+    this->Sensors.ToggleOptical = std::make_unique<pros::Optical>(optical);
 
     this->Macros.flipToggleHeight = std::make_unique<FlipToggleHeight>();
 }
@@ -80,6 +81,8 @@ void Hardware::init(void) {
 
     this->Sensors.CascadeEncoder->set_reversed(false);
     this->Sensors.CascadeEncoder->reset_position();
+    
+    this->Sensors.ToggleOptical->set_led_pwm(100);
 
     this->Sensors.IMU->reset(true); // Now safe to run blockingly!
 

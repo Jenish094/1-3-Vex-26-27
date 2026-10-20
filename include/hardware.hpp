@@ -33,7 +33,9 @@ enum StandardPorts
 
         cascade_encoder = 6,
 
-        distance = 7
+        distance = 7,
+
+        optical = 8
 };
 
 enum Triports
@@ -126,6 +128,7 @@ public:
         {
                 std::unique_ptr<pros::Imu> IMU;
                 std::unique_ptr<pros::Rotation> CascadeEncoder;
+                std::unique_ptr<pros::Optical> ToggleOptical;
         } Sensors;
 
         struct {
