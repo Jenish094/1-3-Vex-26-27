@@ -1,6 +1,8 @@
 #include "controls.h"
 #include <cmath>
 
+extern bool allianceIsRed;
+
 void controlsInit() {
     devices.Motors.MOTOR_INTAKE_11W.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     devices.Motors.MOTOR_CASCADE_11WR.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -18,8 +20,6 @@ bool controlsUpdate() {
 void runDriverControls() {
     static bool previousA = false;
     static bool previousB = false;
-    static bool previousX = false;
-    static bool targetRed = false; // Press X to switch between blue (default) and red.
     static bool seekingColor = false;
     static uint32_t seekStartedAt = 0;
     static const uint32_t seekTimeoutMs = 2500;
@@ -42,12 +42,6 @@ void runDriverControls() {
 
     bool a = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-    bool x = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
-
-    if (x && !previousX) {
-        targetRed = !targetRed;
-        controller.rumble(targetRed ? ".-" : "-.");
-    }
 
     if (a && !previousA) {
         seekingColor = true;
@@ -75,11 +69,14 @@ void runDriverControls() {
         const bool validReading = std::isfinite(hue) && hue >= 0.0 && proximity >= 80;
         const bool isRed = validReading && (hue <= 30.0 || hue >= 330.0);
         const bool isBlue = validReading && hue >= 190.0 && hue <= 260.0;
-        const bool targetSeen = targetRed ? isRed : isBlue;
+        const bool targetSeen = allianceIsRed ? isRed : isBlue;
 
-        if (targetSeen || pros::millis() - seekStartedAt >= seekTimeoutMs) {
+        if (targetSeen) {
             seekingColor = false;
             scorerollPower = 0; // brake mode is HOLD
+        } else if (pros::millis() - seekStartedAt >= seekTimeoutMs) {
+            seekingColor = false;
+            scorerollPower = 0;
         } else {
             scorerollPower = 45;
         }
@@ -89,7 +86,6 @@ void runDriverControls() {
     }
     previousA = a;
     previousB = b;
-    previousX = x;
 
     devices.Motors.MOTOR_SCORE_ROLL.set(scorerollPower);
 

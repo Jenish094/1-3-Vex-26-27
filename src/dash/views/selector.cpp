@@ -4,6 +4,7 @@
 #include "dash/impl/styles.h"
 #include <cstring>
 
+extern bool allianceIsRed;
 extern const lv_img_dsc_t Logo_41103C_Neutral;
 
 const char *file_name = "/usd/rd_auton.txt";
@@ -89,6 +90,23 @@ void rd::Selector::sd_load() {
 }
 
 // ============================== UI Callbacks ============================== //
+
+static void alliance_toggle_cb(lv_event_t *event) {
+	lv_obj_t *btn = lv_event_get_target(event);
+	if (btn == nullptr) return;
+
+	allianceIsRed = !allianceIsRed;
+	lv_obj_t *label = lv_obj_get_child(btn, 0);
+	if (label != nullptr) {
+		lv_label_set_text(label, allianceIsRed ? "RED" : "BLUE");
+	}
+	lv_obj_set_style_bg_color(
+	    btn,
+	    allianceIsRed ? lv_color_make(255, 0, 0) : lv_color_make(0, 0, 255),
+	    LV_PART_MAIN
+	);
+	lv_obj_set_style_text_color(btn, lv_color_make(255, 255, 255), LV_PART_MAIN);
+}
 
 void rd::Selector::select_cb(lv_event_t *event) {
 	lv_obj_t *obj = lv_event_get_target(event);
@@ -284,6 +302,33 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_label_set_text(title, "Select autonomous routine");
 	lv_obj_add_style(title, &style_text_large, 0);
 	lv_obj_align(title, LV_ALIGN_TOP_LEFT, 8, 12);
+
+	lv_obj_t *alliance_cont = lv_obj_create(view->obj);
+	lv_obj_set_size(alliance_cont, 90, 60);
+	lv_obj_align(alliance_cont, LV_ALIGN_TOP_RIGHT, -8, 36);
+	lv_obj_clear_flag(alliance_cont, LV_OBJ_FLAG_SCROLLABLE);
+
+	lv_obj_t *alliance_title = lv_label_create(alliance_cont);
+	lv_label_set_text(alliance_title, "Alliance");
+	lv_obj_add_style(alliance_title, &style_text_medium, 0);
+	lv_obj_align(alliance_title, LV_ALIGN_TOP_MID, 0, 0);
+
+	lv_obj_t *alliance_btn = lv_btn_create(alliance_cont);
+	lv_obj_set_size(alliance_btn, 78, 28);
+	lv_obj_align(alliance_btn, LV_ALIGN_BOTTOM_MID, 0, -4);
+	lv_obj_add_event_cb(alliance_btn, &alliance_toggle_cb, LV_EVENT_CLICKED, NULL);
+	lv_obj_set_style_bg_color(
+	    alliance_btn,
+	    allianceIsRed ? lv_color_make(255, 0, 0) : lv_color_make(0, 0, 255),
+	    LV_PART_MAIN
+	);
+	lv_obj_set_style_radius(alliance_btn, 8, 0);
+	lv_obj_set_style_text_color(alliance_btn, lv_color_make(255, 255, 255), LV_PART_MAIN);
+	lv_obj_set_style_border_opa(alliance_btn, LV_OPA_0, 0);
+
+	lv_obj_t *alliance_btn_label = lv_label_create(alliance_btn);
+	lv_label_set_text(alliance_btn_label, allianceIsRed ? "RED" : "BLUE");
+	lv_obj_center(alliance_btn_label);
 
 	if (pros::usd::is_installed()) {
 		lv_obj_t *save_icon = lv_label_create(list_btns);

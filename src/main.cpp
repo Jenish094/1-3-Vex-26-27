@@ -6,6 +6,7 @@
 #include <iostream>
 
 bool isAuton = false;
+bool allianceIsRed = false; // false = blue, true = red
 
 extern const lv_img_dsc_t Logo_41103C_Blue;
 extern const lv_img_dsc_t Logo_41103C_Neutral;

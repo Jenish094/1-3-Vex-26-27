@@ -52,5 +52,6 @@ const float WHEEL_CIRCUMFERENCE = PI * WHEEL_DIAMETER_MM;
 
 // AutonSelector Selector = AutonSelector();
 extern bool isAuton;
+extern bool allianceIsRed;
 
 #endif  // _PROS_MAIN_H_
