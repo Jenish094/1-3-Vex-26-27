@@ -192,15 +192,15 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_clear_flag(background, LV_OBJ_FLAG_CLICKABLE);
 
 	routine_list = lv_list_create(view->obj);
-	lv_obj_set_size(routine_list, 132, 192);
-	lv_obj_align(routine_list, LV_ALIGN_TOP_LEFT, 104, 40);
+	lv_obj_set_size(routine_list, 228, 192);
+	lv_obj_align(routine_list, LV_ALIGN_TOP_LEFT, 8, 40);
 	lv_obj_add_style(routine_list, &style_list, 0);
 
 	selected_cont = lv_obj_create(view->obj);
 	lv_obj_add_style(selected_cont, &style_transp, 0);
 	lv_obj_set_layout(selected_cont, LV_LAYOUT_FLEX);
 	lv_obj_set_size(selected_cont, 240, 240);
-	lv_obj_align(selected_cont, LV_ALIGN_CENTER, 120, 0);
+	lv_obj_align(selected_cont, LV_ALIGN_CENTER, 120, 24);
 	lv_obj_set_flex_align(
 	    selected_cont, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER
 	);
@@ -301,12 +301,12 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_t *title = lv_label_create(view->obj);
 	lv_label_set_text(title, "Select autonomous routine");
 	lv_obj_add_style(title, &style_text_large, 0);
-	lv_obj_align(title, LV_ALIGN_TOP_LEFT, 104, 12);
+	lv_obj_align(title, LV_ALIGN_TOP_LEFT, 8, 12);
 
 	lv_obj_t *alliance_cont = lv_obj_create(view->obj);
-	lv_obj_set_size(alliance_cont, 90, 60);
-	// Put the alliance control beside the routine list.
-	lv_obj_align(alliance_cont, LV_ALIGN_TOP_LEFT, 8, 40);
+	lv_obj_set_size(alliance_cont, 204, 76);
+	// Place the larger alliance control above the selected-routine text.
+	lv_obj_align(alliance_cont, LV_ALIGN_TOP_RIGHT, -8, 36);
 	lv_obj_clear_flag(alliance_cont, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_t *alliance_title = lv_label_create(alliance_cont);
@@ -315,8 +315,8 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_align(alliance_title, LV_ALIGN_TOP_MID, 0, 0);
 
 	lv_obj_t *alliance_btn = lv_btn_create(alliance_cont);
-	lv_obj_set_size(alliance_btn, 78, 28);
-	lv_obj_align(alliance_btn, LV_ALIGN_BOTTOM_MID, 0, -4);
+	lv_obj_set_size(alliance_btn, 188, 38);
+	lv_obj_align(alliance_btn, LV_ALIGN_BOTTOM_MID, 0, -6);
 	lv_obj_add_event_cb(alliance_btn, &alliance_toggle_cb, LV_EVENT_CLICKED, NULL);
 	lv_obj_set_style_bg_color(
 	    alliance_btn,
