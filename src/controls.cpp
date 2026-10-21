@@ -21,8 +21,6 @@ void runDriverControls() {
     static bool previousA = false;
     static bool previousB = false;
     static bool seekingColor = false;
-    static uint32_t seekStartedAt = 0;
-    static const uint32_t seekTimeoutMs = 2500;
     pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
 
     int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -44,8 +42,8 @@ void runDriverControls() {
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 
     if (a && !previousA) {
-        seekingColor = true;
-        seekStartedAt = pros::millis();
+        // Press A to start seeking; press it again to cancel manually.
+        seekingColor = !seekingColor;
     }
     
     if (b && !previousB) {
@@ -74,10 +72,8 @@ void runDriverControls() {
         if (targetSeen) {
             seekingColor = false;
             scorerollPower = 0; // brake mode is HOLD
-        } else if (pros::millis() - seekStartedAt >= seekTimeoutMs) {
-            seekingColor = false;
-            scorerollPower = 0;
         } else {
+            // Keep rolling until the selected alliance color is detected.
             scorerollPower = 45;
         }
     } else if (seekingColor) {

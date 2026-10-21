@@ -192,8 +192,8 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_clear_flag(background, LV_OBJ_FLAG_CLICKABLE);
 
 	routine_list = lv_list_create(view->obj);
-	lv_obj_set_size(routine_list, 228, 192);
-	lv_obj_align(routine_list, LV_ALIGN_TOP_LEFT, 8, 40);
+	lv_obj_set_size(routine_list, 132, 192);
+	lv_obj_align(routine_list, LV_ALIGN_TOP_LEFT, 104, 40);
 	lv_obj_add_style(routine_list, &style_list, 0);
 
 	selected_cont = lv_obj_create(view->obj);
@@ -301,11 +301,12 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_t *title = lv_label_create(view->obj);
 	lv_label_set_text(title, "Select autonomous routine");
 	lv_obj_add_style(title, &style_text_large, 0);
-	lv_obj_align(title, LV_ALIGN_TOP_LEFT, 8, 12);
+	lv_obj_align(title, LV_ALIGN_TOP_LEFT, 104, 12);
 
 	lv_obj_t *alliance_cont = lv_obj_create(view->obj);
 	lv_obj_set_size(alliance_cont, 90, 60);
-	lv_obj_align(alliance_cont, LV_ALIGN_TOP_RIGHT, -8, 36);
+	// Put the alliance control beside the routine list.
+	lv_obj_align(alliance_cont, LV_ALIGN_TOP_LEFT, 8, 40);
 	lv_obj_clear_flag(alliance_cont, LV_OBJ_FLAG_SCROLLABLE);
 
 	lv_obj_t *alliance_title = lv_label_create(alliance_cont);
