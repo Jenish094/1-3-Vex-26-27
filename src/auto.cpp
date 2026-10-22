@@ -114,11 +114,9 @@ void test(){
 void toggle_auton(){
         isAuton = true;
 
-        devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(-60);
+        backwards();
         pros::delay(300);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
+        stop();
 
         // Open scoring pneumatic / intake action
         devices.MGroups.MOTORGROUP_INTAKE.set(127);
@@ -136,25 +134,19 @@ void toggle_auton(){
 
         // Run the second toggle
         // Move robot slightly backwards
-        devices.MGroups.DT_L.set(-60);
-        devices.MGroups.DT_R.set(-60);
+        backwards();
         pros::delay(600);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
+        stop();
 
         // Move robot back at double speed
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(60);
+        forward();
         pros::delay(600);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
+        stop();
 
         // Move robot slightly forward
-        devices.MGroups.DT_L.set(60);
-        devices.MGroups.DT_R.set(60);
+        forward();
         pros::delay(100);
-        devices.MGroups.DT_L.set(0);
-        devices.MGroups.DT_R.set(0);
+        stop();
 
         isAuton = false;
 }
