@@ -11,10 +11,10 @@ constexpr double degreesToRadians = ODOM_PI / 180.0;
 constexpr double centidegreesPerRevolution = 36000.0;
 constexpr double odomPositionToleranceIn = 0.25;
 constexpr std::uint32_t odomSettleTimeMs = 150;
-constexpr double driveKp = 4.0;
+constexpr double driveKp = 5.0;
 constexpr double driveKi = 0.45;
 constexpr double driveKd = 0.5;
-constexpr double headingKp = 0.5;
+constexpr double headingKp = 1.0;
 std::atomic<bool> odometryResetRequested(false);
 
 double clampValue(double value, double minimum, double maximum) {
