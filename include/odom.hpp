@@ -19,6 +19,14 @@ void odomReset(void);
 void driveInches(double targetInches, double maxSpeed = 100.0, double timeoutMs = 3000.0);
 void brainScreenManager(void);
 
+class Robot {
+public:
+        void move(double inches, double maxSpeed = 100.0, double timeoutMs = 3000.0);
+        void turn(double degrees, double maxSpeed = 60.0, double timeoutMs = 3000.0);
+};
+
+extern Robot robot;
+
 extern std::atomic<float> globalHeading;          // current heading, radians, CCW+
 extern std::atomic<float> globalHeadingAtLastReset;
 

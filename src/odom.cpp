@@ -60,6 +60,7 @@ std::atomic<float> horizontalPosIn(0.0f);
 std::atomic<float> cascadeEncoderPos(0.0f);
 
 std::atomic<int> dist(0);
+Robot robot;
 
 void odomCalcPos(void) {
         double previousVerticalIn = wheelPositionInches(devices.Odom.VerticalWheel->get_position());
@@ -239,6 +240,68 @@ void driveInches(double targetInches, double maxSpeed, double timeoutMs) {
 
                 previousError = error;
                 previousTime = now;
+                pros::delay(10);
+        }
+
+        stopDrivetrain();
+}
+
+void Robot::move(double inches, double maxSpeed, double timeoutMs) {
+        driveInches(inches, maxSpeed, timeoutMs);
+}
+
+void Robot::turn(double degrees, double maxSpeed, double timeoutMs) {
+        const auto stopDrivetrain = [] {
+                devices.MGroups.DT_L.set(0);
+                devices.MGroups.DT_R.set(0);
+        };
+
+        if (!std::isfinite(degrees) || !std::isfinite(maxSpeed) ||
+            !std::isfinite(timeoutMs) || maxSpeed <= 0.0 || timeoutMs <= 0.0) {
+                stopDrivetrain();
+                return;
+        }
+
+        startOdometryTask();
+
+        const double speedLimit = clampValue(maxSpeed, 0.0, 127.0);
+        const std::uint32_t timeout = static_cast<std::uint32_t>(
+            std::min(timeoutMs, static_cast<double>(std::numeric_limits<std::uint32_t>::max())));
+        const std::uint32_t startTime = pros::millis();
+        const double targetHeading =
+            static_cast<double>(globalHeading.load()) - degrees * degreesToRadians;
+        const double headingTolerance = 2.0 * degreesToRadians;
+        const double headingKpDegrees = 1.5;
+        const std::uint32_t settleTimeMs = 150;
+        std::uint32_t settledSince = 0;
+        bool settling = false;
+
+        while (pros::millis() - startTime < timeout) {
+                const double headingError = std::remainder(
+                    targetHeading - static_cast<double>(globalHeading.load()),
+                    2.0 * ODOM_PI);
+
+                if (std::abs(headingError) <= headingTolerance) {
+                        if (!settling) {
+                                settledSince = pros::millis();
+                                settling = true;
+                        } else if (pros::millis() - settledSince >= settleTimeMs) {
+                                break;
+                        }
+                        stopDrivetrain();
+                } else {
+                        settling = false;
+                        double turnPower = clampValue(
+                            headingError / degreesToRadians * headingKpDegrees,
+                            -speedLimit, speedLimit);
+                        if (std::abs(turnPower) < 12.0)
+                                turnPower = std::copysign(12.0, turnPower);
+
+                        // Positive degrees means right; negative degrees means left.
+                        devices.MGroups.DT_L.set(static_cast<int>(std::lround(-turnPower)));
+                        devices.MGroups.DT_R.set(static_cast<int>(std::lround(turnPower)));
+                }
+
                 pros::delay(10);
         }
 
