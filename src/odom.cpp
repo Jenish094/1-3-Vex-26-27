@@ -11,10 +11,10 @@ constexpr double degreesToRadians = ODOM_PI / 180.0;
 constexpr double centidegreesPerRevolution = 36000.0;
 constexpr double odomPositionToleranceIn = 0.25;
 constexpr std::uint32_t odomSettleTimeMs = 150;
-constexpr double driveKp = 10.0;
-constexpr double driveKi = 0.35;
+constexpr double driveKp = 4.0;
+constexpr double driveKi = 0.45;
 constexpr double driveKd = 0.5;
-constexpr double headingKp = 1.5;
+constexpr double headingKp = 0.5;
 std::atomic<bool> odometryResetRequested(false);
 
 double clampValue(double value, double minimum, double maximum) {
@@ -109,7 +109,7 @@ void odomCalcPos(void) {
                 const double localForwardIn =
                     arcScale * (deltaVerticalIn + verticalOdomOffsetInches * deltaTheta);
                 const double localSideIn =
-                    arcScale * (deltaHorizontalIn + horizontalOdomOffsetInches * deltaTheta);
+                    arcScale * (-deltaHorizontalIn + horizontalOdomOffsetInches * deltaTheta);
 
                 const double averageHeading = previousHeading + deltaTheta * 0.5;
                 // Heading is CCW-positive, zero faces +Y, and local side is +right:
@@ -271,7 +271,7 @@ void Robot::turn(double degrees, double maxSpeed, double timeoutMs) {
         const double targetHeading =
             static_cast<double>(globalHeading.load()) - degrees * degreesToRadians;
         const double headingTolerance = 2.0 * degreesToRadians;
-        const double headingKpDegrees = 1.5;
+        const double headingKpDegrees = 1.2;
         const std::uint32_t settleTimeMs = 150;
         std::uint32_t settledSince = 0;
         bool settling = false;

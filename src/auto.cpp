@@ -105,8 +105,17 @@ void stop() {
 void test(){
         isAuton = true;
 
-        robot.move(12.0, 75.0, 4000.0);
-        robot.turn(-90.0, 60.0, 3000.0);
+        robot.move(18.0, 75.0, 3000.0);
+        robot.turn(90.0, 60.0, 2000.0);
+
+        robot.move(18.0, 75.0, 3000.0);
+        robot.turn(90.0, 60.0, 2000.0);
+
+        robot.move(18.0, 75.0, 4000.0);
+        robot.turn(90.0, 60.0, 2000.0);
+
+        robot.move(18.0, 75.0, 4000.0);
+        robot.turn(90.0, 60.0, 2000.0);
 
         isAuton = false;
 }
