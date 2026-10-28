@@ -1,4 +1,47 @@
 #include "odom.hpp"
+#include "hardware.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+
+namespace {
+constexpr double degreesToRadians = ODOM_PI / 180.0;
+constexpr double centidegreesPerRevolution = 36000.0;
+constexpr double odomPositionToleranceIn = 0.25;
+constexpr std::uint32_t odomSettleTimeMs = 150;
+constexpr double driveKp = 10.0;
+constexpr double driveKi = 0.35;
+constexpr double driveKd = 0.5;
+constexpr double headingKp = 1.5;
+std::atomic<bool> odometryResetRequested(false);
+
+double clampValue(double value, double minimum, double maximum) {
+        return std::max(minimum, std::min(value, maximum));
+}
+
+double wheelPositionInches(std::int32_t centidegrees) {
+        return static_cast<double>(centidegrees) * odomWheelCircumferenceIn /
+               centidegreesPerRevolution;
+}
+
+double wrappedHeadingDeltaDegrees(double current, double previous) {
+        double delta = current - previous;
+        if (delta > 180.0)
+                delta -= 360.0;
+        else if (delta < -180.0)
+                delta += 360.0;
+        return delta;
+}
+
+double sinc(double angle) {
+        if (std::abs(angle) < 1e-6)
+                return 1.0 - (angle * angle) / 24.0;
+        return 2.0 * std::sin(angle * 0.5) / angle;
+}
+
+} // namespace
 
 std::atomic<float> globalHeading(0.0f);
 std::atomic<float> globalHeadingAtLastReset(0.0f);
@@ -16,76 +59,87 @@ std::atomic<float> horizontalPosIn(0.0f);
 
 std::atomic<float> cascadeEncoderPos(0.0f);
 
-std::atomic<int> dist(0); // placeholder / diagnostic, see odomUpdate() in main.cpp
+std::atomic<int> dist(0);
 
-// Single combined odom task: reads both tracking wheels + the IMU, then
-// integrates position with an arc-correction so the readings stay
-// accurate while turning (not just driving straight).
 void odomCalcPos(void) {
-        float prevGlobalHeading = globalHeadingAtLastReset.load();
+        double previousVerticalIn = wheelPositionInches(devices.Odom.VerticalWheel->get_position());
+        double previousHorizontalIn = wheelPositionInches(devices.Odom.HorizontalWheel->get_position());
+        double previousImuHeadingDeg = devices.Sensors.IMU->get_heading();
+        double previousHeading = globalHeading.load();
 
-        do {
-                // --- Read sensors ---
-                float verticalTicks = devices.Odom.VerticalWheel->get_position();
-                float horizontalTicks = devices.Odom.HorizontalWheel->get_position();
+        verticalPosIn = static_cast<float>(previousVerticalIn);
+        horizontalPosIn = static_cast<float>(previousHorizontalIn);
+        lastVertical = static_cast<float>(previousVerticalIn);
+        lastHorizontal = static_cast<float>(previousHorizontalIn);
 
-                verticalPosIn = verticalTicks * centideg2rad * (odomWheelDiameterIn * 0.5f);
-                horizontalPosIn = horizontalTicks * centideg2rad * (odomWheelDiameterIn * 0.5f);
+        while (true) {
+                const double currentVerticalIn =
+                    wheelPositionInches(devices.Odom.VerticalWheel->get_position());
+                const double currentHorizontalIn =
+                    wheelPositionInches(devices.Odom.HorizontalWheel->get_position());
+                const double currentImuHeadingDeg = devices.Sensors.IMU->get_heading();
 
-                // pros::Imu::get_rotation() is continuous (doesn't wrap at 360 like
-                // get_heading()) and increases clockwise; negate it so increasing
-                // globalHeading means turning counter-clockwise, matching sin/cos.
-                float imuRotationDeg = devices.Sensors.IMU->get_rotation();
-                float currentHeading = globalHeadingAtLastReset.load() - (imuRotationDeg * deg2rad);
-                globalHeading = currentHeading;
-
-                // --- Compute deltas since last loop ---
-                float currentVertical = verticalPosIn.load();
-                float currentHorizontal = horizontalPosIn.load();
-
-                float deltaVerticalIn = currentVertical - lastVertical;
-                float deltaHorizontalIn = currentHorizontal - lastHorizontal;
-
-                lastVertical = currentVertical;
-                lastHorizontal = currentHorizontal;
-
-                float deltaTheta = currentHeading - prevGlobalHeading;
-
-                // --- Arc-correct the local displacement ---
-                // Each wheel doesn't just measure translation; while the robot
-                // turns, a wheel offset from the turning center also sweeps out
-                // extra arc length. This backs that out so straight-line
-                // distance is recovered even mid-turn.
-                float localForwardIn;
-                float localSideIn;
-
-                if (deltaTheta == 0.0f) {
-                        localForwardIn = deltaVerticalIn;
-                        localSideIn = deltaHorizontalIn;
-                } else {
-                        float chord = 2.0f * sin(deltaTheta * 0.5f);
-                        localForwardIn = chord * ((deltaVerticalIn / deltaTheta) + verticalOdomOffsetInches);
-                        localSideIn = chord * ((deltaHorizontalIn / deltaTheta) + horizontalOdomOffsetInches);
+                if (odometryResetRequested.exchange(false)) {
+                        previousVerticalIn = currentVerticalIn;
+                        previousHorizontalIn = currentHorizontalIn;
+                        previousImuHeadingDeg = currentImuHeadingDeg;
+                        previousHeading = globalHeadingAtLastReset.load();
+                        verticalPosIn = static_cast<float>(currentVerticalIn);
+                        horizontalPosIn = static_cast<float>(currentHorizontalIn);
+                        lastVertical = static_cast<float>(currentVerticalIn);
+                        lastHorizontal = static_cast<float>(currentHorizontalIn);
+                        globalHeading = static_cast<float>(previousHeading);
+                        pros::delay(10);
+                        continue;
                 }
 
-                // --- Rotate the local displacement into the global frame ---
-                // Convention: heading 0 faces +Y, and increasing (CCW) heading
-                // rotates "forward" toward -X. If X/Y end up swapped or mirrored
-                // on the field during testing, flip the signs below to match.
-                float avgHeading = prevGlobalHeading + (deltaTheta * 0.5f);
+                verticalPosIn = static_cast<float>(currentVerticalIn);
+                horizontalPosIn = static_cast<float>(currentHorizontalIn);
 
-                float globalDeltaX = (localForwardIn * sin(avgHeading)) + (localSideIn * cos(avgHeading));
-                float globalDeltaY = (localForwardIn * cos(avgHeading)) - (localSideIn * sin(avgHeading));
+                const double deltaVerticalIn = currentVerticalIn - previousVerticalIn;
+                const double deltaHorizontalIn = currentHorizontalIn - previousHorizontalIn;
+                const double deltaTheta =
+                    -wrappedHeadingDeltaDegrees(currentImuHeadingDeg, previousImuHeadingDeg) *
+                    degreesToRadians;
+                const double currentHeading = previousHeading + deltaTheta;
+
+                // Remove the distance each offset wheel sweeps while the robot turns.
+                const double arcScale = sinc(deltaTheta);
+                const double localForwardIn =
+                    arcScale * (deltaVerticalIn + verticalOdomOffsetInches * deltaTheta);
+                const double localSideIn =
+                    arcScale * (deltaHorizontalIn + horizontalOdomOffsetInches * deltaTheta);
+
+                const double averageHeading = previousHeading + deltaTheta * 0.5;
+                // Heading is CCW-positive, zero faces +Y, and local side is +right:
+                // [dX; dY] = [-sin(h) cos(h); cos(h) sin(h)] * [forward; side].
+                const double globalDeltaX =
+                    -localForwardIn * std::sin(averageHeading) +
+                    localSideIn * std::cos(averageHeading);
+                const double globalDeltaY =
+                    localForwardIn * std::cos(averageHeading) +
+                    localSideIn * std::sin(averageHeading);
 
                 lastGlobalXIn = globalXIn.load();
                 lastGlobalYIn = globalYIn.load();
-                prevGlobalHeading = currentHeading;
+                globalXIn = static_cast<float>(globalXIn.load() + globalDeltaX);
+                globalYIn = static_cast<float>(globalYIn.load() + globalDeltaY);
+                globalHeading = static_cast<float>(currentHeading);
 
-                globalXIn = globalXIn.load() + globalDeltaX;
-                globalYIn = globalYIn.load() + globalDeltaY;
+                previousVerticalIn = currentVerticalIn;
+                previousHorizontalIn = currentHorizontalIn;
+                previousImuHeadingDeg = currentImuHeadingDeg;
+                previousHeading = currentHeading;
+                lastVertical = static_cast<float>(currentVerticalIn);
+                lastHorizontal = static_cast<float>(currentHorizontalIn);
 
-                pros::delay(5); // ~200Hz
-        } while (true);
+                pros::delay(10);
+        }
+}
+
+void startOdometryTask(void) {
+        static pros::Task odometryTask([] { odomCalcPos(); }, "Odometry");
+        (void)odometryTask;
 }
 
 void odomReset(void) {
@@ -96,34 +150,116 @@ void odomReset(void) {
 
         lastVertical = 0.0f;
         lastHorizontal = 0.0f;
-
         verticalPosIn = 0.0f;
         horizontalPosIn = 0.0f;
         cascadeEncoderPos = 0.0f;
 
-        globalHeading = globalHeadingAtLastReset.load();
-
+        const float heading = globalHeading.load();
+        globalHeadingAtLastReset = heading;
+        globalHeading = heading;
         globalXIn = 0.0f;
         globalYIn = 0.0f;
         lastGlobalXIn = 0.0f;
         lastGlobalYIn = 0.0f;
+        odometryResetRequested = true;
+}
+
+void driveInches(double targetInches, double maxSpeed, double timeoutMs) {
+        const auto stopDrivetrain = [] {
+                devices.MGroups.DT_L.set(0);
+                devices.MGroups.DT_R.set(0);
+        };
+
+        if (!std::isfinite(targetInches) || !std::isfinite(maxSpeed) ||
+            !std::isfinite(timeoutMs) || maxSpeed <= 0.0 || timeoutMs <= 0.0) {
+                stopDrivetrain();
+                return;
+        }
+
+        startOdometryTask();
+
+        const double speedLimit = clampValue(maxSpeed, 0.0, 127.0);
+        const std::uint32_t timeout = static_cast<std::uint32_t>(
+            std::min(timeoutMs, static_cast<double>(std::numeric_limits<std::uint32_t>::max())));
+        const std::uint32_t startTime = pros::millis();
+        const double startX = globalXIn.load();
+        const double startY = globalYIn.load();
+        const double startHeading = globalHeading.load();
+        const double startImuRotationDeg = devices.Sensors.IMU->get_rotation();
+        const double headingCorrectionLimit = speedLimit * 0.4;
+        const double driveDirection = targetInches < 0.0 ? -1.0 : 1.0;
+
+        double integral = 0.0;
+        double previousError = targetInches;
+        std::uint32_t previousTime = startTime;
+        std::uint32_t settledSince = 0;
+        bool settling = false;
+
+        while (pros::millis() - startTime < timeout) {
+                const double deltaX = globalXIn.load() - startX;
+                const double deltaY = globalYIn.load() - startY;
+                const double travelledInches =
+                    -deltaX * std::sin(startHeading) + deltaY * std::cos(startHeading);
+                const double error = targetInches - travelledInches;
+                const std::uint32_t now = pros::millis();
+                const double dt = std::max(0.01, (now - previousTime) / 1000.0);
+
+                double basePower = 0.0;
+                if (std::abs(error) <= odomPositionToleranceIn) {
+                        if (!settling) {
+                                settledSince = now;
+                                settling = true;
+                        } else if (now - settledSince >= odomSettleTimeMs) {
+                                break;
+                        }
+                        integral = 0.0;
+                } else {
+                        settling = false;
+                        integral = clampValue(integral + error * dt, -20.0, 20.0);
+                        const double derivative = (error - previousError) / dt;
+                        basePower = clampValue(
+                            driveKp * error + driveKi * integral + driveKd * derivative,
+                            -speedLimit, speedLimit);
+                }
+
+                const double currentImuRotationDeg = devices.Sensors.IMU->get_rotation();
+                const double headingErrorDeg = startImuRotationDeg - currentImuRotationDeg;
+                const double headingCorrection = clampValue(
+                    headingKp * headingErrorDeg,
+                    -headingCorrectionLimit, headingCorrectionLimit);
+                const double correctionDirection =
+                    basePower == 0.0 ? driveDirection : (basePower < 0.0 ? -1.0 : 1.0);
+                const double leftPower = clampValue(
+                    basePower + correctionDirection * headingCorrection, -speedLimit, speedLimit);
+                const double rightPower = clampValue(
+                    basePower - correctionDirection * headingCorrection, -speedLimit, speedLimit);
+
+                devices.MGroups.DT_L.set(static_cast<int>(std::lround(leftPower)));
+                devices.MGroups.DT_R.set(static_cast<int>(std::lround(rightPower)));
+
+                previousError = error;
+                previousTime = now;
+                pros::delay(10);
+        }
+
+        stopDrivetrain();
 }
 
 void brainScreenManager(void) {
-        do {
+        while (true) {
                 pros::screen::erase();
 
                 pros::screen::print(pros::E_TEXT_MEDIUM, 0, "VERT (in): %.4f", verticalPosIn.load());
                 pros::screen::print(pros::E_TEXT_MEDIUM, 1, "HORZ (in): %.4f", horizontalPosIn.load());
-
                 pros::screen::print(pros::E_TEXT_MEDIUM, 3, "X (In): %.4f", globalXIn.load());
                 pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Y (In): %.4f", globalYIn.load());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 5, "HDG (deg): %.4f", globalHeading.load() * (180.0f / PI));
+                pros::screen::print(pros::E_TEXT_MEDIUM, 5, "HDG (deg): %.4f",
+                                    globalHeading.load() / degreesToRadians);
 
-                float cascadeRot = devices.Sensors.CascadeEncoder->get_position();
-                cascadeEncoderPos = cascadeRot;
-                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "CASCADE (deg): %.4f", cascadeRot);
+                const float cascadeRotation = devices.Sensors.CascadeEncoder->get_position();
+                cascadeEncoderPos = cascadeRotation;
+                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "CASCADE (deg): %.4f", cascadeRotation);
 
                 pros::delay(77);
-        } while (true);
+        }
 }

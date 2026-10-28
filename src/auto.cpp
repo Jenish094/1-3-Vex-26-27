@@ -105,9 +105,48 @@ void stop() {
 void test(){
         isAuton = true;
 
-        devices.Motors.MOTOR_INTAKE_11W.set(127);
-        pros::delay(1000);
-        
+        startOdometryTask();
+        driveInches(12.0, 75.0, 4000.0);
+
+        const double targetHeading =
+            static_cast<double>(globalHeading.load()) + (ODOM_PI * 0.5);
+        const std::uint32_t turnStart = pros::millis();
+        const std::uint32_t turnTimeoutMs = 3000;
+        const std::uint32_t settleTimeMs = 150;
+        const double headingTolerance = 2.0 * ODOM_PI / 180.0;
+        std::uint32_t settledSince = 0;
+        bool settling = false;
+
+        while (pros::millis() - turnStart < turnTimeoutMs) {
+                const double headingError = std::remainder(
+                    targetHeading - static_cast<double>(globalHeading.load()),
+                    2.0 * ODOM_PI);
+
+                if (std::abs(headingError) <= headingTolerance) {
+                        if (!settling) {
+                                settledSince = pros::millis();
+                                settling = true;
+                        } else if (pros::millis() - settledSince >= settleTimeMs) {
+                                break;
+                        }
+                        devices.MGroups.DT_L.set(0);
+                        devices.MGroups.DT_R.set(0);
+                } else {
+                        settling = false;
+                        double turnPower = std::clamp(headingError * 70.0, -60.0, 60.0);
+                        if (std::abs(turnPower) < 12.0)
+                                turnPower = std::copysign(12.0, turnPower);
+
+                        // Positive odometry heading is a left (counterclockwise) turn.
+                        devices.MGroups.DT_L.set(static_cast<int>(std::lround(-turnPower)));
+                        devices.MGroups.DT_R.set(static_cast<int>(std::lround(turnPower)));
+                }
+
+                pros::delay(10);
+        }
+
+        devices.MGroups.DT_L.set(0);
+        devices.MGroups.DT_R.set(0);
         isAuton = false;
 }
 

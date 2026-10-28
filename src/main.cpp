@@ -30,9 +30,6 @@ void initialize(void) {
         devices.init();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
-        // pros::Task odomCalcPosHandler(odomCalcPos, "odomCalcPos");
-        // pros::Task brainScreenManagerHandler(brainScreenManager, "brainScreenManager");
-        // pros::Task dist_updateHandler(odomUpdate, "odomUpdate");
 
         autonSelector = new rd::Selector("autonselect", {
         //{"Test Auton", auton::test},
@@ -44,6 +41,7 @@ void initialize(void) {
         {"Left Side Toggle Only", auton::left_side_toggle_only},
         {"Right Side Toggle Only", auton::right_side_toggle_only},
         {"Skills Auton", auton::skills_auton_routine},
+        {"Test Auto", auton::test},
         {"No Drive", auton::nodrive},
     });
         autonSelector->focus();
@@ -52,11 +50,6 @@ void initialize(void) {
 void disabled(void) {}
 
 void competition_initialize(void) {}
-
-void raw_drive(int pow) {
-        devices.MGroups.DT_L.set(pow);
-        devices.MGroups.DT_R.set(pow);
-}
 
 void autonomous(void) {
         auto selectedAuton = autonSelector->get_auton();
@@ -78,12 +71,4 @@ void opcontrol(void) {
                 updateCascadeAutomation();
                 pros::delay(20);
         }
-        driverScreenManager();
-}
-
-void odomUpdate(void) { // diagnostic: distance travelled by the vertical tracking wheel, in cm
-        do {
-                dist = (int)(verticalPosIn.load() * IN_TO_MM / 10.0f);
-                pros::delay(50);
-        } while (true);
 }

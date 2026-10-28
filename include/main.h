@@ -28,12 +28,9 @@ extern "C" {
 #include <string>
 #endif
 
-// Our stuff
 #include "helpers.hpp"
 #include "odom.hpp"
 #include "autonSelector.hpp"
-#include "driver.hpp"
-#include "auton.hpp"
 #include "controls.h"
 
 class Odom;
