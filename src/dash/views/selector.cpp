@@ -2,6 +2,7 @@
 #include "api.h"
 #include "dash/apix.h"
 #include "dash/impl/styles.h"
+#include "recorder.hpp"
 #include <cstring>
 
 extern bool allianceIsRed;
@@ -330,6 +331,8 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	lv_obj_t *alliance_btn_label = lv_label_create(alliance_btn);
 	lv_label_set_text(alliance_btn_label, allianceIsRed ? "RED" : "BLUE");
 	lv_obj_center(alliance_btn_label);
+
+	recorder::create_button(view->obj);
 
 	if (pros::usd::is_installed()) {
 		lv_obj_t *save_icon = lv_label_create(list_btns);

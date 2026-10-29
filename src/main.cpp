@@ -28,6 +28,7 @@ void initialize(void) {
         red = new rd::Image(&Logo_41103C_Red, "RedLogo");
         chinese = new rd::Image(&Logo_41103C_Chinese, "ChineseLogo");
         devices.init();
+        initializeRecorderTask();
         odomReset();  // Reset tracking wheels to 0,0
         controlsInit();
 
@@ -47,11 +48,14 @@ void initialize(void) {
         autonSelector->focus();
 }
 
-void disabled(void) {}
+void disabled(void) {
+        recorder::stop();
+}
 
 void competition_initialize(void) {}
 
 void autonomous(void) {
+        recorder::stop();
         auto selectedAuton = autonSelector->get_auton();
         if (!selectedAuton) {
                 return;

@@ -15,3 +15,8 @@ temp.log
 temp.errors
 *.ini
 .d/
+
+# Windows converter build output
+cppconvertapp/build/
+cppconvertapp/*.exe
+cppconvertapp/*.csv

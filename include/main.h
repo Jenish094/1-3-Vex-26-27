@@ -32,6 +32,7 @@ extern "C" {
 #include "odom.hpp"
 #include "autonSelector.hpp"
 #include "controls.h"
+#include "recorder.hpp"
 
 class Odom;
 
@@ -50,5 +51,7 @@ const float WHEEL_CIRCUMFERENCE = PI * WHEEL_DIAMETER_MM;
 // AutonSelector Selector = AutonSelector();
 extern bool isAuton;
 extern bool allianceIsRed;
+
+void initializeRecorderTask(void);
 
 #endif  // _PROS_MAIN_H_
