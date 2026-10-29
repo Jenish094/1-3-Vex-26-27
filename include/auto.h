@@ -1,5 +1,6 @@
 #pragma once
 #include "movetopoint.hpp"
+#include "odom.hpp"
 
 namespace auton {
 

@@ -16,6 +16,7 @@ constexpr double horizontalOdomOffsetInches = 0.0;
 void startOdometryTask(void);
 void odomCalcPos(void);
 void odomReset(void);
+void odomSetPose(double xIn, double yIn, double headingRadians);
 void driveInches(double targetInches, double maxSpeed = 100.0, double timeoutMs = 3000.0);
 void brainScreenManager(void);
 
@@ -23,6 +24,7 @@ class Robot {
 public:
         void move(double inches, double maxSpeed = 100.0, double timeoutMs = 3000.0);
         void turn(double degrees, double maxSpeed = 60.0, double timeoutMs = 3000.0);
+        bool follow(const char *pathText, double timeoutMs = 15000.0);
 };
 
 extern Robot robot;

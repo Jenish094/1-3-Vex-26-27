@@ -165,6 +165,24 @@ void odomReset(void) {
         odometryResetRequested = true;
 }
 
+void odomSetPose(double xIn, double yIn, double headingRadians) {
+        devices.Odom.VerticalWheel->reset_position();
+        devices.Odom.HorizontalWheel->reset_position();
+        devices.Sensors.IMU->tare_rotation();
+
+        lastVertical = 0.0f;
+        lastHorizontal = 0.0f;
+        verticalPosIn = 0.0f;
+        horizontalPosIn = 0.0f;
+        globalHeadingAtLastReset = static_cast<float>(headingRadians);
+        globalHeading = static_cast<float>(headingRadians);
+        globalXIn = static_cast<float>(xIn);
+        globalYIn = static_cast<float>(yIn);
+        lastGlobalXIn = static_cast<float>(xIn);
+        lastGlobalYIn = static_cast<float>(yIn);
+        odometryResetRequested = true;
+}
+
 void driveInches(double targetInches, double maxSpeed, double timeoutMs) {
         const auto stopDrivetrain = [] {
                 devices.MGroups.DT_L.set(0);
@@ -247,7 +265,7 @@ void driveInches(double targetInches, double maxSpeed, double timeoutMs) {
 }
 
 void Robot::move(double inches, double maxSpeed, double timeoutMs) {
-        driveInches(inches, maxSpeed, timeoutMs);
+        driveInches(inches * 3.0, maxSpeed, timeoutMs);
 }
 
 void Robot::turn(double degrees, double maxSpeed, double timeoutMs) {
