@@ -29,3 +29,7 @@ is ready to select from the brain.
 The recorder samples every 20 ms. The CSV contains each motor's output command,
 controller input, button state, and odometry telemetry. Replay is command-based;
 it does not require the controller or SD card to be present during autonomous.
+
+## Web version
+
+The web version is on https://cppconvert.jenish.tech
