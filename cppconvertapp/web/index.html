@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zankov's Drained wallet</title>
+  <style>
+    body { max-width: 760px; margin: 2rem auto; padding: 0 1rem; font: 16px system-ui, sans-serif; }
+    label, button { display: block; margin-top: 1rem; }
+    button { padding: .4rem .7rem; }
+    #status { min-height: 1.4em; }
+    textarea { width: 100%; min-height: 22rem; font: 13px monospace; }
+  </style>
+</head>
+<body>
+  <h1>recording converter</h1>
+  <p>Select the <code>recording.csv</code> file from the robot.</p>
+
+  <label for="recording">Recording CSV</label>
+  <input id="recording" type="file" accept=".csv,text/csv">
+  <button id="convert" type="button" disabled>Convert to C++</button>
+  <p id="status" role="status"></p>
+  <textarea id="output" aria-label="Generated C++" readonly placeholder="Generated C++ will appear here"></textarea>
+  <button id="download" type="button" disabled>Download recorded_auton.cpp</button>
+
+  <script src="converter.js"></script>
+</body>
+</html>
