@@ -8,6 +8,9 @@ namespace auton {
 void one_pin_left();
 void one_pin_right();
 
+void middle_pin_left();
+void middle_pin_right();
+
 void thirty_point_left();
 void thirty_point_right();
 
