@@ -33,17 +33,14 @@ void initialize(void) {
         controlsInit();
 
         autonSelector = new rd::Selector("autonselect", {
-        //{"Test Auton", auton::test},
-        {"Toggle Auton", auton::toggle_auton},
-        {"Recorded Auton", auton::recorded_routine},
-        {"Left Side Auton", auton::left_side_auton},
-        {"Right Side Auton", auton::right_side_auton},
-        {"Left Side Middle Pin Auton", auton::left_side_auton_middle_pin},
-        {"Right Side Middle Pin Auton", auton::right_side_auton_middle_pin},
-        {"Left Side Toggle Only", auton::left_side_toggle_only},
-        {"Right Side Toggle Only", auton::right_side_toggle_only},
-        {"Skills Auton", auton::skills_auton_routine},
-        {"Test Auto", auton::test},
+        {"1 Pin Left", auton::one_pin_left},
+        {"1 Pin Right", auton::one_pin_right},
+        {"30 Point Left", auton::thirty_point_left},
+        {"30 Point Right", auton::thirty_point_right},
+        {"40 Point Left", auton::forty_point_left},
+        {"40 Point Right", auton::forty_point_right},
+        {"Skills Routine", auton::skills_routine},
+        {"Recorded Routine", auton::recorded_routine},
         {"No Drive", auton::nodrive},
     });
         autonSelector->focus();
