@@ -35,6 +35,7 @@ void initialize(void) {
         autonSelector = new rd::Selector("autonselect", {
         //{"Test Auton", auton::test},
         {"Toggle Auton", auton::toggle_auton},
+        {"Recorded Auton", auton::recorded_routine},
         {"Left Side Auton", auton::left_side_auton},
         {"Right Side Auton", auton::right_side_auton},
         {"Left Side Middle Pin Auton", auton::left_side_auton_middle_pin},

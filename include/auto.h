@@ -16,6 +16,8 @@ void left_side_auton_middle_pin();
 void right_side_auton_middle_pin();
 void test();
 
+void recorded_routine();
+
 // dont use
 void LeftAuto2();
 
