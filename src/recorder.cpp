@@ -11,7 +11,7 @@
 namespace {
 
 constexpr const char *recordingPath = "/usd/recording.csv";
-constexpr int samplePeriodMs = 20;
+constexpr int samplePeriodMs = 5;
 
 std::atomic<bool> recordingRequested{false};
 std::atomic<bool> recordingActive{false};
@@ -105,6 +105,10 @@ bool is_recording() {
     return recordingActive.load();
 }
 
+bool is_requested() {
+    return recordingRequested.load();
+}
+
 bool start() {
     if (!pros::usd::is_installed()) return false;
     recordingRequested.store(true);
@@ -136,6 +140,13 @@ void create_button(lv_obj_t *parent) {
     lv_obj_t *button = lv_btn_create(panel);
     lv_obj_set_size(button, 178, 34);
     lv_obj_align(button, LV_ALIGN_BOTTOM_MID, 0, -4);
+
+    lv_obj_set_style_bg_color(button, lv_color_make(55, 115, 255), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(button, lv_color_make(255, 50, 50), LV_PART_MAIN | LV_STATE_CHECKED);
+    lv_obj_set_style_text_color(button, lv_color_make(255, 255, 255), LV_PART_MAIN);
+    lv_obj_set_style_border_opa(button, LV_OPA_0, 0);
+    lv_obj_set_style_radius(button, 8, 0);
+
     lv_obj_t *label = lv_label_create(button);
     lv_label_set_text(label, "START RECORDING");
     lv_obj_center(label);
@@ -143,13 +154,30 @@ void create_button(lv_obj_t *parent) {
     lv_obj_add_event_cb(
         button,
         [](lv_event_t *event) {
-            recorder::toggle();
+            lv_obj_t *target = lv_event_get_target(event);
             lv_obj_t *recordingLabel =
-                static_cast<lv_obj_t *>(lv_obj_get_user_data(lv_event_get_target(event)));
+                static_cast<lv_obj_t *>(lv_obj_get_user_data(target));
+
+            const bool wasRecording = recorder::is_requested();
+            if (wasRecording) {
+                recorder::stop();
+            } else {
+                if (!recorder::start()) {
+                    return;
+                }
+            }
+
+            const bool nowRecording = recorder::is_requested();
             lv_label_set_text(
                 recordingLabel,
-                recorder::is_recording() ? "STOP RECORDING" : "START RECORDING"
+                nowRecording ? "STOP RECORDING" : "START RECORDING"
             );
+
+            if (nowRecording) {
+                lv_obj_add_state(target, LV_STATE_CHECKED);
+            } else {
+                lv_obj_clear_state(target, LV_STATE_CHECKED);
+            }
         },
         LV_EVENT_CLICKED,
         nullptr

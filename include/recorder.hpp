@@ -5,6 +5,7 @@
 namespace recorder {
 
 bool is_recording();
+bool is_requested();
 bool start();
 void stop();
 void toggle();
