@@ -1,6 +1,6 @@
 #include "recorder.hpp"
 
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 #include "odom.hpp"
 #include "pros/rtos.hpp"
 

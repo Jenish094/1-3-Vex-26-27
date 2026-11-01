@@ -74,7 +74,7 @@ bool convert(const std::string &inputPath, const std::string &outputPath) {
     }
 
     output << "#include \"main.h\"\n"
-           << "#include \"hardware.hpp\"\n\n"
+           << "#include \"robot_hardware.hpp\"\n\n"
            << "namespace auton {\n\n"
            << "void recorded_routine() {\n"
            << "    isAuton = true;\n";

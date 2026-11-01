@@ -1,6 +1,6 @@
 #pragma once
 #include "api.h"
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 
 void controlsInit();
 bool controlsUpdate();

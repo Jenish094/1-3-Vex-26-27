@@ -1,5 +1,5 @@
 #include "odom.hpp"
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -326,21 +326,21 @@ void Robot::turn(double degrees, double maxSpeed, double timeoutMs) {
         stopDrivetrain();
 }
 
-void brainScreenManager(void) {
+void brainscreen(void) {
         while (true) {
                 pros::screen::erase();
 
-                pros::screen::print(pros::E_TEXT_MEDIUM, 0, "VERT (in): %.4f", verticalPosIn.load());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 1, "HORZ (in): %.4f", horizontalPosIn.load());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 3, "X (In): %.4f", globalXIn.load());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Y (In): %.4f", globalYIn.load());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 5, "HDG (deg): %.4f",
+                pros::screen::print(pros::E_TEXT_LARGE, 0, "VERT (in): %.4f", verticalPosIn.load());
+                pros::screen::print(pros::E_TEXT_LARGE, 1, "HORZ (in): %.4f", horizontalPosIn.load());
+                pros::screen::print(pros::E_TEXT_LARGE, 3, "X (In): %.4f", globalXIn.load());
+                pros::screen::print(pros::E_TEXT_LARGE, 4, "Y (In): %.4f", globalYIn.load());
+                pros::screen::print(pros::E_TEXT_LARGE, 5, "HDG (deg): %.4f",
                                     globalHeading.load() / degreesToRadians);
 
                 const float cascadeRotation = devices.Sensors.CascadeEncoder->get_position();
                 cascadeEncoderPos = cascadeRotation;
-                pros::screen::print(pros::E_TEXT_MEDIUM, 6, "CASCADE (deg): %.4f", cascadeRotation);
+                pros::screen::print(pros::E_TEXT_LARGE, 6, "CASCADE (deg): %.4f", cascadeRotation);
 
-                pros::delay(77);
+                pros::delay(70);
         }
 }
