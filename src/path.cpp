@@ -1,5 +1,5 @@
 #include "path.hpp"
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 #include "main.h"
 
 #include <algorithm>

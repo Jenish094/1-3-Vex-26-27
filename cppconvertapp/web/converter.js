@@ -67,7 +67,7 @@ function convertRecording(text) {
   const samples = parseRecording(text);
   const lines = [
     '#include "main.h"',
-    '#include "hardware.hpp"',
+    '#include "robot_hardware.hpp"',
     "",
     "namespace auton {",
     "",

@@ -1,7 +1,11 @@
 #include "movetopoint.hpp"
 #include "odom.hpp"
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 #include <cmath>
+
+namespace {
+constexpr float movementPi = 3.142f;
+}
 
 // Configuration flag - set to true to reverse the drivetrain during autonomous
 bool AUTON_REVERSED = false;
@@ -15,8 +19,8 @@ static float clamp(float value, float min, float max) {
 
 // Normalize angle to [-PI, PI]
 static float normalizeAngle(float angle) {
-    while (angle > PI) angle -= 2.0f * PI;
-    while (angle < -PI) angle += 2.0f * PI;
+    while (angle > movementPi) angle -= 2.0f * movementPi;
+    while (angle < -movementPi) angle += 2.0f * movementPi;
     return angle;
 }
 
@@ -55,11 +59,11 @@ void moveToPoint(float vert, float horz, int maxPower, float heading) {
             pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Target: V=%.2f H=%.2f", vert, horz);
             pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Current: V=%.2f H=%.2f", currentVert, currentHorz);
             pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: V=%.3f H=%.3f", vertError, horzError);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Hdg: %.2f rad (%.1f deg)", currentHeading, currentHeading * 180.0f / PI);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Hdg: %.2f rad (%.1f deg)", currentHeading, currentHeading * 180.0f / movementPi);
             
             if (heading != 0.0f) {
                 float headingErr = normalizeAngle(heading - currentHeading);
-                pros::screen::print(pros::E_TEXT_MEDIUM, 4, "HdgErr: %.2f deg", headingErr * 180.0f / PI);
+                pros::screen::print(pros::E_TEXT_MEDIUM, 4, "HdgErr: %.2f deg", headingErr * 180.0f / movementPi);
             }
             
             pros::screen::print(pros::E_TEXT_MEDIUM, 5, "AtTarget: %d/%d", framesAtTarget, framesNeeded);

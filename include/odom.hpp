@@ -4,12 +4,12 @@
 #include "api.h"
 #include <atomic>
 
+//close enough to pi
 constexpr double ODOM_PI = 3.14159265358979323846;
 constexpr double odomWheelDiameterIn = 2.0;
 constexpr double odomWheelCircumferenceIn = odomWheelDiameterIn * ODOM_PI;
 
-// Offsets are from the rotation center. Positive vertical offset means left;
-// positive horizontal offset means forward. Measure these on the assembled bot.
+// Offsets are from the rotation center. Positive vertical offset means left positive horizontal offset means forward.
 constexpr double verticalOdomOffsetInches = 1.9375;
 constexpr double horizontalOdomOffsetInches = 0.0;
 
@@ -18,7 +18,7 @@ void odomCalcPos(void);
 void odomReset(void);
 void odomSetPose(double xIn, double yIn, double headingRadians);
 void driveInches(double targetInches, double maxSpeed = 100.0, double timeoutMs = 3000.0);
-void brainScreenManager(void);
+void brainscreen(void);
 
 class Robot {
 public:

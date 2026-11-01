@@ -1,6 +1,6 @@
 #include "functions.h"
 #include "controls.h"
-#include "hardware.hpp"
+#include "robot_hardware.hpp"
 #include <cmath>
 #include <cstdio>
 #include <string>
