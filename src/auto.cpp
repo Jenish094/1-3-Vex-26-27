@@ -8418,7 +8418,7 @@ void forty_point_left() {
 void forty_point_right() {
         isAuton = true;
 
-        evices.Motors.MOTOR_INTAKE_11W.set(5);
+        devices.Motors.MOTOR_INTAKE_11W.set(5);
         devices.Motors.MOTOR_CASCADE_11WR.set(4);
         devices.Motors.MOTOR_CASCADE_11WL.set(2);
         devices.Motors.MOTOR_SCORE_OPEN.set(4);
