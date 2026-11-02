@@ -11,7 +11,7 @@
 namespace {
 
 constexpr const char *recordingPath = "/usd/recording.csv";
-constexpr int samplePeriodMs = 5;
+constexpr int samplePeriodMs = 1;
 
 std::atomic<bool> recordingRequested{false};
 std::atomic<bool> recordingActive{false};
