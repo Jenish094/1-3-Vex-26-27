@@ -42,10 +42,10 @@ void runDriverControls() {
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 
     if (a && !previousA) {
-        // Press A to start seeking; press it again to cancel manually.
+        // Press A once to start the sensor loop. It stays active until A is pressed again.
         seekingColor = !seekingColor;
     }
-    
+
     if (b && !previousB) {
         if (devices.Pneumatics.PNEUMATIC) {
             if (devices.Pneumatics.PNEUMATIC->is_extended()) {
@@ -71,10 +71,10 @@ void runDriverControls() {
         const bool targetSeen = isRed || isYellow || isBlue;
 
         if (targetSeen) {
-            seekingColor = false;
-            scorerollPower = 0; // brake mode is HOLD
+            // Keep scanning in a continuous loop while active. Do not auto-cancel on a hit.
+            scorerollPower = 0;
         } else {
-            // Keep rolling until any of the toggle colors is detected.
+            // Keep rolling until any valid toggle color is detected.
             scorerollPower = -127;
         }
     } else if (seekingColor) {
