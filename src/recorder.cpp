@@ -17,26 +17,6 @@ std::atomic<bool> recordingRequested{false};
 std::atomic<bool> recordingActive{false};
 pros::Task *recordingTask = nullptr;
 
-int motorCommand(const MWrap &motor) {
-    if (!motor.motor) return 0;
-    return static_cast<int>(motor.motor->get_voltage() * 127 / 12000);
-}
-
-int controllerButtons(pros::Controller &controller) {
-    int buttons = 0;
-    const pros::controller_digital_e_t buttonList[] = {
-        pros::E_CONTROLLER_DIGITAL_A, pros::E_CONTROLLER_DIGITAL_B,
-        pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2,
-        pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2,
-        pros::E_CONTROLLER_DIGITAL_UP, pros::E_CONTROLLER_DIGITAL_DOWN,
-        pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT
-    };
-    for (unsigned int i = 0; i < sizeof(buttonList) / sizeof(buttonList[0]); ++i) {
-        if (controller.get_digital(buttonList[i])) buttons |= 1 << i;
-    }
-    return buttons;
-}
-
 void recordLoop() {
     FILE *file = nullptr;
     std::uint32_t startTime = 0;
@@ -48,8 +28,7 @@ void recordLoop() {
                 if (file) {
                     std::fprintf(
                         file,
-                        "timestamp_ms,l1,l2,r1,r2,intake,cascade_right,cascade_left,score_open,"
-                        "score_roll,throttle,steer,buttons,x_in,y_in,heading_rad\n"
+                        "timestamp_ms,x_in,y_in,heading_rad\n"
                     );
                     std::fflush(file);
                     startTime = pros::millis();
@@ -68,27 +47,14 @@ void recordLoop() {
             recordingActive.store(false);
         }
 
-        if (file && devices.PRIMARY_CONTROLLER) {
-            pros::Controller &controller = *devices.PRIMARY_CONTROLLER;
+        if (file) {
             std::fprintf(
                 file,
-                "%u,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.4f,%.4f,%.6f\n",
+                "%u,%.4f,%.4f,%.6f\n",
                 pros::millis() - startTime,
-                motorCommand(devices.Motors.MOTOR_L1),
-                motorCommand(devices.Motors.MOTOR_L2),
-                motorCommand(devices.Motors.MOTOR_R1),
-                motorCommand(devices.Motors.MOTOR_R2),
-                motorCommand(devices.Motors.MOTOR_INTAKE_11W),
-                motorCommand(devices.Motors.MOTOR_CASCADE_11WR),
-                motorCommand(devices.Motors.MOTOR_CASCADE_11WL),
-                motorCommand(devices.Motors.MOTOR_SCORE_OPEN),
-                motorCommand(devices.Motors.MOTOR_SCORE_ROLL),
-                controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),
-                controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),
-                controllerButtons(controller),
-                globalXIn.load(),
-                globalYIn.load(),
-                globalHeading.load()
+                static_cast<double>(globalXIn.load()),
+                static_cast<double>(globalYIn.load()),
+                static_cast<double>(globalHeading.load())
             );
             std::fflush(file);
         }

@@ -1,6 +1,6 @@
-#include <algorithm>
-#include <array>
+#include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -8,14 +8,13 @@
 
 namespace {
 
-constexpr std::array<const char *, 9> motorNames = {
-    "MOTOR_L1", "MOTOR_L2", "MOTOR_R1", "MOTOR_R2", "MOTOR_INTAKE_11W",
-    "MOTOR_CASCADE_11WR", "MOTOR_CASCADE_11WL", "MOTOR_SCORE_OPEN", "MOTOR_SCORE_ROLL"
-};
+constexpr double minTravelDistanceInches = 3.0;
 
 struct Sample {
     long long timestamp = 0;
-    std::array<int, 9> motors{};
+    double xIn = 0.0;
+    double yIn = 0.0;
+    double headingRad = 0.0;
 };
 
 std::vector<std::string> split(const std::string &line) {
@@ -28,25 +27,21 @@ std::vector<std::string> split(const std::string &line) {
 
 bool parseSample(const std::string &line, Sample &sample) {
     const std::vector<std::string> fields = split(line);
-    if (fields.size() < 10) return false;
+    if (fields.size() < 4) return false;
     try {
         sample.timestamp = std::stoll(fields[0]);
-        for (size_t i = 0; i < sample.motors.size(); ++i) {
-            sample.motors[i] = std::clamp(std::stoi(fields[i + 1]), -127, 127);
-        }
+        sample.xIn = std::stod(fields[1]);
+        sample.yIn = std::stod(fields[2]);
+        sample.headingRad = std::stod(fields[3]);
     } catch (const std::exception &) {
         return false;
     }
-    return true;
+    return std::isfinite(sample.xIn) && std::isfinite(sample.yIn) &&
+           std::isfinite(sample.headingRad);
 }
 
-void writeMotorCommands(std::ostream &output, const Sample &sample, const std::array<int, 9> &last) {
-    for (size_t i = 0; i < sample.motors.size(); ++i) {
-        if (sample.motors[i] != last[i]) {
-            output << "        devices.Motors." << motorNames[i] << ".set(" << sample.motors[i]
-                   << ");\n";
-        }
-    }
+double distanceBetween(const Sample &a, const Sample &b) {
+    return std::hypot(b.xIn - a.xIn, b.yIn - a.yIn);
 }
 
 bool convert(const std::string &inputPath, const std::string &outputPath) {
@@ -69,35 +64,45 @@ bool convert(const std::string &inputPath, const std::string &outputPath) {
         if (parseSample(line, sample)) samples.push_back(sample);
     }
     if (samples.empty()) {
-        std::cerr << "The input contains no valid recorder samples.\n";
+        std::cerr << "The input contains no valid odometry samples.\n";
         return false;
     }
 
+    std::vector<Sample> filtered;
+    filtered.push_back(samples.front());
+    for (std::size_t i = 1; i < samples.size(); ++i) {
+        const Sample &candidate = samples[i];
+        const Sample &last = filtered.back();
+        if (distanceBetween(last, candidate) >= minTravelDistanceInches) {
+            filtered.push_back(candidate);
+        }
+    }
+
     output << "#include \"main.h\"\n"
-           << "#include \"robot_hardware.hpp\"\n\n"
+           << "#include \"odom.hpp\"\n\n"
            << "namespace auton {\n\n"
            << "void recorded_routine() {\n"
            << "    isAuton = true;\n";
 
-    std::array<int, 9> last{};
-    long long previousTimestamp = samples.front().timestamp;
-    for (const Sample &sample : samples) {
-        const long long delay = std::max(0LL, sample.timestamp - previousTimestamp);
-        if (delay > 0) output << "        pros::delay(" << delay << ");\n";
-        writeMotorCommands(output, sample, last);
-        last = sample.motors;
-        previousTimestamp = sample.timestamp;
+    if (filtered.size() >= 2) {
+        output << "    const char *recorded_path = R\"(\n";
+        output << std::fixed << std::setprecision(2);
+        for (const Sample &sample : filtered) {
+            output << "        " << sample.xIn << " " << sample.yIn << "\n";
+        }
+        output << ")\";\n";
+        output << "    robot.follow(recorded_path, 15000.0);\n";
+    } else {
+        output << "    odomSetPose(" << filtered.front().xIn << ", "
+               << filtered.front().yIn << ", " << filtered.front().headingRad << ");\n";
     }
 
-    output << "        pros::delay(20);\n";
-    for (const char *motor : motorNames) {
-        output << "        devices.Motors." << motor << ".set(0);\n";
-    }
     output << "    isAuton = false;\n"
            << "}\n\n"
            << "} // namespace auton\n";
 
-    std::cout << "Converted " << samples.size() << " samples to " << outputPath << '\n';
+    std::cout << "Converted " << filtered.size() << " filtered odometry points to "
+              << outputPath << '\n';
     return true;
 }
 

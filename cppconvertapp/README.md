@@ -26,9 +26,10 @@ Copy the generated function into `src\auto.cpp` and declare it in
 `include\auto.h`. Add it to the `rd::Selector` list in `src\main.cpp` when it
 is ready to select from the brain.
 
-The recorder samples every 20 ms. The CSV contains each motor's output command,
-controller input, button state, and odometry telemetry. Replay is command-based;
-it does not require the controller or SD card to be present during autonomous.
+The recorder logs odometry at a fixed interval, writing `timestamp_ms,x_in,y_in,heading_rad`.
+The converter reads those points, filters them so it only keeps motion that moves at least
+3 inches from the last accepted point, and emits a coordinate-following autonomous routine using
+`robot.follow(...)` with the recorded path.
 
 ## Web version
 
