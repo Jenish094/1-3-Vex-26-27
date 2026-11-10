@@ -1,4 +1,6 @@
-const minTravelDistanceInches = 3;
+const minTravelDistanceInches = 1;
+const minHeadingChangeRadians = 0.12;
+const pi = Math.PI;
 
 const fileInput = document.querySelector("#recording");
 const convertButton = document.querySelector("#convert");
@@ -43,11 +45,20 @@ function distanceBetween(a, b) {
   return Math.hypot(b.xIn - a.xIn, b.yIn - a.yIn);
 }
 
+function headingChangeBetween(a, b) {
+  let change = b.headingRad - a.headingRad;
+  while (change > pi) change -= 2 * pi;
+  while (change < -pi) change += 2 * pi;
+  return Math.abs(change);
+}
+
 function convertRecording(text) {
   const samples = parseRecording(text);
   const filtered = [samples[0]];
   for (const candidate of samples.slice(1)) {
-    if (distanceBetween(filtered[filtered.length - 1], candidate) >= minTravelDistanceInches) {
+    const last = filtered[filtered.length - 1];
+    if (distanceBetween(last, candidate) >= minTravelDistanceInches
+      || headingChangeBetween(last, candidate) >= minHeadingChangeRadians) {
       filtered.push(candidate);
     }
   }

@@ -8,7 +8,9 @@
 
 namespace {
 
-constexpr double minTravelDistanceInches = 3.0;
+constexpr double minTravelDistanceInches = 1.0;
+constexpr double minHeadingChangeRadians = 0.12;
+constexpr double pi = 3.14159265358979323846;
 
 struct Sample {
     long long timestamp = 0;
@@ -44,6 +46,13 @@ double distanceBetween(const Sample &a, const Sample &b) {
     return std::hypot(b.xIn - a.xIn, b.yIn - a.yIn);
 }
 
+double headingChangeBetween(const Sample &a, const Sample &b) {
+    double change = b.headingRad - a.headingRad;
+    while (change > pi) change -= 2.0 * pi;
+    while (change < -pi) change += 2.0 * pi;
+    return std::abs(change);
+}
+
 bool convert(const std::string &inputPath, const std::string &outputPath) {
     std::ifstream input(inputPath);
     if (!input) {
@@ -73,7 +82,8 @@ bool convert(const std::string &inputPath, const std::string &outputPath) {
     for (std::size_t i = 1; i < samples.size(); ++i) {
         const Sample &candidate = samples[i];
         const Sample &last = filtered.back();
-        if (distanceBetween(last, candidate) >= minTravelDistanceInches) {
+        if (distanceBetween(last, candidate) >= minTravelDistanceInches ||
+            headingChangeBetween(last, candidate) >= minHeadingChangeRadians) {
             filtered.push_back(candidate);
         }
     }

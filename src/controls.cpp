@@ -66,15 +66,13 @@ void runDriverControls() {
         const int proximity = devices.Sensors.ToggleOptical->get_proximity();
         const bool validReading = std::isfinite(hue) && hue >= 0.0 && proximity >= 80;
         const bool isRed = validReading && (hue <= 30.0 || hue >= 330.0);
-        const bool isYellow = validReading && hue >= 30.0 && hue <= 80.0;
         const bool isBlue = validReading && hue >= 190.0 && hue <= 260.0;
-        const bool targetSeen = isRed || isYellow || isBlue;
+        const bool targetSeen = allianceIsRed ? isRed : isBlue;
 
         if (targetSeen) {
-            // Keep scanning in a continuous loop while active. Do not auto-cancel on a hit.
             scorerollPower = 0;
         } else {
-            // Keep rolling until any valid toggle color is detected.
+            // Keep rolling until the selected alliance color is detected.
             scorerollPower = -127;
         }
     } else if (seekingColor) {

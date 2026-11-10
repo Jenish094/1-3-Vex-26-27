@@ -11,7 +11,7 @@
 namespace {
 
 constexpr const char *recordingPath = "/usd/recording.csv";
-constexpr int samplePeriodMs = 1;
+constexpr int samplePeriodMs = 10;
 
 std::atomic<bool> recordingRequested{false};
 std::atomic<bool> recordingActive{false};
@@ -77,6 +77,7 @@ bool is_requested() {
 
 bool start() {
     if (!pros::usd::is_installed()) return false;
+    startOdometryTask();
     recordingRequested.store(true);
     return true;
 }
