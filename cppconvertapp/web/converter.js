@@ -1,14 +1,4 @@
-const motorNames = [
-  "MOTOR_L1", "MOTOR_L2", "MOTOR_R1", "MOTOR_R2", "MOTOR_INTAKE_11W",
-  "MOTOR_CASCADE_11WR", "MOTOR_CASCADE_11WL", "MOTOR_SCORE_OPEN", "MOTOR_SCORE_ROLL"
-];
-
-const motorHeaders = [
-  ["l1", "motor_l1"], ["l2", "motor_l2"], ["r1", "motor_r1"], ["r2", "motor_r2"],
-  ["intake", "motor_intake_11w"], ["cascade_right", "motor_cascade_11wr"],
-  ["cascade_left", "motor_cascade_11wl"], ["score_open", "motor_score_open"],
-  ["score_roll", "motor_score_roll"]
-];
+const minTravelDistanceInches = 3;
 
 const fileInput = document.querySelector("#recording");
 const convertButton = document.querySelector("#convert");
@@ -26,27 +16,22 @@ function parseRecording(text) {
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
   if (lines.length < 2) throw new Error("The CSV does not contain any samples.");
 
-  const header = parseLine(lines[0]);
-  const normalizedHeader = header.map((field) => field.toLowerCase());
-  const timestampIndex = normalizedHeader.indexOf("timestamp_ms");
-  const actualMotorIndexes = motorHeaders.map((aliases) =>
-    aliases.map((alias) => normalizedHeader.indexOf(alias))
-      .find((index) => index >= 0)
-  );
-
-  if (timestampIndex < 0 || actualMotorIndexes.some((index) => index < 0)) {
-    throw new Error("The CSV header is missing required recorder columns.");
-  }
-
   const samples = [];
   for (const line of lines.slice(1)) {
     const fields = parseLine(line);
-    const timestamp = Number(fields[timestampIndex]);
-    const motors = actualMotorIndexes.map((index) =>
-      Math.max(-127, Math.min(127, Number(fields[index])))
-    );
-    if (Number.isInteger(timestamp) && motors.every(Number.isFinite)) {
-      samples.push({ timestamp, motors });
+    if (fields.length < 4 || fields.slice(0, 4).some((field) => field === "")) continue;
+
+    const sample = {
+      timestamp: Number(fields[0]),
+      xIn: Number(fields[1]),
+      yIn: Number(fields[2]),
+      headingRad: Number(fields[3])
+    };
+    if (Number.isInteger(sample.timestamp)
+      && Number.isFinite(sample.xIn)
+      && Number.isFinite(sample.yIn)
+      && Number.isFinite(sample.headingRad)) {
+      samples.push(sample);
     }
   }
 
@@ -54,44 +39,42 @@ function parseRecording(text) {
   return samples;
 }
 
-function motorCommands(sample, previous) {
-  return sample.motors
-    .map((value, index) => value !== previous[index]
-      ? `        devices.Motors.${motorNames[index]}.set(${value});`
-      : "")
-    .filter(Boolean)
-    .join("\n");
+function distanceBetween(a, b) {
+  return Math.hypot(b.xIn - a.xIn, b.yIn - a.yIn);
 }
 
 function convertRecording(text) {
   const samples = parseRecording(text);
+  const filtered = [samples[0]];
+  for (const candidate of samples.slice(1)) {
+    if (distanceBetween(filtered[filtered.length - 1], candidate) >= minTravelDistanceInches) {
+      filtered.push(candidate);
+    }
+  }
+
   const lines = [
     '#include "main.h"',
-    '#include "robot_hardware.hpp"',
+    '#include "odom.hpp"',
     "",
     "namespace auton {",
     "",
     "void recorded_routine() {",
     "    isAuton = true;"
   ];
-  let previous = Array(motorNames.length).fill(0);
-  let previousTimestamp = samples[0].timestamp;
 
-  for (const sample of samples) {
-    const delay = Math.max(0, sample.timestamp - previousTimestamp);
-    if (delay > 0) lines.push(`        pros::delay(${delay});`);
-    const commands = motorCommands(sample, previous);
-    if (commands) lines.push(commands);
-    previous = sample.motors;
-    previousTimestamp = sample.timestamp;
+  if (filtered.length >= 2) {
+    lines.push('    const char *recorded_path = R"(');
+    for (const sample of filtered) {
+      lines.push(`        ${sample.xIn.toFixed(2)} ${sample.yIn.toFixed(2)}`);
+    }
+    lines.push(')";', "    robot.follow(recorded_path, 15000.0);");
+  } else {
+    const sample = filtered[0];
+    lines.push(`    odomSetPose(${sample.xIn}, ${sample.yIn}, ${sample.headingRad});`);
   }
 
-  lines.push("        pros::delay(20);");
-  for (const motor of motorNames) {
-    lines.push(`        devices.Motors.${motor}.set(0);`);
-  }
   lines.push("    isAuton = false;", "}", "", "} // namespace auton", "");
-  return { code: lines.join("\n"), count: samples.length };
+  return { code: lines.join("\n"), count: filtered.length };
 }
 
 fileInput.addEventListener("change", () => {
@@ -109,7 +92,7 @@ convertButton.addEventListener("click", async () => {
     generatedCode = result.code;
     output.value = generatedCode;
     downloadButton.disabled = false;
-    status.textContent = `Converted ${result.count} samples.`;
+    status.textContent = `Converted ${result.count} filtered odometry points.`;
   } catch (error) {
     generatedCode = "";
     output.value = "";
