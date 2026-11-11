@@ -1,7 +1,12 @@
 #include "controls.h"
 #include <cmath>
+#include <cstdint>
 
 extern bool allianceIsRed;
+
+namespace {
+constexpr std::uint32_t scorerollFinishTimeMs = 500;
+}
 
 void controlsInit() {
     devices.Motors.MOTOR_INTAKE_11W.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -21,6 +26,8 @@ void runDriverControls() {
     static bool previousA = false;
     static bool previousB = false;
     static bool seekingColor = false;
+    static bool finishingColor = false;
+    static std::uint32_t colorSeenTime = 0;
     pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
 
     int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -42,8 +49,11 @@ void runDriverControls() {
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 
     if (a && !previousA) {
-        // Press A once to start the sensor loop. It stays active until A is pressed again.
         seekingColor = !seekingColor;
+        finishingColor = false;
+        if (seekingColor) {
+            colorSeenTime = 0;
+        }
     }
 
     if (b && !previousB) {
@@ -61,23 +71,29 @@ void runDriverControls() {
     devices.Motors.MOTOR_SCORE_OPEN.set(scoreOpenPower);
 
     int scorerollPower = intakePower;
-    if (seekingColor && devices.Sensors.ToggleOptical) {
-        const double hue = devices.Sensors.ToggleOptical->get_hue();
-        const int proximity = devices.Sensors.ToggleOptical->get_proximity();
-        const bool validReading = std::isfinite(hue) && hue >= 0.0 && proximity >= 80;
-        const bool isRed = validReading && (hue <= 30.0 || hue >= 330.0);
-        const bool isBlue = validReading && hue >= 190.0 && hue <= 260.0;
-        const bool targetSeen = allianceIsRed ? isRed : isBlue;
+    if (seekingColor) {
+        scorerollPower = -127;
 
-        if (targetSeen) {
-            scorerollPower = 0;
-        } else {
-            // Keep rolling until the selected alliance color is detected.
-            scorerollPower = -127;
+        if (!finishingColor && devices.Sensors.ToggleOptical) {
+            const double hue = devices.Sensors.ToggleOptical->get_hue();
+            const int proximity = devices.Sensors.ToggleOptical->get_proximity();
+            const bool validReading = std::isfinite(hue) && hue >= 0.0 && proximity >= 100;
+            const bool isRed = validReading && (hue <= 30.0 || hue >= 330.0);
+            const bool isBlue = validReading && hue >= 190.0 && hue <= 260.0;
+            const bool targetSeen = allianceIsRed ? isRed : isBlue;
+
+            if (targetSeen) {
+                finishingColor = true;
+                colorSeenTime = pros::millis();
+            }
         }
-    } else if (seekingColor) {
-        seekingColor = false;
-        scorerollPower = 0;
+
+        if (finishingColor &&
+            pros::millis() - colorSeenTime >= scorerollFinishTimeMs) {
+            seekingColor = false;
+            finishingColor = false;
+            scorerollPower = 0;
+        }
     }
     previousA = a;
     previousB = b;
