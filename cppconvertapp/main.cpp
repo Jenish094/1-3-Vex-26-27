@@ -95,13 +95,15 @@ bool convert(const std::string &inputPath, const std::string &outputPath) {
            << "    isAuton = true;\n";
 
     if (filtered.size() >= 2) {
+        const long long playbackTimeoutMs =
+            std::max(15000LL, samples.back().timestamp + 5000LL);
         output << "    const char *recorded_path = R\"(\n";
         output << std::fixed << std::setprecision(2);
         for (const Sample &sample : filtered) {
             output << "        " << sample.xIn << " " << sample.yIn << "\n";
         }
         output << ")\";\n";
-        output << "    robot.follow(recorded_path, 15000.0);\n";
+        output << "    robot.follow(recorded_path, " << playbackTimeoutMs << ".0);\n";
     } else {
         output << "    odomSetPose(" << filtered.front().xIn << ", "
                << filtered.front().yIn << ", " << filtered.front().headingRad << ");\n";

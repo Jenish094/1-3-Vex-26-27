@@ -74,11 +74,12 @@ function convertRecording(text) {
   ];
 
   if (filtered.length >= 2) {
+    const playbackTimeoutMs = Math.max(15000, samples[samples.length - 1].timestamp + 5000);
     lines.push('    const char *recorded_path = R"(');
     for (const sample of filtered) {
       lines.push(`        ${sample.xIn.toFixed(2)} ${sample.yIn.toFixed(2)}`);
     }
-    lines.push(')";', "    robot.follow(recorded_path, 15000.0);");
+    lines.push(')";', `    robot.follow(recorded_path, ${playbackTimeoutMs}.0);`);
   } else {
     const sample = filtered[0];
     lines.push(`    odomSetPose(${sample.xIn}, ${sample.yIn}, ${sample.headingRad});`);

@@ -92,7 +92,7 @@ bool Robot::follow(const char *pathText, double timeoutMs) {
                     cumulativeLength[i - 1] + distanceBetween(points[i - 1], points[i]);
         const double totalLength = cumulativeLength.back();
         const std::uint32_t startTime = pros::millis();
-        constexpr double lookaheadInches = 8.0;
+        constexpr double lookaheadInches = 10.0;
 
         while (pros::millis() - startTime < timeoutMs) {
                 const double x = globalXIn.load();
@@ -150,7 +150,7 @@ bool Robot::follow(const char *pathText, double timeoutMs) {
                 const double deltaY = targetY - y;
                 const double rightError = deltaX * std::cos(heading) + deltaY * std::sin(heading);
                 const double speedLimit = clampValue(points[targetSegment].speed * 1.27, 15.0, 127.0);
-                const double basePower = clampValue(targetDistance * 4.0, 15.0, speedLimit);
+                const double basePower = clampValue(targetDistance * 8.0, 20.0, speedLimit);
                 const double turnPower = clampValue(rightError * 4.0,
                                                     -speedLimit * 0.7, speedLimit * 0.7);
                 devices.MGroups.DT_L.set(static_cast<int>(std::lround(basePower + turnPower)));
