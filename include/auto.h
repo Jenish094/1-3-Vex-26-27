@@ -4,7 +4,7 @@
 
 namespace auton {
 
-
+void toggle_auton();
 void one_pin_left();
 void one_pin_right();
 
@@ -22,6 +22,5 @@ void skills_routine();
 void nodrive();
 
 void recorded_routine();
-
 
 }
