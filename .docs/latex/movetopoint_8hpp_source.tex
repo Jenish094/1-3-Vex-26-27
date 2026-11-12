@@ -1,0 +1,36 @@
+\doxysection{movetopoint.\+hpp}
+\hypertarget{movetopoint_8hpp_source}{}\label{movetopoint_8hpp_source}\index{include/movetopoint.hpp@{include/movetopoint.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ doesn't\ work\ well\ but\ can\ be\ used\ for\ straight\ line\ movements\ and\ basic\ turning}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Set\ to\ true\ if\ the\ robot\ moves\ BACKWARD\ when\ moveToPoint\ is\ called}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Set\ to\ false\ if\ the\ robot\ moves\ FORWARD\ (normal)}}
+\DoxyCodeLine{00006\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ AUTON\_REVERSED;}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ Pose:\ represents\ a\ target\ position\ based\ on\ tracking\ wheel\ measurements}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{struct\ }Pose\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{float}\ x;\ \ \ \ \ \ \ \textcolor{comment}{//\ target\ VERT\ (vertical\ wheel)\ position\ in\ inches}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{float}\ y;\ \ \ \ \ \ \ \textcolor{comment}{//\ target\ HORZ\ (horizontal\ wheel)\ position\ in\ inches}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{float}\ heading;\ \textcolor{comment}{//\ heading\ in\ radians\ (for\ reference\ only)}}
+\DoxyCodeLine{00013\ \ \ \ \ }
+\DoxyCodeLine{00014\ \ \ \ \ Pose(\textcolor{keywordtype}{void})\ :\ x(0),\ y(0),\ heading(0)\ \{\}}
+\DoxyCodeLine{00015\ \ \ \ \ Pose(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y)\ :\ x(x),\ y(y),\ heading(0)\ \{\}}
+\DoxyCodeLine{00016\ \ \ \ \ Pose(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ heading)\ :\ x(x),\ y(y),\ heading(heading)\ \{\}}
+\DoxyCodeLine{00017\ \};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ Simple\ straight-\/line\ movement\ to\ a\ target\ using\ tracking\ wheels}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ Goes\ FORWARD\ by\ default\ (set\ AUTON\_REVERSED\ =\ true\ to\ reverse)}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ vert:\ target\ vertical\ wheel\ position\ in\ inches}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ horz:\ target\ horizontal\ wheel\ position\ in\ inches}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ maxPower:\ maximum\ motor\ power\ (-\/127\ to\ 127)}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ heading:\ target\ heading\ in\ radians\ (0\ =\ no\ heading\ control,\ just\ move\ forward/backward)}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ moveToPoint(\textcolor{keywordtype}{float}\ vert,\ \textcolor{keywordtype}{float}\ horz,\ \textcolor{keywordtype}{int}\ maxPower\ =\ 80,\ \textcolor{keywordtype}{float}\ heading\ =\ 0.0f);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ Print\ current\ tracking\ wheel\ pos\ to\ brain\ screen}}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ printCurrentPosition(\textcolor{keywordtype}{void});}
+
+\end{DoxyCode}
