@@ -5,6 +5,7 @@
 namespace auton {
 
 void toggle_auton();
+
 void one_pin_left();
 void one_pin_right();
 
