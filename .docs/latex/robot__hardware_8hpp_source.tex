@@ -1,0 +1,190 @@
+\doxysection{robot\+\_\+hardware.\+hpp}
+\hypertarget{robot__hardware_8hpp_source}{}\label{robot__hardware_8hpp_source}\index{include/robot\_hardware.hpp@{include/robot\_hardware.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ROBOT\_HARDWARE\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ROBOT\_HARDWARE\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{api_8h}{api.h}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}macro.hpp"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}odom.hpp"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{using\ }pros\_adi\_port\ =\ uint8\_t;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{using\ }pros\_standard\_port\ =\ int8\_t;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_flip_toggle_height}{FlipToggleHeight}};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ negative\ port\ is\ reversed}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{enum}\ StandardPorts\ :\ pros\_standard\_port}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ LEFT\_FRONT\ =\ -\/14,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ LEFT\_REAR\ =\ -\/15,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ RIGHT\_FRONT\ =\ 11,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ RIGHT\_REAR\ =\ 12,}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ IMU\_PORT\ =\ 5,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ AI\_VISION\_PORT\ =\ 9,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ INTAKE\_PORT\ =\ -\/16,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ CASCADE\_RIGHT\_PORT\ =\ -\/19,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ CASCADE\_LEFT\_PORT\ =\ 20,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ SCORE\_OPEN\_PORT\ =\ -\/1,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ SCORE\_ROLL\_PORT\ =\ -\/2,}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ VERTICAL\_ODOM\_PORT\ =\ 3,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ HORIZONTAL\_ODOM\_PORT\ =\ 4,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ CASCADE\_ENCODER\_PORT\ =\ 6,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ OPTICAL\_PORT\ =\ 8}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_left\_front\ =\ LEFT\_FRONT;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_left\_rear\ =\ LEFT\_REAR;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_right\_front\ =\ RIGHT\_FRONT;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_right\_rear\ =\ RIGHT\_REAR;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ imu\ =\ IMU\_PORT;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ aivision\ =\ AI\_VISION\_PORT;}
+\DoxyCodeLine{00044\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_intake\_11W\ =\ INTAKE\_PORT;}
+\DoxyCodeLine{00045\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_cascade\_11WR\ =\ CASCADE\_RIGHT\_PORT;}
+\DoxyCodeLine{00046\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_cascade\_11WL\ =\ CASCADE\_LEFT\_PORT;}
+\DoxyCodeLine{00047\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_score\_open\ =\ SCORE\_OPEN\_PORT;}
+\DoxyCodeLine{00048\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ motor\_score\_roll\ =\ SCORE\_ROLL\_PORT;}
+\DoxyCodeLine{00049\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ odom\_vertical\ =\ VERTICAL\_ODOM\_PORT;}
+\DoxyCodeLine{00050\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ odom\_horizontal\ =\ HORIZONTAL\_ODOM\_PORT;}
+\DoxyCodeLine{00051\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ cascade\_encoder\ =\ CASCADE\_ENCODER\_PORT;}
+\DoxyCodeLine{00052\ \textcolor{keyword}{constexpr}\ pros\_standard\_port\ optical\ =\ OPTICAL\_PORT;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keyword}{enum}\ ThreeWire}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }MWrap}
+\DoxyCodeLine{00059\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Motor>\ motor;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ pros\_standard\_port\ port;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ pros::motor\_gearset\_e\_t\ gearset;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ MWrap()}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ motor(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port(0),}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gearset(pros::E\_MOTOR\_GEAR\_BLUE)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ MWrap(pros\_standard\_port\ motorPort,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pros::motor\_gearset\_e\_t\ motorGear\ =\ pros::E\_MOTOR\_GEAR\_BLUE)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ motor(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port(motorPort),}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gearset(motorGear)}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \string~MWrap(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ MWrap\_Init()}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (motor)\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motor\ =\ std::make\_unique<pros::Motor>(port);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motor-\/>set\_brake\_mode(pros::MotorBrake::brake);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motor-\/>set\_gearing(gearset);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ operator=(pros::Motor\ motorValue)}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motor\ =\ std::make\_unique<pros::Motor>(motorValue);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set(\textcolor{keywordtype}{int}\ speed);}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keyword}{struct\ }MGWrap}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ std::vector<MWrap*>\ motors;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ powerScale;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ MGWrap()}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ powerScale(1.0f)}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ MGWrap(\doxymbox{\hyperlink{struct_m_wrap}{MWrap}}*\ first,\ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}*\ second,\ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}*\ third,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scale\ =\ 1.0f);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set(\textcolor{keywordtype}{int}\ speed)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ output\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(speed\ *\ powerScale);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\doxymbox{\hyperlink{struct_m_wrap}{MWrap}}*\ motor\ :\ motors)\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (motor\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motor-\/>set(output);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ \};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keyword}{struct\ }Hardware}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_L1;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_L2;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_R1;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_R2;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_INTAKE\_11W;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_CASCADE\_11WR;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_CASCADE\_11WL;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_SCORE\_OPEN;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_wrap}{MWrap}}\ MOTOR\_SCORE\_ROLL;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \}\ Motors;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_g_wrap}{MGWrap}}\ DT\_L;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_g_wrap}{MGWrap}}\ DT\_R;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_m_g_wrap}{MGWrap}}\ MOTORGROUP\_INTAKE;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \}\ MGroups;}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::adi::Pneumatics>\ PNEUMATIC;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \}\ Pneumatics;}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Rotation>\ VerticalWheel;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Rotation>\ HorizontalWheel;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}\ Odom;}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Imu>\ IMU;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Rotation>\ CascadeEncoder;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Optical>\ ToggleOptical;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \}\ Sensors;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<FlipToggleHeight>\ flipToggleHeight;}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \}\ Macros;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Controller>\ PRIMARY\_CONTROLLER;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ std::unique\_ptr<pros::Controller>\ SECONDARY\_CONTROLLER;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ Hardware(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \string~Hardware(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ LoadPeripherals(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ init(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ Hardware(\textcolor{keyword}{const}\ Hardware\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ Hardware\&\ operator=(\textcolor{keyword}{const}\ Hardware\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00180\ \};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{extern}\ \doxymbox{\hyperlink{struct_hardware}{Hardware}}\ devices;}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

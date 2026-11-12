@@ -1,0 +1,56 @@
+\doxysection{odom.\+hpp}
+\hypertarget{odom_8hpp_source}{}\label{odom_8hpp_source}\index{include/odom.hpp@{include/odom.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ODOM\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ODOM\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{api_8h}{api.h}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <atomic>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{//close\ enough\ to\ pi}}
+\DoxyCodeLine{00008\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ ODOM\_PI\ =\ 3.14159265358979323846;}
+\DoxyCodeLine{00009\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ odomWheelDiameterIn\ =\ 2.0;}
+\DoxyCodeLine{00010\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ odomWheelCircumferenceIn\ =\ odomWheelDiameterIn\ *\ ODOM\_PI;}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ Offsets\ are\ from\ the\ rotation\ center.\ Positive\ vertical\ offset\ means\ left\ positive\ horizontal\ offset\ means\ forward.}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ verticalOdomOffsetInches\ =\ 1.9375;}
+\DoxyCodeLine{00014\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{double}\ horizontalOdomOffsetInches\ =\ 0.0;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{void}\ startOdometryTask(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ odomCalcPos(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ odomReset(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ odomSetPose(\textcolor{keywordtype}{double}\ xIn,\ \textcolor{keywordtype}{double}\ yIn,\ \textcolor{keywordtype}{double}\ headingRadians);}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{void}\ driveInches(\textcolor{keywordtype}{double}\ targetInches,\ \textcolor{keywordtype}{double}\ maxSpeed\ =\ 100.0,\ \textcolor{keywordtype}{double}\ timeoutMs\ =\ 3000.0);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ brainscreen(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_robot}{Robot}}\ \{}
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ move(\textcolor{keywordtype}{double}\ inches,\ \textcolor{keywordtype}{double}\ maxSpeed\ =\ 100.0,\ \textcolor{keywordtype}{double}\ timeoutMs\ =\ 3000.0);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ turn(\textcolor{keywordtype}{double}\ degrees,\ \textcolor{keywordtype}{double}\ maxSpeed\ =\ 60.0,\ \textcolor{keywordtype}{double}\ timeoutMs\ =\ 3000.0);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ follow(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pathText,\ \textcolor{keywordtype}{double}\ timeoutMs\ =\ 15000.0);}
+\DoxyCodeLine{00028\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{extern}\ \doxymbox{\hyperlink{class_robot}{Robot}}\ robot;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{extern}\ std::atomic<float>\ globalHeading;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ current\ heading,\ radians,\ CCW+}}
+\DoxyCodeLine{00033\ \textcolor{keyword}{extern}\ std::atomic<float>\ globalHeadingAtLastReset;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{float}\ lastVertical;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{float}\ lastHorizontal;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{extern}\ std::atomic<float>\ globalXIn;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ std::atomic<float>\ globalYIn;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{extern}\ std::atomic<float>\ lastGlobalXIn;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{extern}\ std::atomic<float>\ lastGlobalYIn;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{extern}\ std::atomic<float>\ verticalPosIn;}
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ std::atomic<float>\ horizontalPosIn;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{extern}\ std::atomic<float>\ cascadeEncoderPos;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{extern}\ std::atomic<int>\ dist;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
