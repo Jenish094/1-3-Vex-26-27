@@ -12,9 +12,9 @@ void toggle_auton() {
 
         
         robot.move(-4, 110, 1000);
-        //devices.Motors.MOTOR_INTAKE_11W.set(127);
+        devices.Motors.MOTOR_INTAKE_11W.set(127);
         pros::delay(500);
-        //devices.Motors.MOTOR_INTAKE_11W.set(0);
+        devices.Motors.MOTOR_INTAKE_11W.set(0);
         robot.move(5, 110, 1000);
         robot.move(-4, 110, 1000);
         robot.move(5, 110, 1000);
@@ -27,7 +27,7 @@ void one_pin_left() {
 
         toggle_auton();
 
-        robot.move(-6, 120, 1000);
+        robot.move(-5, 120, 1000);
         robot.turn(-90, 120, 1000);
         devices.Motors.MOTOR_SCORE_OPEN.set(60);
         pros::delay(500);
@@ -57,7 +57,7 @@ void one_pin_right() {
 
         toggle_auton();
 
-        robot.move(-6, 120, 1000);
+        robot.move(-5, 120, 1000);
         robot.turn(90, 120, 1000);
         devices.Motors.MOTOR_SCORE_OPEN.set(60);
         pros::delay(500);
@@ -175,9 +175,31 @@ void thirty_point_left() {
 void thirty_point_right() {
         isAuton = true;
 
-        one_pin_right();
+        toggle_auton();
 
-        robot.turn(-60, 120, 1000);
+        robot.move(-5, 120, 1000);
+        robot.turn(90, 120, 1000);
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(-12, 50, 2000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(300);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-50);
+        pros::delay(1000);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(20);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(5, 120, 1000);
+
+        robot.turn(-62, 120, 1000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(40);
         pros::delay(500);
@@ -185,7 +207,7 @@ void thirty_point_right() {
 
         devices.Motors.MOTOR_SCORE_ROLL.set(127);
         
-        robot.move(-9.1, 120, 1000);
+        robot.move(-7.8, 120, 1000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(-40);
         pros::delay(500);
@@ -201,13 +223,13 @@ void thirty_point_right() {
 
         devices.Motors.MOTOR_CASCADE_11WR.set(127);
         devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        pros::delay(700);
+        pros::delay(500);
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
-        robot.move(-6, 80, 1000);
+        robot.move(-7, 80, 1000);
 
-        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        devices.Motors.MOTOR_SCORE_OPEN.set(-20);
         pros::delay(450);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
@@ -220,6 +242,7 @@ void thirty_point_right() {
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
         robot.move(2, 120, 1000);
+
 
         isAuton = false;
 }
@@ -243,82 +266,7 @@ void forty_point_right() {
 void skills_routine() {
         isAuton = true; //need to add park to skills and try for a 30 point run (2 line pins)
 
-        toggle_auton();
-
-        robot.move(-6, 120, 1000);
-        robot.turn(-90, 120, 1000);
-        devices.Motors.MOTOR_SCORE_OPEN.set(60);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        robot.move(-12, 50, 2000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
-        pros::delay(300);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-50);
-        pros::delay(1000);
-        devices.Motors.MOTOR_SCORE_ROLL.set(0);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(20);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        robot.move(5, 120, 1000);
-
-        robot.turn(60, 120, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(40);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(127);
-        
-        robot.move(-9.1, 120, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(-40);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        pros::delay(500);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(40);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        robot.move(10, 120, 1000);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(0);
-
-        robot.turn(-60, 120, 1000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        pros::delay(700);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        robot.move(-12.5, 80, 2000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
-        pros::delay(450);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
-
-        pros::delay(1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(50);
-        pros::delay(450);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        robot.move(5, 120, 1000);
-
-        //new stuff *test*
-
-        robot.turn(90, 120, 1000);
-        robot.move(-8, 120, 1000);
+        thirty_point_left();
 
         isAuton = false;
 }
