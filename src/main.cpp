@@ -42,7 +42,7 @@ void initialize(void) {
         {"40 Point Left", auton::forty_point_left},
         {"40 Point Right", auton::forty_point_right},
         {"Skills Routine", auton::skills_routine},
-        {"Recorded Routine", auton::recorded_routine},
+        // {"Recorded Routine", auton::recorded_routine},
         {"No Drive", auton::nodrive},
     });
         autonSelector->focus();

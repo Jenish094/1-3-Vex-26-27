@@ -10,10 +10,14 @@ namespace auton {
 void toggle_auton() {
         isAuton = true;
 
+        
         robot.move(-4, 110, 1000);
-        robot.move(6, 110, 1000);
+        //devices.Motors.MOTOR_INTAKE_11W.set(127);
+        pros::delay(500);
+        //devices.Motors.MOTOR_INTAKE_11W.set(0);
+        robot.move(5, 110, 1000);
         robot.move(-4, 110, 1000);
-        robot.move(6, 110, 1000);
+        robot.move(5, 110, 1000);
 
         isAuton = false;
 }
@@ -51,7 +55,29 @@ void one_pin_left() {
 void one_pin_right() {
         isAuton = true;
 
-        
+        toggle_auton();
+
+        robot.move(-6, 120, 1000);
+        robot.turn(90, 120, 1000);
+        devices.Motors.MOTOR_SCORE_OPEN.set(60);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(-12, 50, 2000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(300);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-50);
+        pros::delay(1000);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(20);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(5, 120, 1000);
 
         isAuton = false;
 }
@@ -59,11 +85,15 @@ void one_pin_right() {
 void middle_pin_left() {
         isAuton = true;
 
+        one_pin_left();
+
         isAuton = false;
 }
 
 void middle_pin_right() {
         isAuton = true;
+
+        one_pin_right();
 
         isAuton = false;
 }
@@ -73,7 +103,7 @@ void thirty_point_left() {
 
         toggle_auton();
 
-        robot.move(-6, 120, 1000);
+        robot.move(-5, 120, 1000);
         robot.turn(-90, 120, 1000);
         devices.Motors.MOTOR_SCORE_OPEN.set(60);
         pros::delay(500);
@@ -95,7 +125,59 @@ void thirty_point_left() {
 
         robot.move(5, 120, 1000);
 
-        robot.turn(60, 120, 1000);
+        robot.turn(62, 120, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+        
+        robot.move(-7.8, 120, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-40);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        pros::delay(500);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(40);
+        pros::delay(700);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.turn(-110, 100, 1000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(500);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        robot.move(-7, 80, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-20);
+        pros::delay(450);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-60);
+
+        pros::delay(1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(50);
+        pros::delay(450);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(2, 120, 1000);
+
+        isAuton = false;
+}
+
+void thirty_point_right() {
+        isAuton = true;
+
+        one_pin_right();
+
+        robot.turn(-60, 120, 1000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(40);
         pros::delay(500);
@@ -115,7 +197,7 @@ void thirty_point_left() {
         pros::delay(700);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
-        robot.turn(-110, 100, 1000);
+        robot.turn(110, 100, 1000);
 
         devices.Motors.MOTOR_CASCADE_11WR.set(127);
         devices.Motors.MOTOR_CASCADE_11WL.set(127);
@@ -142,16 +224,10 @@ void thirty_point_left() {
         isAuton = false;
 }
 
-void thirty_point_right() {
-        isAuton = true;
-
-        one_pin_right();
-
-        isAuton = false;
-}
-
 void forty_point_left() {
         isAuton = true;
+
+        thirty_point_left();
 
         isAuton = false;
 }
@@ -159,11 +235,13 @@ void forty_point_left() {
 void forty_point_right() {
         isAuton = true;
 
+        thirty_point_right();
+
         isAuton = false;
 }
 
 void skills_routine() {
-        isAuton = true;
+        isAuton = true; //need to add park to skills and try for a 30 point run (2 line pins)
 
         toggle_auton();
 
@@ -236,6 +314,11 @@ void skills_routine() {
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
         robot.move(5, 120, 1000);
+
+        //new stuff *test*
+
+        robot.turn(90, 120, 1000);
+        robot.move(-8, 120, 1000);
 
         isAuton = false;
 }
