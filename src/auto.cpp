@@ -243,14 +243,6 @@ void forty_point_left() {
 
         thirty_point_left();
 
-        isAuton = false;
-}
-
-void forty_point_right() {
-        isAuton = true;
-
-        thirty_point_right();
-
         robot.move(6, 127, 2000);
 
         robot.turn(-45, 127, 1000);
@@ -260,6 +252,16 @@ void forty_point_right() {
         robot.move(-4, 127, 2000);
 
         //add other stuff lmao
+
+        isAuton = false;
+}
+
+void forty_point_right() {
+        isAuton = true;
+
+        thirty_point_right();
+
+        
 
         
 
