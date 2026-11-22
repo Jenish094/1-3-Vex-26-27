@@ -6,6 +6,21 @@ extern bool allianceIsRed;
 
 namespace {
 constexpr std::uint32_t scorerollFinishTimeMs = 500;
+
+enum class PinGrabState {
+    Idle,
+    MovingUp,
+    MovingWristDown,
+    MovingBackDown,
+    RollingIntake
+};
+
+constexpr float cascadeMoveUpUnits = 1800.0f;
+constexpr float cascadeToleranceUnits = 200.0f;
+constexpr double wristDownDegrees = -90.0;
+constexpr int scoreRollMacroPower = -127;
+constexpr std::uint32_t scoreRollMacroTimeMs = 500;
+constexpr std::uint32_t cascadeTimeoutMs = 5000;
 }
 
 void controlsInit() {
@@ -21,13 +36,20 @@ void controlsInit() {
 bool controlsUpdate() {
     return false;
 }
-    
+
 void runDriverControls() {
     static bool previousA = false;
     static bool previousB = false;
+    static bool previousX = false;
     static bool seekingColor = false;
     static bool finishingColor = false;
     static std::uint32_t colorSeenTime = 0;
+    static PinGrabState pinGrabState = PinGrabState::Idle;
+    static float pinGrabCascadeStart = 0.0f;
+    static float pinGrabCascadeTarget = 0.0f;
+    static double pinGrabWristTarget = 0.0;
+    static std::uint32_t stageStartTime = 0;
+    static std::uint32_t scoreRollMacroStart = 0;
     pros::Controller& controller = *devices.PRIMARY_CONTROLLER;
 
     int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -42,17 +64,86 @@ void runDriverControls() {
 
     int cascadePower = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127 : 0)
         - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 127 : 0);
+    if (cascadePower != 0 && pinGrabState != PinGrabState::Idle) {
+        pinGrabState = PinGrabState::Idle;
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+    }
     devices.Motors.MOTOR_CASCADE_11WR.set(cascadePower);
     devices.Motors.MOTOR_CASCADE_11WL.set(cascadePower);
 
     bool a = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+    bool x = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
 
-    if (a && !previousA) {
-        seekingColor = !seekingColor;
-        finishingColor = false;
-        if (seekingColor) {
-            colorSeenTime = 0;
+    if (x && !previousX) {
+        pinGrabState = PinGrabState::Idle;
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+        if (devices.Motors.MOTOR_SCORE_OPEN.motor) {
+            devices.Motors.MOTOR_SCORE_OPEN.motor->brake();
+        }
+    }
+
+    if (a && !previousA && pinGrabState == PinGrabState::Idle &&
+        devices.Sensors.CascadeEncoder &&
+        devices.Motors.MOTOR_SCORE_OPEN.motor) {
+        pinGrabCascadeStart = devices.Sensors.CascadeEncoder->get_position();
+        pinGrabCascadeTarget = pinGrabCascadeStart + cascadeMoveUpUnits;
+        pinGrabWristTarget =
+            devices.Motors.MOTOR_SCORE_OPEN.motor->get_position() + wristDownDegrees;
+        stageStartTime = pros::millis();
+        pinGrabState = PinGrabState::MovingUp;
+    }
+
+    if (pinGrabState != PinGrabState::Idle &&
+        devices.Sensors.CascadeEncoder &&
+        devices.Motors.MOTOR_SCORE_OPEN.motor) {
+        const float cascadePosition =
+            devices.Sensors.CascadeEncoder->get_position();
+        const double wristPosition =
+            devices.Motors.MOTOR_SCORE_OPEN.motor->get_position();
+
+        if (pinGrabState == PinGrabState::MovingUp) {
+            const float error = pinGrabCascadeTarget - cascadePosition;
+            if (std::fabs(error) <= cascadeToleranceUnits ||
+                pros::millis() - stageStartTime >= cascadeTimeoutMs) {
+                devices.Motors.MOTOR_CASCADE_11WR.set(0);
+                devices.Motors.MOTOR_CASCADE_11WL.set(0);
+                pinGrabState = PinGrabState::MovingWristDown;
+                devices.Motors.MOTOR_SCORE_OPEN.motor->move_relative(
+                    wristDownDegrees, 127);
+            } else {
+                const int power = error > 0.0f ? 127 : -127;
+                devices.Motors.MOTOR_CASCADE_11WR.set(power);
+                devices.Motors.MOTOR_CASCADE_11WL.set(power);
+            }
+        } else if (pinGrabState == PinGrabState::MovingWristDown) {
+            if (std::fabs(wristPosition - pinGrabWristTarget) <= 5.0 ||
+                pros::millis() - stageStartTime >= cascadeTimeoutMs) {
+                stageStartTime = pros::millis();
+                pinGrabState = PinGrabState::MovingBackDown;
+            }
+        } else if (pinGrabState == PinGrabState::MovingBackDown) {
+            const float error = pinGrabCascadeStart - cascadePosition;
+            if (std::fabs(error) <= cascadeToleranceUnits ||
+                pros::millis() - stageStartTime >= cascadeTimeoutMs) {
+                devices.Motors.MOTOR_CASCADE_11WR.set(0);
+                devices.Motors.MOTOR_CASCADE_11WL.set(0);
+                scoreRollMacroStart = pros::millis();
+                pinGrabState = PinGrabState::RollingIntake;
+            } else {
+                const int power = error > 0.0f ? 127 : -127;
+                devices.Motors.MOTOR_CASCADE_11WR.set(power);
+                devices.Motors.MOTOR_CASCADE_11WL.set(power);
+            }
+        } else if (pinGrabState == PinGrabState::RollingIntake) {
+            if (pros::millis() - scoreRollMacroStart >= scoreRollMacroTimeMs) {
+                pinGrabState = PinGrabState::Idle;
+                devices.Motors.MOTOR_SCORE_ROLL.set(0);
+            } else {
+                devices.Motors.MOTOR_SCORE_ROLL.set(scoreRollMacroPower);
+            }
         }
     }
 
@@ -68,10 +159,18 @@ void runDriverControls() {
 
     int scoreOpenPower = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) ? 127 : 0)
         - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
-    devices.Motors.MOTOR_SCORE_OPEN.set(scoreOpenPower);
+    if (pinGrabState != PinGrabState::MovingWristDown) {
+        devices.Motors.MOTOR_SCORE_OPEN.set(scoreOpenPower);
+    }
 
     int scorerollPower = intakePower;
-    if (seekingColor) {
+    if (pinGrabState == PinGrabState::RollingIntake) {
+        if (pros::millis() - scoreRollMacroStart >= scoreRollMacroTimeMs) {
+            scorerollPower = 0;
+        } else {
+            scorerollPower = scoreRollMacroPower;
+        }
+    } else if (seekingColor) {
         scorerollPower = -127;
 
         if (!finishingColor && devices.Sensors.ToggleOptical) {
@@ -97,7 +196,7 @@ void runDriverControls() {
     }
     previousA = a;
     previousB = b;
+    previousX = x;
 
     devices.Motors.MOTOR_SCORE_ROLL.set(scorerollPower);
-
 }

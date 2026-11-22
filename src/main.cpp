@@ -33,14 +33,14 @@ void initialize(void) {
         controlsInit();
 
         autonSelector = new rd::Selector("autonselect", {
-        {"1 Pin Left", auton::one_pin_left},
-        {"1 Pin Right", auton::one_pin_right},
+        {"20 Point Left", auton::twenty_point_left},
+        {"20 Pint Right", auton::twenty_point_right},
         // {"Middle Pin Left", auton::middle_pin_left},
         // {"Middle Pin Right", auton::middle_pin_right},
         {"30 Point Left", auton::thirty_point_left},
         {"30 Point Right", auton::thirty_point_right},
-        {"40 Point Left", auton::forty_point_left},
-        {"40 Point Right", auton::forty_point_right},
+        //{"40 Point Left", auton::forty_point_left},
+        //{"40 Point Right", auton::forty_point_right},
         {"Skills Routine", auton::skills_routine},
         // {"Recorded Routine", auton::recorded_routine},
         {"No Drive", auton::nodrive},
