@@ -19,8 +19,8 @@ void toggle_auton() {
         const std::uint32_t cascadeStart = pros::millis();
         robot.move(-4, 110, 1000);
         const std::uint32_t cascadeElapsed = pros::millis() - cascadeStart;
-        if (cascadeElapsed < 1000) {
-                pros::delay(1000 - cascadeElapsed);
+        if (cascadeElapsed < 1500) {
+                pros::delay(1500 - cascadeElapsed);
         }
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
@@ -47,7 +47,7 @@ void twenty_point_left() {
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
         
-        robot.move(-10, 127, 2000);
+        robot.move(-8, 80, 2000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(10);
         pros::delay(500);
@@ -68,7 +68,7 @@ void twenty_point_left() {
 
         devices.Motors.MOTOR_CASCADE_11WR.set(-127);
         devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(400);
+        pros::delay(900);
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
@@ -140,13 +140,13 @@ void thirty_point_left() {
 
         pros::delay(500);
 
-        robot.turn(-125, 127, 1000);
-
         devices.Motors.MOTOR_CASCADE_11WR.set(127);
         devices.Motors.MOTOR_CASCADE_11WL.set(127);
         pros::delay(2000);
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        robot.turn(-125, 127, 1000);
 
         robot.move(-6, 127, 1000);
 
@@ -163,6 +163,12 @@ void thirty_point_left() {
         devices.Motors.MOTOR_SCORE_ROLL.set(-127);
 
         robot.move(2, 127, 1000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(1400);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
 
         isAuton = false;
@@ -218,15 +224,34 @@ void forty_point_left() {
 
         thirty_point_left();
 
-        robot.move(6, 127, 2000);
+        robot.move(3, 127, 2000);
 
-        robot.turn(-45, 127, 1000);
+        robot.turn(55, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
         devices.Motors.MOTOR_SCORE_ROLL.set(127);
 
-        robot.move(-4, 127, 2000);
+        robot.move(-10, 127, 2000);
 
-        //add other stuff lmao
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(3300);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.turn(-90, 100, 1000);
+
+        robot.move(-5, 100, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
+
 
         isAuton = false;
 }
