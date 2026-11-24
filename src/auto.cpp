@@ -7,41 +7,25 @@
 
 namespace auton {
 
-void toggle_auton() {
-        isAuton = true;
+namespace {
 
-        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+constexpr int kTwentyPointLeftTurn = 90;
+constexpr int kThirtyPointLeftTurn = 58;
+constexpr int kThirtyPointLeftReturnTurn = -125;
+constexpr int kFortyPointLeftTurn = 55;
+constexpr int kFortyPointLeftReturnTurn = -90;
 
-        // Start the cascade, then immediately begin moving. Both commands run
-        // concurrently because the motors remain powered while robot.move waits.
-        devices.Motors.MOTOR_CASCADE_11WR.set(127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        const std::uint32_t cascadeStart = pros::millis();
-        robot.move(-4, 110, 1000);
-        const std::uint32_t cascadeElapsed = pros::millis() - cascadeStart;
-        if (cascadeElapsed < 1500) {
-                pros::delay(1500 - cascadeElapsed);
-        }
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        devices.Motors.MOTOR_INTAKE_11W.set(127);
-        pros::delay(500);
-        devices.Motors.MOTOR_INTAKE_11W.set(0);
-        robot.move(5, 110, 1000);
-        robot.move(-4, 110, 1000);
-        robot.move(5, 110, 1000);
-
-        isAuton = false;
+int turn_for_side(int leftAngle, bool rightSide) {
+        return rightSide ? -leftAngle : leftAngle;
 }
 
-void twenty_point_left() {
+void run_twenty_point_sequence(bool rightSide) {
         isAuton = true;
 
         toggle_auton();
 
         robot.move(-5, 127, 1000);
-        robot.turn(-90, 127, 1000);
+        robot.turn(turn_for_side(kTwentyPointLeftTurn, rightSide), 127, 1000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(10);
         pros::delay(500);
@@ -76,62 +60,12 @@ void twenty_point_left() {
         isAuton = false;
 }
 
-void twenty_point_right() {
+void run_thirty_point_sequence(bool rightSide) {
         isAuton = true;
 
-        toggle_auton();
+        run_twenty_point_sequence(rightSide);
 
-        robot.move(-5, 127, 1000);
-        robot.turn(90, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(10);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-        
-        robot.move(-8, 127, 2000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(10);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(600);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-100);
-        pros::delay(500);
-
-        robot.move(5, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(0);
-
-        isAuton = false;
-}
-
-void middle_pin_left() {
-        isAuton = true;
-        
-
-        
-        isAuton = false;
-}
-
-void middle_pin_right() {
-        isAuton = true;
-
-        isAuton = false;
-}
-
-void thirty_point_left() {
-        isAuton = true;
-
-        twenty_point_left();
-
-        robot.turn(58, 127, 1000);
-
-
+        robot.turn(turn_for_side(kThirtyPointLeftTurn, rightSide), 127, 1000);
 
         //check lines 136 - 144 idk if it will work but it should, if not just uncomment the lines and delete the task
 
@@ -144,10 +78,6 @@ void thirty_point_left() {
         });
 
         robot.move(-11, 90, 1000);
-
-
-
-
 
         pros::delay(500);
 
@@ -162,7 +92,7 @@ void thirty_point_left() {
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
-        robot.turn(-125, 127, 1000);
+        robot.turn(turn_for_side(kThirtyPointLeftReturnTurn, rightSide), 127, 1000);
 
         robot.move(-6, 127, 1000);
 
@@ -182,63 +112,17 @@ void thirty_point_left() {
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
-
         isAuton = false;
 }
 
-void thirty_point_right() {
+void run_forty_point_sequence(bool rightSide) {
         isAuton = true;
 
-        twenty_point_right();
-
-        robot.turn(-58, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(127);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        robot.move(-11, 90, 1000);
-
-        pros::delay(500);
-
-        robot.turn(125, 127, 1000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        pros::delay(2000);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        robot.move(-6, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(30);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(600);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
-
-        robot.move(2, 127, 1000);
-
-
-        isAuton = false;
-}
-
-void forty_point_left() {
-        isAuton = true;
-
-        thirty_point_left();
+        run_thirty_point_sequence(rightSide);
 
         robot.move(3, 127, 2000);
 
-        robot.turn(55, 127, 1000);
+        robot.turn(turn_for_side(kFortyPointLeftTurn, rightSide), 127, 1000);
 
         devices.Motors.MOTOR_SCORE_OPEN.set(-30);
         pros::delay(400);
@@ -259,26 +143,81 @@ void forty_point_left() {
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
-        robot.turn(-90, 100, 1000);
+        robot.turn(turn_for_side(kFortyPointLeftReturnTurn, rightSide), 100, 1000);
 
         robot.move(-5, 100, 1000);
 
         devices.Motors.MOTOR_SCORE_ROLL.set(-127);
 
+        isAuton = false;
+}
+
+} // namespace
+
+void toggle_auton() {
+        isAuton = true;
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        // Start the cascade, then immediately begin moving. Both commands run
+        // concurrently because the motors remain powered while robot.move waits.
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        const std::uint32_t cascadeStart = pros::millis();
+        robot.move(-4, 110, 1000);
+        const std::uint32_t cascadeElapsed = pros::millis() - cascadeStart;
+        if (cascadeElapsed < 1500) {
+                pros::delay(1500 - cascadeElapsed);
+        }
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_INTAKE_11W.set(127);
+        pros::delay(500);
+        devices.Motors.MOTOR_INTAKE_11W.set(0);
+        robot.move(5, 110, 1000);
+        robot.move(-4, 110, 1000);
+        robot.move(5, 110, 1000);
 
         isAuton = false;
 }
 
-void forty_point_right() {
+void twenty_point_left() {
+        run_twenty_point_sequence(false);
+}
+
+void twenty_point_right() {
+        run_twenty_point_sequence(true);
+}
+
+void middle_pin_left() {
+        isAuton = true;
+        
+
+        
+        isAuton = false;
+}
+
+void middle_pin_right() {
         isAuton = true;
 
-        thirty_point_right();
-
-        
-
-        
-
         isAuton = false;
+}
+
+void thirty_point_left() {
+        run_thirty_point_sequence(false);
+}
+
+void thirty_point_right() {
+        run_thirty_point_sequence(true);
+}
+
+void forty_point_left() {
+        run_forty_point_sequence(false);
+}
+
+void forty_point_right() {
+        run_forty_point_sequence(true);
 }
 
 void skills_routine() {
