@@ -27,8 +27,8 @@ enum StandardPorts : pros_standard_port
         INTAKE_PORT = -16,
         CASCADE_RIGHT_PORT = -19,
         CASCADE_LEFT_PORT = 20,
-        SCORE_OPEN_PORT = -1,
-        SCORE_ROLL_PORT = -2,
+        SCORE_OPEN_PORT = -1, // Ratchet Wrist
+        SCORE_ROLL_PORT = -2, // Ratchet Open/Close
 
         VERTICAL_ODOM_PORT = 3,
         HORIZONTAL_ODOM_PORT = 4,
