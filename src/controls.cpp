@@ -21,9 +21,16 @@ constexpr double wristDownDegrees = -90.0;
 constexpr int scoreRollMacroPower = -127;
 constexpr std::uint32_t scoreRollMacroTimeMs = 500;
 constexpr std::uint32_t cascadeTimeoutMs = 5000;
+constexpr std::uint32_t ratchetWristMoveTimeMs = 400;
+bool ratchetWristMoveDown = true;
+bool ratchetWristMacroActive = false;
+std::uint32_t ratchetWristMacroStart = 0;
 }
 
 void controlsInit() {
+    ratchetWristMoveDown = true;
+    ratchetWristMacroActive = false;
+    ratchetWristMacroStart = 0;
     devices.Motors.MOTOR_INTAKE_11W.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     devices.Motors.MOTOR_CASCADE_11WR.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     devices.Motors.MOTOR_CASCADE_11WL.motor->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -41,6 +48,7 @@ void runDriverControls() {
     static bool previousA = false;
     static bool previousB = false;
     static bool previousX = false;
+    static bool previousY = false;
     static bool seekingColor = false;
     static bool finishingColor = false;
     static std::uint32_t colorSeenTime = 0;
@@ -74,6 +82,7 @@ void runDriverControls() {
     bool a = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
     bool b = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
     bool x = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
+    bool y = controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
 
     if (x && !previousX) {
         pinGrabState = PinGrabState::Idle;
@@ -157,8 +166,29 @@ void runDriverControls() {
         }
     }
 
+    if (y && !previousY) {
+        ratchetWristMacroActive = true;
+        ratchetWristMacroStart = pros::millis();
+    }
+
+    int ratchetWristPower = 0;
+    if (ratchetWristMacroActive) {
+        if (pros::millis() - ratchetWristMacroStart >= ratchetWristMoveTimeMs) {
+            ratchetWristMacroActive = false;
+        } else {
+            ratchetWristPower = ratchetWristMoveDown ? -127 : 127;
+        }
+    }
+
+    if (y && !previousY) {
+        ratchetWristMoveDown = !ratchetWristMoveDown;
+    }
+
     int scoreOpenPower = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) ? 127 : 0)
         - (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) ? 127 : 0);
+    if (ratchetWristMacroActive) {
+        scoreOpenPower = ratchetWristPower;
+    }
     if (pinGrabState != PinGrabState::MovingWristDown) {
         devices.Motors.MOTOR_SCORE_OPEN.set(scoreOpenPower);
     }
@@ -197,6 +227,7 @@ void runDriverControls() {
     previousA = a;
     previousB = b;
     previousX = x;
+    previousY = y;
 
     devices.Motors.MOTOR_SCORE_ROLL.set(scorerollPower);
 }
