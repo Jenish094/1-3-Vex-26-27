@@ -49,15 +49,16 @@ void twenty_point_left() {
         
         robot.move(-8, 80, 2000);
 
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
         devices.Motors.MOTOR_SCORE_OPEN.set(10);
+
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(600);
+        pros::delay(100);
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);        
 
         devices.Motors.MOTOR_SCORE_ROLL.set(-100);
         pros::delay(500);
@@ -130,29 +131,40 @@ void thirty_point_left() {
 
         robot.turn(58, 127, 1000);
 
+
+
+        //check lines 136 - 144 idk if it will work but it should, if not just uncomment the lines and delete the task
+
         devices.Motors.MOTOR_SCORE_ROLL.set(127);
 
-        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        pros::Task scoreOpenTimer([](void*) {
+                devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+                pros::delay(500);
+                devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        });
 
         robot.move(-11, 90, 1000);
+
+
+
+
 
         pros::delay(500);
 
         devices.Motors.MOTOR_CASCADE_11WR.set(127);
         devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        pros::delay(2000);
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        pros::delay(1500);
         devices.Motors.MOTOR_CASCADE_11WR.set(0);
         devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
         robot.turn(-125, 127, 1000);
 
         robot.move(-6, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(30);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
 
         devices.Motors.MOTOR_CASCADE_11WR.set(-127);
         devices.Motors.MOTOR_CASCADE_11WL.set(-127);
@@ -238,13 +250,14 @@ void forty_point_left() {
 
         devices.Motors.MOTOR_CASCADE_11WR.set(127);
         devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        pros::delay(3300);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
         devices.Motors.MOTOR_SCORE_OPEN.set(30);
+
         pros::delay(500);
         devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        pros::delay(2800);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
 
         robot.turn(-90, 100, 1000);
 
