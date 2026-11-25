@@ -9,14 +9,13 @@ void toggle_auton();
 void twenty_point_left();
 void twenty_point_right();
 
-void middle_pin_left();
-void middle_pin_right();
-
 void thirty_point_left();
 void thirty_point_right();
 
 void forty_point_left();
 void forty_point_right();
+
+void loading_routine();
 
 void skills_routine();
 

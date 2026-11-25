@@ -7,153 +7,6 @@
 
 namespace auton {
 
-namespace {
-
-constexpr int kTwentyPointLeftTurn = 90;
-constexpr int kThirtyPointLeftTurn = 58;
-constexpr int kThirtyPointLeftReturnTurn = -125;
-constexpr int kFortyPointLeftTurn = 55;
-constexpr int kFortyPointLeftReturnTurn = -90;
-
-int turn_for_side(int leftAngle, bool rightSide) {
-        return rightSide ? -leftAngle : leftAngle;
-}
-
-void run_twenty_point_sequence(bool rightSide) {
-        isAuton = true;
-
-        toggle_auton();
-
-        robot.move(-5, 127, 1000);
-        robot.turn(turn_for_side(kTwentyPointLeftTurn, rightSide), 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(10);
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-        
-        robot.move(-8, 80, 2000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        devices.Motors.MOTOR_SCORE_OPEN.set(10);
-
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        pros::delay(100);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);        
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-100);
-        pros::delay(500);
-
-        robot.move(5, 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(0);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(900);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        isAuton = false;
-}
-
-void run_thirty_point_sequence(bool rightSide) {
-        isAuton = true;
-
-        run_twenty_point_sequence(rightSide);
-
-        robot.turn(turn_for_side(kThirtyPointLeftTurn, rightSide), 127, 1000);
-
-        //check lines 136 - 144 idk if it will work but it should, if not just uncomment the lines and delete the task
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(127);
-
-        pros::Task scoreOpenTimer([](void*) {
-                devices.Motors.MOTOR_SCORE_OPEN.set(-10);
-                pros::delay(500);
-                devices.Motors.MOTOR_SCORE_OPEN.set(0);
-        });
-
-        robot.move(-11, 90, 1000);
-
-        pros::delay(500);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        devices.Motors.MOTOR_SCORE_OPEN.set(30);
-
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        pros::delay(1500);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        robot.turn(turn_for_side(kThirtyPointLeftReturnTurn, rightSide), 127, 1000);
-
-        robot.move(-6, 127, 1000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(600);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
-
-        robot.move(2, 127, 1000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
-        pros::delay(1400);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        isAuton = false;
-}
-
-void run_forty_point_sequence(bool rightSide) {
-        isAuton = true;
-
-        run_thirty_point_sequence(rightSide);
-
-        robot.move(3, 127, 2000);
-
-        robot.turn(turn_for_side(kFortyPointLeftTurn, rightSide), 127, 1000);
-
-        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
-        pros::delay(400);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(127);
-
-        robot.move(-10, 127, 2000);
-
-        devices.Motors.MOTOR_CASCADE_11WR.set(127);
-        devices.Motors.MOTOR_CASCADE_11WL.set(127);
-        devices.Motors.MOTOR_SCORE_OPEN.set(30);
-
-        pros::delay(500);
-        devices.Motors.MOTOR_SCORE_OPEN.set(0);
-
-        pros::delay(2800);
-        devices.Motors.MOTOR_CASCADE_11WR.set(0);
-        devices.Motors.MOTOR_CASCADE_11WL.set(0);
-
-        robot.turn(turn_for_side(kFortyPointLeftReturnTurn, rightSide), 100, 1000);
-
-        robot.move(-5, 100, 1000);
-
-        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
-
-        isAuton = false;
-}
-
-} // namespace
-
 void toggle_auton() {
         isAuton = true;
 
@@ -183,49 +36,321 @@ void toggle_auton() {
 }
 
 void twenty_point_left() {
-        run_twenty_point_sequence(false);
-}
-
-void twenty_point_right() {
-        run_twenty_point_sequence(true);
-}
-
-void middle_pin_left() {
         isAuton = true;
-        
 
+        toggle_auton();
+
+        robot.move(-5, 127, 1000);
+        robot.turn(-90, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
         
+        robot.move(-8, 80, 2000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(600);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-100);
+        pros::delay(500);
+
+        robot.move(5, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(900);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
         isAuton = false;
 }
 
-void middle_pin_right() {
+void twenty_point_right() {
         isAuton = true;
+
+        toggle_auton();
+
+        robot.move(-5, 127, 1000);
+        robot.turn(90, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+        
+        robot.move(-8, 127, 2000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(600);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-100);
+        pros::delay(500);
+
+        robot.move(5, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
 
         isAuton = false;
 }
 
 void thirty_point_left() {
-        run_thirty_point_sequence(false);
+        isAuton = true;
+
+        twenty_point_left();
+
+        robot.turn(58, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(-11, 90, 1000);
+
+        pros::delay(500);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(2000);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        robot.turn(-125, 127, 1000);
+
+        robot.move(-6, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(600);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
+
+        robot.move(2, 127, 1000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(1400);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+
+        isAuton = false;
 }
 
 void thirty_point_right() {
-        run_thirty_point_sequence(true);
+        isAuton = true;
+
+        twenty_point_right();
+
+        robot.turn(-58, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(-11, 90, 1000);
+
+        pros::delay(500);
+
+        robot.turn(125, 127, 1000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(2000);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        robot.move(-6, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+        pros::delay(600);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
+
+        robot.move(2, 127, 1000);
+
+
+        isAuton = false;
 }
 
 void forty_point_left() {
-        run_forty_point_sequence(false);
+        isAuton = true;
+
+        thirty_point_left();
+
+        robot.move(3, 127, 2000);
+
+        robot.turn(55, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        robot.move(-10, 127, 2000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(3300);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.turn(-90, 100, 1000);
+
+        robot.move(-5, 100, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
+
+
+        isAuton = false;
 }
 
 void forty_point_right() {
-        run_forty_point_sequence(true);
+        isAuton = true;
+
+        thirty_point_right();
+
+        robot.move(3, 127, 2000);
+
+        robot.turn(-55, 127, 1000);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-30);
+        pros::delay(400);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        robot.move(-10, 127, 2000);
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        pros::delay(3300);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.turn(90, 100, 1000);
+
+        robot.move(-5, 100, 1000);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(-127);
+
+
+        isAuton = false;
+}
+
+
+void loading_routine(){
+        isAuton = true;
+        static int nextCascadeDurationMs = 1000;
+        const int cascadeDurationMs = nextCascadeDurationMs;
+
+        /// for loading
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(127);
+
+        robot.move(-4, 100, 1000);
+
+        pros::delay(500);
+
+        //pin now in claw 
+
+        robot.move(4, 100, 1000);
+
+        robot.turn(90, 100, 1000); //check if right direction
+
+        robot.move(4, 100, 1000);
+
+        //drive intake into wall to align straight
+
+        devices.Motors.MOTOR_CASCADE_11WR.set(127);
+        devices.Motors.MOTOR_CASCADE_11WL.set(127);
+        devices.Motors.MOTOR_SCORE_OPEN.set(30);
+        
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        pros::delay(cascadeDurationMs - 500);
+        devices.Motors.MOTOR_CASCADE_11WR.set(0);
+        devices.Motors.MOTOR_CASCADE_11WL.set(0);
+
+        robot.move(-10, 80, 3000);
+
+        pros::delay(500);
+
+        devices.Motors.MOTOR_SCORE_ROLL.set(0);
+
+        pros::Task cascadeDownTask([cascadeDurationMs] {
+                devices.Motors.MOTOR_CASCADE_11WR.set(-127);
+                devices.Motors.MOTOR_CASCADE_11WL.set(-127);
+                pros::delay(cascadeDurationMs);
+                devices.Motors.MOTOR_CASCADE_11WR.set(0);
+                devices.Motors.MOTOR_CASCADE_11WL.set(0);
+        }, "Cascade down");
+
+        robot.move(10, 80, 3000);
+        cascadeDownTask.join();
+
+        devices.Motors.MOTOR_SCORE_OPEN.set(-10);
+        pros::delay(500);
+        devices.Motors.MOTOR_SCORE_OPEN.set(0);
+
+        robot.move(2, 127, 1000);
+
+        robot.turn(-90, 100, 1000); //check if right direction (check abive with other turn value)
+
+        nextCascadeDurationMs += 1000;
+        isAuton = false;
 }
 
 void skills_routine() {
         isAuton = true; //need to add park to skills and try for a 30 point run (2 line pins)
 
-        thirty_point_left();
+        //forty_point_right();
 
-        robot.move(8, 127, 2000);
+        loading_routine();
+        
+
 
         isAuton = false;
 }
