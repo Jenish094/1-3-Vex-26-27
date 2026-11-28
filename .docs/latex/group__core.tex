@@ -1,0 +1,181 @@
+\doxysection{Core }
+\hypertarget{group__core}{}\label{group__core}\index{Core@{Core}}
+
+
+The view management system.  
+
+
+\doxysubsubsection*{Files}
+\begin{DoxyCompactItemize}
+\item 
+file \doxymbox{\hyperlink{core_8h}{include/\+dash/\+core.\+h}}
+\begin{DoxyCompactList}\small\item\em Dash core header. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{structrd__view}{rd\+\_\+view}}
+\begin{DoxyCompactList}\small\item\em Dash view structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__core_gabf8b58c0e1a80b23109f1e14a9542117}\label{group__core_gabf8b58c0e1a80b23109f1e14a9542117} 
+typedef enum \doxymbox{\hyperlink{group__core_gabccfe48c57880d25f21e6db67cfb0277}{rd\+\_\+anim\+\_\+state}} {\bfseries rd\+\_\+anim\+\_\+state\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Animation state. \end{DoxyCompactList}\item 
+\Hypertarget{group__core_gaac30b45d648de30e2c32b1d8cac99d75}\label{group__core_gaac30b45d648de30e2c32b1d8cac99d75} 
+typedef struct \doxymbox{\hyperlink{structrd__view}{rd\+\_\+view}} {\bfseries rd\+\_\+view\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Dash view structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__core_gabccfe48c57880d25f21e6db67cfb0277}\label{group__core_gabccfe48c57880d25f21e6db67cfb0277} 
+enum \doxymbox{\hyperlink{group__core_gabccfe48c57880d25f21e6db67cfb0277}{rd\+\_\+anim\+\_\+state}} \{ {\bfseries RD\+\_\+\+ANIM\+\_\+\+ON}
+, {\bfseries RD\+\_\+\+ANIM\+\_\+\+OFF}
+ \}
+\begin{DoxyCompactList}\small\item\em Animation state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{group__core_gad825f912081674f39ae1f8d255f6eb84}{rd\+\_\+view\+\_\+create}} (const char \texorpdfstring{$\ast$}{*}name)
+\begin{DoxyCompactList}\small\item\em Create a view. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga06317955ba1241ad37d3fbd50ae75254}{rd\+\_\+view\+\_\+focus}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Set a view to the currently active view. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga19bc42fd864f9c14e4710b9ec2dd5631}{rd\+\_\+view\+\_\+del}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Delete a view. \end{DoxyCompactList}\item 
+lv\+\_\+obj\+\_\+t \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{group__core_ga7aa13a1312f4232db533db0e40b1a5f0}{rd\+\_\+view\+\_\+obj}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Get the view\textquotesingle{}s lvgl object. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_gadb1c96b770111c3d5d365c12e0dab598}{rd\+\_\+view\+\_\+alert}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view, const char \texorpdfstring{$\ast$}{*}msg)
+\begin{DoxyCompactList}\small\item\em Push an alert. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga20d76c93f6c264a9e585bc98fdea83f5}{rd\+\_\+view\+\_\+set\+\_\+anims}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view, \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}} state)
+\begin{DoxyCompactList}\small\item\em Enable or disable animations for a view. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}} \doxymbox{\hyperlink{group__core_ga75e568ff4d1a621830fed7bba86b21a9}{rd\+\_\+view\+\_\+get\+\_\+anims}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Get the animation state for a view. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The view management system. 
+
+The LVGL view management system to enable compatibility between templates that provide LVGL GUIs. Knowledge of LVGL is required to use this API.
+
+\label{group__core_doc-func-members}
+\Hypertarget{group__core_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{group__core_gadb1c96b770111c3d5d365c12e0dab598}\index{Core@{Core}!rd\_view\_alert@{rd\_view\_alert}}
+\index{rd\_view\_alert@{rd\_view\_alert}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_alert()}{rd\_view\_alert()}}
+{\footnotesize\ttfamily \label{group__core_gadb1c96b770111c3d5d365c12e0dab598} 
+void rd\+\_\+view\+\_\+alert (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{}\end{DoxyParamCaption})}
+
+
+
+Push an alert. 
+
+Pushes an alert to the screen, regardless of which view is active.
+
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to link back to \\
+\hline
+{\em msg} & Message to display \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__core_gad825f912081674f39ae1f8d255f6eb84}\index{Core@{Core}!rd\_view\_create@{rd\_view\_create}}
+\index{rd\_view\_create@{rd\_view\_create}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_create()}{rd\_view\_create()}}
+{\footnotesize\ttfamily \label{group__core_gad825f912081674f39ae1f8d255f6eb84} 
+\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*} rd\+\_\+view\+\_\+create (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{name}{}\end{DoxyParamCaption})}
+
+
+
+Create a view. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of the view \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to a view object 
+\end{DoxyReturn}
+\Hypertarget{group__core_ga19bc42fd864f9c14e4710b9ec2dd5631}\index{Core@{Core}!rd\_view\_del@{rd\_view\_del}}
+\index{rd\_view\_del@{rd\_view\_del}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_del()}{rd\_view\_del()}}
+{\footnotesize\ttfamily \label{group__core_ga19bc42fd864f9c14e4710b9ec2dd5631} 
+void rd\+\_\+view\+\_\+del (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{}\end{DoxyParamCaption})}
+
+
+
+Delete a view. 
+
+\begin{DoxyWarning}{Warning}
+Deleting a view will free the memory the view occupied, but will not set any variables pointing to said view {\ttfamily NULL}.
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to delete \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__core_ga06317955ba1241ad37d3fbd50ae75254}\index{Core@{Core}!rd\_view\_focus@{rd\_view\_focus}}
+\index{rd\_view\_focus@{rd\_view\_focus}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_focus()}{rd\_view\_focus()}}
+{\footnotesize\ttfamily \label{group__core_ga06317955ba1241ad37d3fbd50ae75254} 
+void rd\+\_\+view\+\_\+focus (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{}\end{DoxyParamCaption})}
+
+
+
+Set a view to the currently active view. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to focus \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__core_ga75e568ff4d1a621830fed7bba86b21a9}\index{Core@{Core}!rd\_view\_get\_anims@{rd\_view\_get\_anims}}
+\index{rd\_view\_get\_anims@{rd\_view\_get\_anims}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_get\_anims()}{rd\_view\_get\_anims()}}
+{\footnotesize\ttfamily \label{group__core_ga75e568ff4d1a621830fed7bba86b21a9} 
+\doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}} rd\+\_\+view\+\_\+get\+\_\+anims (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{}\end{DoxyParamCaption})}
+
+
+
+Get the animation state for a view. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to query \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The animation state 
+\end{DoxyReturn}
+\Hypertarget{group__core_ga7aa13a1312f4232db533db0e40b1a5f0}\index{Core@{Core}!rd\_view\_obj@{rd\_view\_obj}}
+\index{rd\_view\_obj@{rd\_view\_obj}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_obj()}{rd\_view\_obj()}}
+{\footnotesize\ttfamily \label{group__core_ga7aa13a1312f4232db533db0e40b1a5f0} 
+lv\+\_\+obj\+\_\+t \texorpdfstring{$\ast$}{*} rd\+\_\+view\+\_\+obj (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{}\end{DoxyParamCaption})}
+
+
+
+Get the view\textquotesingle{}s lvgl object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to query \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__core_ga20d76c93f6c264a9e585bc98fdea83f5}\index{Core@{Core}!rd\_view\_set\_anims@{rd\_view\_set\_anims}}
+\index{rd\_view\_set\_anims@{rd\_view\_set\_anims}!Core@{Core}}
+\doxysubsubsection{\texorpdfstring{rd\_view\_set\_anims()}{rd\_view\_set\_anims()}}
+{\footnotesize\ttfamily \label{group__core_ga20d76c93f6c264a9e585bc98fdea83f5} 
+void rd\+\_\+view\+\_\+set\+\_\+anims (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{view}{, }\item[{\doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}}}]{state}{}\end{DoxyParamCaption})}
+
+
+
+Enable or disable animations for a view. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em view} & View to modify \\
+\hline
+{\em state} & Animation state \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,150 @@
+\chapter{Autonomous Recording System }
+\hypertarget{autonomous_recording}{}\label{autonomous_recording}\index{Autonomous Recording System@{Autonomous Recording System}}
+\hypertarget{autonomous_recording_autotoc_md0}{}\doxysubsection{\texorpdfstring{The short version}{The short version}}\label{autonomous_recording_autotoc_md0}
+The autonomous recording system follows the route the robot actually drove. While driving, two passive tracking wheels and the inertial sensor feed the odometry task. Odometry estimates the robot\textquotesingle{}s field position and heading, and the recorder writes that pose to the micro\+SD card at a 10 ms interval. A separate converter later turns the recording into C++ code. During autonomous, the path follower uses fresh odometry readings to steer toward those points.
+
+It does not record joystick inputs or save drivetrain motor power. It records the measured result of driving, then follows that measured path with feedback.\hypertarget{autonomous_recording_autotoc_md1}{}\doxysubsection{\texorpdfstring{Data path}{Data path}}\label{autonomous_recording_autotoc_md1}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Driver\ moves\ the\ robot\ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Passive\ tracking\ wheels\ rotate\ \ \ \ \ |}
+\DoxyCodeLine{|\ IMU\ measures\ robot\ heading\ change\ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Odometry\ converts\ sensor\ changes\ \ \ |}
+\DoxyCodeLine{|\ into\ field\ X,\ Y,\ and\ heading\ \ \ \ \ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Recorder\ writes\ a\ pose\ row\ about\ \ \ |}
+\DoxyCodeLine{|\ every\ 10\ ms\ to\ /usd/recording.csv\ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Copy\ CSV\ to\ a\ computer\ and\ run\ \ \ \ \ |}
+\DoxyCodeLine{|\ the\ csv-\/to-\/C++\ converter\ \ \ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Converter\ filters\ redundant\ poses\ |}
+\DoxyCodeLine{|\ and\ emits\ route\ waypoints\ in\ C++\ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Path\ follower\ compares\ live\ pose\ \ |}
+\DoxyCodeLine{|\ with\ the\ route\ and\ steers\ motors\ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+
+\end{DoxyCode}
+\hypertarget{autonomous_recording_autotoc_md2}{}\doxysubsection{\texorpdfstring{Odometry}{Odometry}}\label{autonomous_recording_autotoc_md2}
+The robot uses two unpowered tracking wheels, each read by a rotation sensor, plus the IMU. Because the tracking wheels are not driven by motors, they roll with the robot\textquotesingle{}s movement and provide an independent measurement of travel. Their rotation sensor positions are read in centidegrees. In {\ttfamily odom.\+cpp}, one wheel revolution is 36,000 centidegrees and the configured wheel diameter is 2 inches, so a change in sensor position is converted to wheel travel as:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{wheel\ travel\ (in)\ =\ change\ in\ centidegrees\ /\ 36,000\ *\ (2\ *\ pi\ *\ wheel\ radius)}
+
+\end{DoxyCode}
+
+
+The implementation expresses the wheel circumference as {\ttfamily 2 \texorpdfstring{$\ast$}{*} pi} inches, using the configured 2-\/inch diameter. The vertical and horizontal wheel deltas describe local forward and sideways movement. The IMU supplies the heading change in degrees; odometry wraps that change across the +/\+-\/180-\/degree boundary and converts it to radians. It accounts for tracking-\/wheel offsets during turns, then rotates the local movement into field X and Y coordinates.
+
+The pose convention is zero heading facing +Y, with positive heading counterclockwise. The position is relative to the pose reset or starting pose, so use the same physical start location and orientation when recording and replaying.\hypertarget{autonomous_recording_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Why sample every 10 ms?}{Why sample every 10 ms?}}\label{autonomous_recording_autotoc_md3}
+The odometry task reads the tracking-\/wheel sensors and IMU about every 10 ms. The recorder also writes the current estimated pose on a 10 ms cycle. These are separate task loops.
+
+The rotation sensors report a cumulative position, not just movement that occurred during one instant. At each odometry update, the code subtracts the previous reading from the current reading. If an update happens late, the next reading normally includes the wheel rotation accumulated since the previous read.
+
+We do {\bfseries{not}} fill missed odometry movement with drivetrain motor encoders. Those encoders are not used to calculate field pose: on turns, wheel slip, and longer runs their readings are not a sufficiently dependable substitute for the passive tracking wheels. If the tracking sensors themselves lose movement or the wheels slip, this code has no drivetrain-\/encoder fallback to reconstruct it. The IMU continues to supply heading change, but it cannot recover unknown translation by itself.
+
+Built-\/in motor encoders can still be useful for other mechanisms, where the task is a local position such as moving our wrist or cascade and does not require the drivetrain\textquotesingle{}s field-\/position accuracy. For example, the driver wrist macro reads it\textquotesingle{}s motor\textquotesingle{}s position to control its wrist movement. That use is separate from odometry; it does not feed the recorded X/\+Y path.\hypertarget{autonomous_recording_autotoc_md4}{}\doxysubsection{\texorpdfstring{Recording file}{Recording file}}\label{autonomous_recording_autotoc_md4}
+The persistent recorder task waits for a start request. It checks that a micro\+SD card is installed, starts odometry, opens {\ttfamily /\+usd/\+recording.csv} in write mode, writes a header, and then appends a row on each loop. Starting a new recording overwrites the previous file. Each row is flushed after writing; stopping the request closes the file on the recorder task\textquotesingle{}s next iteration.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{timestamp\_ms,x\_in,y\_in,heading\_rad}
+\DoxyCodeLine{0,0.0000,0.0000,0.000000}
+
+\end{DoxyCode}
+
+
+{\ttfamily x\+\_\+in} and {\ttfamily y\+\_\+in} are inches. {\ttfamily heading\+\_\+rad} is the odometry heading in radians. The recorded values are estimates, not ground-\/truth measurements. Starting pose, wheel alignment, calibration, surface traction, and physical wheel contact all affect the result.
+
+The recorder API is implemented in {\ttfamily src/\+recorder.\+cpp}. The start/\+stop button can be created with {\ttfamily recorder::\+create\+\_\+button(...)}, but that function is not currently called by the robot\textquotesingle{}s dashboard initialization. The recorder task is initialized from {\ttfamily src/\+main.\+cpp}; the recorder is asked to stop when the robot is disabled or enters autonomous mode.\hypertarget{autonomous_recording_autotoc_md5}{}\doxysubsection{\texorpdfstring{Conversion: recording to route}{Conversion: recording to route}}\label{autonomous_recording_autotoc_md5}
+The desktop utility in {\ttfamily cppconvertapp} reads the CSV and ignores malformed or non-\/finite rows. It retains the first valid pose, then keeps another pose when it differs from the last retained pose by at least 1 inch of translation or 0.\+12 radians of heading. The result is a shorter route that keeps meaningful changes without carrying every sample into the generated source.
+
+The converter is separate from the sensor-\/unit conversion in {\ttfamily odom.\+cpp}:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily odom.\+cpp} converts rotation-\/sensor centidegrees into wheel distance and combines wheel and IMU deltas into a field pose.
+\item {\ttfamily cppconvertapp} converts recorded field poses into route points and C++ source.
+\end{DoxyItemize}
+
+The converter writes X/\+Y coordinates to two decimal places. With at least two retained points it generates a call to {\ttfamily robot.\+follow(...)}. The timeout is the larger of 15 seconds and the last recording timestamp plus 5 seconds. Timestamps set this overall timeout; playback does not reproduce the original timing or speed profile. Heading helps decide whether to retain a sample, but the follower receives X/\+Y points and infers its initial heading from the first route segment. A recording that reduces to one point cannot produce a driving route.\hypertarget{autonomous_recording_autotoc_md6}{}\doxysubsection{\texorpdfstring{Playback: following the route}{Playback: following the route}}\label{autonomous_recording_autotoc_md6}
+{\ttfamily Robot::\+follow} reads the generated waypoints and uses the live odometry pose while driving. It finds the closest point on the route, chooses a target about 10 inches farther along, then calculates forward and steering power. It repeats this about every 10 ms. The drivetrain is stopped when the robot reaches the end condition or the timeout expires.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Set\ odometry\ to\ the\ first\ point\ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+\ \ \ \ \ \ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Read\ current\ X,\ Y,\ and\ heading\ \ \ |<-\/-\/-\/-\/-\/|\ Not\ complete:\ read\ pose\ again|}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+\ \ \ \ \ \ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Find\ nearest\ point\ on\ the\ route\ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Select\ a\ target\ about\ 10\ in\ ahead|}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Calculate\ forward\ and\ turn\ power|}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Command\ drivetrain;\ wait\ \string~10\ ms\ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ At\ route\ end\ or\ timed\ out?\ \ \ \ \ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ |\ yes\ \ \ \ \ \ \ \ \ \ \ \ \ |\ no}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ v\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +-\/-\/-\/-\/-\/>\ Not\ complete:\ read\ pose\ again}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+\DoxyCodeLine{|\ Stop\ drivetrain\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}
+
+\end{DoxyCode}
+
+
+The follower can correct some error by steering toward the route, but it cannot remove odometry drift or guarantee identical motion on every surface. Its return value reports whether the route was accepted and setup succeeded; timeout is not currently reported as a separate failure.\hypertarget{autonomous_recording_autotoc_md7}{}\doxysubsection{\texorpdfstring{Adding a generated route to the robot}{Adding a generated route to the robot}}\label{autonomous_recording_autotoc_md7}
+After converting the csv into a cpp file, the function can be either copied and pasted into an autonomous routine in auto.\+cpp or the direct file can be placed into ./\+src and referenced in \doxylink{auto_8h_source}{auto.\+h} as a routine \hypertarget{autonomous_recording_autotoc_md8}{}\doxysubsection{\texorpdfstring{Source files}{Source files}}\label{autonomous_recording_autotoc_md8}
+
+\begin{DoxyItemize}
+\item {\ttfamily src/\+recorder.\+cpp}: recording task, CSV output, and start/\+stop API.
+\item {\ttfamily src/\+odom.\+cpp}: tracking-\/wheel and IMU conversion and field-\/pose integration.
+\item {\ttfamily src/\+path.\+cpp}: route parsing and feedback path follower.
+\item {\ttfamily src/\+main.\+cpp}: add routine into the interface.
+\item {\ttfamily src/\+dash/\+views/\+selector.\+cpp} : lvgl source code for the autonomous selector
+\item {\ttfamily cppconvertapp/\+main.\+cpp}: CSV-\/to-\/\+C++ converter. 
+\end{DoxyItemize}

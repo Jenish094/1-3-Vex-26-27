@@ -1,0 +1,128 @@
+/**
+\mainpage Codebase Summary
+
+Welcome to the codebase for 41103C 1/3's 2026-2027 VEX V5 robot. This page is a map of the robot software containing what the brain runs, how the controllers are assigned, what hardware the code talks to, and where the main pieces live.
+
+The source is available for judging, and review on [GitHub](https://github.com/Jenish094/1-3-Vex-26-27). Use the navigation panel to browse the documented headers, types, and implementation files.
+
+## At a glance
+
+The V5 brain runs the PROS firmware. The main program initializes hardware and the on-brain autonomous selector, then switches between competition callbacks for autonomous, driver control, and disabled states. LVGL is used by the brain-side display and dashboard interface. Odometry, driver input, mechanism controls, and autonomous routines are implemented in the project source rather than being separate libraries.
+
+```text
++---------------------------+
+| V5 brain / PROS firmware  |
++---------------------------+
+             |
+             v
++---------------------------+
+| Initialise motors, sensors|
+| and on-brain selector     |
++---------------------------+
+             |
+       +-----+------+
+       |            |
+       v            v
++-------------+  +----------------+
+| Driver mode |  | Autonomous mode|
++-------------+  +----------------+
+       |            |
+       v            v
++-------------+  +----------------+
+| Controller  |  | Selected routine|
+| and macros  |  | and odometry    |
++-------------+  +----------------+
+```
+
+## Robot and brain
+
+The robot uses a four-motor drivetrain, a motor-driven intake, a two-motor cascade, and separate score/wrist mechanisms. A pneumatic brake is also available to the driver controls. The hardware declarations and device initialisation are in `include/robot_hardware.hpp` and `src/robot_hardware.cpp`.
+
+The brain runs PROS. During initialisation, the program initialises the devices, resets odometry, starts the recorder task, and presents an autonomous selector. During driver control, it reads the primary controller and updates the cascade automation. During autonomous, it runs the selected callback. The dashboard uses LVGL-based code; the current autonomous selection is the main brain-screen workflow exposed from `src/main.cpp`.
+
+## Controllers
+
+### Primary controller
+
+| Input | Action |
+| --- | --- |
+| Left stick Y and right stick X | Arcade-style drivetrain control. |
+| R2 / R1 | Run the intake in or out. |
+| L2 / L1 | Manually move the cascade up or down. |
+| A | Run the pin-grab sequence: raise the cascade, move the wrist, return the cascade, and run the score roller. |
+| X | Cancel the pin-grab sequence and stop its active motors. |
+| B | Toggle the pneumatic brake. |
+| Y | Pulse the wrist motor; each press alternates direction. |
+| Right / Down | Manually move the score/wrist motor. |
+
+### Partner controller
+
+| Input | Action |
+| --- | --- |
+| Left / Up / Right | Select neutral, centre, or alliance goal mode. |
+| B | Switch between pin-scoring and cup-scoring cascade targets. |
+| A | Increase the requested cascade level, up to level 10. |
+| X | Stop cascade automation and clear its requested level. |
+| L2 | Stop automation and reset the cascade rotation sensor position. |
+
+The controller screens provide quick status: the primary screen displays cascade encoder position, and the partner screen shows the selected goal and scoring modes. The detailed input loop and display updates are in `src/controls.cpp` and `src/functions.cpp`.
+
+## Sensors and hardware feedback
+
+- **Two passive tracking-wheel rotation sensors:** vertical and horizontal wheel travel used by odometry.
+- **Inertial sensor:** heading change used with tracking-wheel movement to estimate field pose.
+- **Cascade rotation sensor:** cascade position feedback for preset-height automation and the primary controller display.
+- **Optical sensor:** initialized in the hardware layer; color-detection logic is present, but its activation path is not currently connected to a driver input.
+- **AI Vision port:** Allows the robot to align with the goal's AprilTags when required                               
+- **Motor encoders:** mechanism motor position is available for local actions such as the wrist macro. Drivetrain motor encoders are not used by field odometry.
+
+Odometry converts tracking-wheel rotation into inches and combines that motion with IMU heading changes to update X, Y, and heading. The [Autonomous Recording System](\ref autonomous_recording) page explains how pose samples are recorded and converted into a path-following routine.
+
+## Autonomous
+
+The brain's selector currently offers 20-point, 30-point, and 40-point routines for the left and right sides, a Skills routine, and disabled. The longer routines build on shorter routines and combine robot movement with cascade, intake, wrist, and roller actions. The Skills routine currently calls the loading routine.
+
+The code also includes a loading routine and a recorded-routine placeholder. The recorded routine is not currently enabled in the selector and its function body is empty. The recording converter can generate a path-following implementation, but that generated source still needs to be integrated into the robot project and selector.
+
+Movement helpers use odometry for distance and heading control. The route follower tracks a list of field coordinates using the live pose estimate. Autonomous declarations are in `include/auto.h`; routine implementations and selector setup are in `src/auto.cpp` and `src/main.cpp`.
+
+## Quality-of-life features
+
+- **Cascade presets:** the partner controller selects goal type, scoring mode, and a level up to 10. The controller loop uses the cascade rotation sensor to move toward the corresponding target.
+- **Manual override and stop controls:** the primary controller can take manual cascade control; partner controls can cancel automation or reset its sensor position.
+- **Pin-grab macro:** a staged sequence coordinates cascade travel, wrist movement, and the score roller, with a timeout on movement stages.
+- **Controller status screens:** mechanism position and selected cascade modes are visible without connecting a laptop.
+- **Autonomous selector:** routines are selected on the brain rather than by editing the selected callback at runtime.
+- **Recording-to-path tool:** the separate converter reduces recorded pose samples and emits C++ waypoint-following code. See [Autonomous Recording System](\ref autonomous_recording).
+
+## Codebase layout
+
+| Path | Contents |
+| --- | --- |
+| `src/` | Robot program implementations: lifecycle, controls, hardware, odometry, autonomous routines, and dashboard code. |
+| `include/` | Project headers and interfaces. `include/pros/` contains PROS headers, `include/liblvgl/` contains LVGL headers, and `include/dash/` contains dashboard interfaces. |
+| `src/dash/` | Brain-dashboard implementation and views. |
+| `cppconvertapp/` | Windows C++ recording converter and its browser-based converter. |
+| `assets/` | Team logos. |
+| `firmware/` | Linker scripts used by the V5 firmware build. |
+| `Doxyfile`, `docs/` | Doxygen configuration, the main documentation page, and the autonomous-recording guide. |
+| `.github/workflows/` | GitHub Actions workflow for running Doxygen. |
+
+## Libraries
+
+The robot project uses two external robotics/UI libraries:
+
+- **PROS:** V5 runtime, competition lifecycle, motor and sensor APIs, tasks, and controller access.
+- **LVGL:** graphics and user-interface primitives used by the brain display and dashboard code.
+- **Doxygen-Awesome-CSS:** For our doxygen documentation theme
+
+The recording converter uses the C++ standard library. Doxygen Awesome is used only to style the generated documentation; it is not linked into robot firmware.
+
+## Source repository
+
+Browse the source and project history on [GitHub](https://github.com/Jenish094/1-3-Vex-26-27).
+
+## License
+
+[Read the project license](https://github.com/Jenish094/1-3-Vex-26-27/blob/states/LICENSE).
+*/

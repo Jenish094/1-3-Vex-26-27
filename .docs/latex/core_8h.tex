@@ -1,0 +1,50 @@
+\doxysection{include/\+dash/\+core.h File Reference}
+\hypertarget{core_8h}{}\label{core_8h}\index{include/dash/core.h@{include/dash/core.h}}
+
+
+Dash core header.  
+
+
+{\ttfamily \+\#include "{}liblvgl/\+lvgl.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{structrd__view}{rd\+\_\+view}}
+\begin{DoxyCompactList}\small\item\em Dash view structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \doxymbox{\hyperlink{group__core_gabccfe48c57880d25f21e6db67cfb0277}{rd\+\_\+anim\+\_\+state}} {\bfseries rd\+\_\+anim\+\_\+state\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Animation state. \end{DoxyCompactList}\item 
+typedef struct \doxymbox{\hyperlink{structrd__view}{rd\+\_\+view}} {\bfseries rd\+\_\+view\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Dash view structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__core_gabccfe48c57880d25f21e6db67cfb0277}\label{group__core_gabccfe48c57880d25f21e6db67cfb0277} 
+enum \doxymbox{\hyperlink{group__core_gabccfe48c57880d25f21e6db67cfb0277}{rd\+\_\+anim\+\_\+state}} \{ {\bfseries RD\+\_\+\+ANIM\+\_\+\+ON}
+, {\bfseries RD\+\_\+\+ANIM\+\_\+\+OFF}
+ \}
+\begin{DoxyCompactList}\small\item\em Animation state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{group__core_gad825f912081674f39ae1f8d255f6eb84}{rd\+\_\+view\+\_\+create}} (const char \texorpdfstring{$\ast$}{*}name)
+\begin{DoxyCompactList}\small\item\em Create a view. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga06317955ba1241ad37d3fbd50ae75254}{rd\+\_\+view\+\_\+focus}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Set a view to the currently active view. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga19bc42fd864f9c14e4710b9ec2dd5631}{rd\+\_\+view\+\_\+del}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Delete a view. \end{DoxyCompactList}\item 
+lv\+\_\+obj\+\_\+t \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{group__core_ga7aa13a1312f4232db533db0e40b1a5f0}{rd\+\_\+view\+\_\+obj}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Get the view\textquotesingle{}s lvgl object. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_gadb1c96b770111c3d5d365c12e0dab598}{rd\+\_\+view\+\_\+alert}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view, const char \texorpdfstring{$\ast$}{*}msg)
+\begin{DoxyCompactList}\small\item\em Push an alert. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{group__core_ga20d76c93f6c264a9e585bc98fdea83f5}{rd\+\_\+view\+\_\+set\+\_\+anims}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view, \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}} state)
+\begin{DoxyCompactList}\small\item\em Enable or disable animations for a view. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\+\_\+anim\+\_\+state\+\_\+t}} \doxymbox{\hyperlink{group__core_ga75e568ff4d1a621830fed7bba86b21a9}{rd\+\_\+view\+\_\+get\+\_\+anims}} (\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\+\_\+view\+\_\+t}} \texorpdfstring{$\ast$}{*}view)
+\begin{DoxyCompactList}\small\item\em Get the animation state for a view. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Dash core header. 
+

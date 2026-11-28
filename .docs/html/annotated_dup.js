@@ -6,5 +6,6 @@ var annotated_dup =
     [ "MGWrap", "struct_m_g_wrap.html", null ],
     [ "MWrap", "struct_m_wrap.html", null ],
     [ "Pose", "struct_pose.html", null ],
+    [ "rd_view", "structrd__view.html", null ],
     [ "Robot", "class_robot.html", null ]
 ];

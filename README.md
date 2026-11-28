@@ -11,6 +11,7 @@
 
 [Code Documentation](https://docs.41103c.jenish.tech/)
 [Team Website](https://41103c.jenish.tech/)
+[Autonomous Recording System](https://docs.41103c.jenish.tech/autonomous_recording.html)
 
 > [!NOTE]
 > This 'states' branch is the new main branch

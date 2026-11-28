@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pose_0',['Pose',['../struct_pose.html',1,'']]]
+  ['data_20path_0',['Data path',['../autonomous_recording.html#autotoc_md1',1,'']]]
 ];

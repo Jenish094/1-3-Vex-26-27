@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hardware_0',['Hardware',['../struct_hardware.html',1,'']]]
+  ['brain_0',['Robot and brain',['../index.html#autotoc_md10',1,'']]]
 ];

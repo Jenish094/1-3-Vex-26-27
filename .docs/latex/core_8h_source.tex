@@ -1,0 +1,45 @@
+\doxysection{core.\+h}
+\hypertarget{core_8h_source}{}\label{core_8h_source}\index{include/dash/core.h@{include/dash/core.h}}
+\doxymbox{\hyperlink{core_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}liblvgl/lvgl.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00012\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{group__core_gabccfe48c57880d25f21e6db67cfb0277}{rd\_anim\_state}}\ \{\ RD\_ANIM\_ON,\ RD\_ANIM\_OFF\ \}\ \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\_anim\_state\_t}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{structrd__view}{rd\_view}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00036\ \ \ \ \ lv\_obj\_t\ *obj;}
+\DoxyCodeLine{00037\ \ \ \ \ lv\_obj\_t\ *\_list\_btn;}
+\DoxyCodeLine{00038\ \ \ \ \ \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\_anim\_state\_t}}\ anims;}
+\DoxyCodeLine{00039\ \}\ \doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00047\ \doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *\doxymbox{\hyperlink{group__core_gad825f912081674f39ae1f8d255f6eb84}{rd\_view\_create}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{group__core_ga06317955ba1241ad37d3fbd50ae75254}{rd\_view\_focus}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{group__core_ga19bc42fd864f9c14e4710b9ec2dd5631}{rd\_view\_del}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00070\ lv\_obj\_t\ *\doxymbox{\hyperlink{group__core_ga7aa13a1312f4232db533db0e40b1a5f0}{rd\_view\_obj}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{group__core_gadb1c96b770111c3d5d365c12e0dab598}{rd\_view\_alert}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *msg);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{group__core_ga20d76c93f6c264a9e585bc98fdea83f5}{rd\_view\_set\_anims}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view,\ \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\_anim\_state\_t}}\ state);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00096\ \doxymbox{\hyperlink{group__core_gabf8b58c0e1a80b23109f1e14a9542117}{rd\_anim\_state\_t}}\ \doxymbox{\hyperlink{group__core_ga75e568ff4d1a621830fed7bba86b21a9}{rd\_view\_get\_anims}}(\doxymbox{\hyperlink{group__core_gaac30b45d648de30e2c32b1d8cac99d75}{rd\_view\_t}}\ *view);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

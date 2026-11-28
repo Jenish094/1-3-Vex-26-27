@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['macro_0',['Macro',['../class_macro.html',1,'']]],
-  ['mgwrap_1',['MGWrap',['../struct_m_g_wrap.html',1,'']]],
-  ['mwrap_2',['MWrap',['../struct_m_wrap.html',1,'']]]
+  ['codebase_20layout_0',['Codebase layout',['../index.html#autotoc_md17',1,'']]],
+  ['codebase_20summary_1',['Codebase Summary',['../index.html',1,'']]],
+  ['controller_2',['controller',['../index.html#autotoc_md13',1,'Partner controller'],['../index.html#autotoc_md12',1,'Primary controller']]],
+  ['controllers_3',['Controllers',['../index.html#autotoc_md11',1,'']]],
+  ['conversion_3a_20recording_20to_20route_4',['Conversion: recording to route',['../autonomous_recording.html#autotoc_md5',1,'']]],
+  ['core_5',['Core',['../group__core.html',1,'']]],
+  ['core_2eh_6',['core.h',['../core_8h.html',1,'']]]
 ];

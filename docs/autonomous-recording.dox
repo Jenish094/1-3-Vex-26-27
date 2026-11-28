@@ -1,0 +1,159 @@
+/**
+\page autonomous_recording Autonomous Recording System
+\tableofcontents
+
+## The short version
+
+The autonomous recording system follows the route the robot actually drove. While driving, two passive tracking wheels and the inertial sensor feed the odometry task. Odometry estimates the robot's field position and heading, and the recorder writes that pose to the microSD card at a 10 ms interval. A separate converter later turns the recording into C++ code. During autonomous, the path follower uses fresh odometry readings to steer toward those points.
+
+It does not record joystick inputs or save drivetrain motor power. It records the measured result of driving, then follows that measured path with feedback.
+
+## Data path
+
+```text
++-----------------------------------+
+| Driver moves the robot             |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Passive tracking wheels rotate     |
+| IMU measures robot heading change |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Odometry converts sensor changes   |
+| into field X, Y, and heading       |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Recorder writes a pose row about   |
+| every 10 ms to /usd/recording.csv  |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Copy CSV to a computer and run     |
+| the csv-to-C++ converter     |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Converter filters redundant poses |
+| and emits route waypoints in C++   |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Path follower compares live pose  |
+| with the route and steers motors  |
++-----------------------------------+
+```
+
+## Odometry
+
+The robot uses two unpowered tracking wheels, each read by a rotation sensor, plus the IMU. Because the tracking wheels are not driven by motors, they roll with the robot's movement and provide an independent measurement of travel. Their rotation sensor positions are read in centidegrees. In `odom.cpp`, one wheel revolution is 36,000 centidegrees and the configured wheel diameter is 2 inches, so a change in sensor position is converted to wheel travel as:
+
+```text
+wheel travel (in) = change in centidegrees / 36,000 * (2 * pi * wheel radius)
+```
+
+The implementation expresses the wheel circumference as `2 * pi` inches, using the configured 2-inch diameter. The vertical and horizontal wheel deltas describe local forward and sideways movement. The IMU supplies the heading change in degrees; odometry wraps that change across the +/-180-degree boundary and converts it to radians. It accounts for tracking-wheel offsets during turns, then rotates the local movement into field X and Y coordinates.
+
+The pose convention is zero heading facing +Y, with positive heading counterclockwise. The position is relative to the pose reset or starting pose, so use the same physical start location and orientation when recording and replaying.
+
+### Why sample every 10 ms?
+
+The odometry task reads the tracking-wheel sensors and IMU about every 10 ms. The recorder also writes the current estimated pose on a 10 ms cycle. These are separate task loops.
+
+The rotation sensors report a cumulative position, not just movement that occurred during one instant. At each odometry update, the code subtracts the previous reading from the current reading. If an update happens late, the next reading normally includes the wheel rotation accumulated since the previous read.
+
+We do **not** fill missed odometry movement with drivetrain motor encoders. Those encoders are not used to calculate field pose: on turns, wheel slip, and longer runs their readings are not a sufficiently dependable substitute for the passive tracking wheels. If the tracking sensors themselves lose movement or the wheels slip, this code has no drivetrain-encoder fallback to reconstruct it. The IMU continues to supply heading change, but it cannot recover unknown translation by itself.
+
+Built-in motor encoders can still be useful for other mechanisms, where the task is a local position such as moving our wrist or cascade and does not require the drivetrain's field-position accuracy. For example, the driver wrist macro reads it's motor's position to control its wrist movement. That use is separate from odometry; it does not feed the recorded X/Y path.
+
+## Recording file
+
+The persistent recorder task waits for a start request. It checks that a microSD card is installed, starts odometry, opens `/usd/recording.csv` in write mode, writes a header, and then appends a row on each loop. Starting a new recording overwrites the previous file. Each row is flushed after writing; stopping the request closes the file on the recorder task's next iteration.
+
+```csv
+timestamp_ms,x_in,y_in,heading_rad
+0,0.0000,0.0000,0.000000
+```
+
+`x_in` and `y_in` are inches. `heading_rad` is the odometry heading in radians. The recorded values are estimates, not ground-truth measurements. Starting pose, wheel alignment, calibration, surface traction, and physical wheel contact all affect the result.
+
+The recorder API is implemented in `src/recorder.cpp`. The start/stop button can be created with `recorder::create_button(...)`, but that function is not currently called by the robot's dashboard initialization. The recorder task is initialized from `src/main.cpp`; the recorder is asked to stop when the robot is disabled or enters autonomous mode.
+
+## Conversion: recording to route
+
+The desktop utility in `cppconvertapp` reads the CSV and ignores malformed or non-finite rows. It retains the first valid pose, then keeps another pose when it differs from the last retained pose by at least 1 inch of translation or 0.12 radians of heading. The result is a shorter route that keeps meaningful changes without carrying every sample into the generated source.
+
+The converter is separate from the sensor-unit conversion in `odom.cpp`:
+
+- `odom.cpp` converts rotation-sensor centidegrees into wheel distance and combines wheel and IMU deltas into a field pose.
+- `cppconvertapp` converts recorded field poses into route points and C++ source.
+
+The converter writes X/Y coordinates to two decimal places. With at least two retained points it generates a call to `robot.follow(...)`. The timeout is the larger of 15 seconds and the last recording timestamp plus 5 seconds. Timestamps set this overall timeout; playback does not reproduce the original timing or speed profile. Heading helps decide whether to retain a sample, but the follower receives X/Y points and infers its initial heading from the first route segment. A recording that reduces to one point cannot produce a driving route.
+
+## Playback: following the route
+
+`Robot::follow` reads the generated waypoints and uses the live odometry pose while driving. It finds the closest point on the route, chooses a target about 10 inches farther along, then calculates forward and steering power. It repeats this about every 10 ms. The drivetrain is stopped when the robot reaches the end condition or the timeout expires.
+
+```text
++-----------------------------------+
+| Set odometry to the first point   |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+      +-----------------------------+
+| Read current X, Y, and heading   |<-----| Not complete: read pose again|
++-----------------------------------+      +-----------------------------+
+                  |
+                  v
++-----------------------------------+
+| Find nearest point on the route  |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Select a target about 10 in ahead|
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Calculate forward and turn power|
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| Command drivetrain; wait ~10 ms |
++-----------------------------------+
+                  |
+                  v
++-----------------------------------+
+| At route end or timed out?       |
++-----------------------------------+
+          | yes             | no
+          v                 +-----> Not complete: read pose again
++-----------------------------------+
+| Stop drivetrain                 |
++-----------------------------------+
+```
+
+The follower can correct some error by steering toward the route, but it cannot remove odometry drift or guarantee identical motion on every surface. Its return value reports whether the route was accepted and setup succeeded; timeout is not currently reported as a separate failure.
+
+## Adding a generated route to the robot
+
+After converting the csv into a cpp file, the function can be either copied and pasted into an autonomous routine in auto.cpp or the direct file can be placed into ./src and referenced in auto.h as a routine
+## Source files
+
+- `src/recorder.cpp`: recording task, CSV output, and start/stop API.
+- `src/odom.cpp`: tracking-wheel and IMU conversion and field-pose integration.
+- `src/path.cpp`: route parsing and feedback path follower.
+- `src/main.cpp`: add routine into the interface.
+- `src/dash/views/selector.cpp`   : lvgl source code for the autonomous selector
+- `cppconvertapp/main.cpp`: CSV-to-C++ converter.
+*/
