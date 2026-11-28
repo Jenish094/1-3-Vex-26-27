@@ -9,9 +9,7 @@
   <img src="assets/Logo_41103C_Chinese.png" width="49%" />
 </p>
 
-[Code Documentation](https://docs.41103c.jenish.tech/)
-[Team Website](https://41103c.jenish.tech/)
-[Autonomous Recording System](https://docs.41103c.jenish.tech/autonomous_recording.html)
+**Project links:** [Code Documentation](https://docs.41103c.jenish.tech/) | [Autonomous Recording System](https://docs.41103c.jenish.tech/autonomous_recording.html) | [Team Website](https://41103c.jenish.tech/)
 
 > [!NOTE]
 > This 'states' branch is the new main branch
